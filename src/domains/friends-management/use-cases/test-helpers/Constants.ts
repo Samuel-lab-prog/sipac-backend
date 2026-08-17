@@ -1,0 +1,6 @@
+export const DEFAULT_REQUESTER_ID = 1;
+export const DEFAULT_ADDRESSEE_ID = 2;
+export const DEFAULT_FRIEND_REQUEST_ID = 10;
+export const DEFAULT_FRIENDSHIP_ID = 20;
+export const DEFAULT_BLOCKED_RELATIONSHIP_ID = 30;
+export const DEFAULT_NICKNAME = 'TestUser';

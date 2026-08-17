@@ -1,0 +1,15 @@
+export const ERROR_CODES = [
+	'BAD_REQUEST',
+	'UNAUTHORIZED',
+	'FORBIDDEN',
+	'NOT_FOUND',
+	'CONFLICT',
+	'GONE',
+	'VALIDATION',
+	'INTERNAL_SERVER_ERROR',
+	'UNKNOWN',
+	'UNPROCESSABLE_ENTITY',
+	'RATE_LIMIT_EXCEEDED',
+] as const;
+
+export type ErrorCode = (typeof ERROR_CODES)[number];

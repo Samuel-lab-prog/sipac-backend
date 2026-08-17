@@ -1,0 +1,3 @@
+src/generic-subdomains/persistance/prisma/generated
+src/generic-subdomains/persistance/prisma/migrations
+src/generic-subdomains/persistance/prisma/schema.prisma

@@ -1,0 +1,14 @@
+export const DEFAULT_REQUESTER_ID = 1;
+export const DEFAULT_AUTHOR_ID = 2;
+export const DEFAULT_POEM_ID = 1;
+export const DEFAULT_USER_NICKNAME = 'TestUser';
+export const DEFAULT_POEM_TITLE = 'Test Poem';
+export const DEFAULT_POEM_CONTENT = 'Some content';
+export const DEFAULT_POEM_EXCERPT = 'Some excerpt';
+export const DEFAULT_POEM_SLUG = 'test-poem';
+export const DEFAULT_POEM_TAGS = ['tag1', 'tag2'];
+export const DEFAULT_POEM_VISIBILITY = 'public';
+export const DEFAULT_POEM_STATUS = 'published';
+export const DEFAULT_POEM_MODERATION_STATUS = 'approved';
+export const DEFAULT_USER_STATUS = 'active';
+export const DEFAULT_USER_ROLE = 'author';

@@ -1,0 +1,389 @@
+generator client {
+  provider = "prisma-client"
+  output   = "generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Collection {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  name   String
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+  items CollectionItem[]
+
+  @@index([userId])
+  @@unique([userId, name]) 
+}
+
+model CollectionItem {
+  collectionId Int
+  poemId       Int
+
+  createdAt DateTime @default(now())
+
+  collection Collection @relation(fields: [collectionId], references: [id])
+  poem       Poem       @relation(fields: [poemId], references: [id])
+
+  @@id([collectionId, poemId])
+  @@index([poemId])
+}
+
+model UserMention {
+  id Int @id @default(autoincrement())
+
+  mentionedUserId Int
+  actorUserId     Int
+
+  poemId    Int?
+  commentId Int?
+
+  createdAt DateTime @default(now())
+
+  mentionedUser User @relation("MentionedUser", fields: [mentionedUserId], references: [id])
+  actorUser     User @relation("MentionActor", fields: [actorUserId], references: [id])
+
+  
+  comment Comment? @relation(fields: [commentId], references: [id])
+
+  @@index([mentionedUserId])
+  @@index([actorUserId])
+  @@index([poemId])
+  @@index([commentId])
+  @@index([mentionedUserId, createdAt])
+  @@unique([mentionedUserId, actorUserId, poemId, commentId])
+  poems Poem[] @relation("PoemMentions")
+}
+
+model SavedPoem {
+  userId Int
+  poemId Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  poem Poem @relation(fields: [poemId], references: [id])
+
+  @@id([userId, poemId])
+  @@index([userId])
+  @@index([poemId])
+}
+
+model User {
+  id           Int    @id @default(autoincrement())
+  email        String @unique
+  passwordHash String
+  name         String
+  nickname     String @unique
+  bio          String
+  avatarUrl    String?
+
+  role   UserRole   @default(author)
+  status UserStatus @default(active)
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+  emailVerifiedAt DateTime?
+
+  poems Poem[]
+
+  comments     Comment[]
+  commentLikes CommentLike[]
+  poemLikes    PoemLike[]
+
+  friendshipsFrom Friendship[] @relation("FriendshipUserA")
+  friendshipsTo   Friendship[] @relation("FriendshipUserB")
+
+  friendshipRequests   FriendshipRequest[] @relation("FriendshipRequestRequester")
+  friendshipAddressees FriendshipRequest[] @relation("FriendshipRequestAddressee")
+
+  blockedUsers BlockedUser[] @relation("BlockedByUser")
+  blockedBy    BlockedUser[] @relation("BlockedUser")
+
+  poemDedicationsReceived PoemDedication[] @relation("UserPoemDedications")
+
+  sanctions     UserSanction[] @relation("SanctionedUser")
+  userSanctions UserSanction[] @relation("ModeratorSanctions")
+
+  notifications Notification[]
+
+  userNotificationSettings UserNotificationSetting[]
+
+  savedPoems SavedPoem[]
+
+
+  collections Collection[]
+
+  mentionsCreated  UserMention[] @relation("MentionActor")
+mentionsReceived UserMention[] @relation("MentionedUser")
+}
+
+enum UserRole {
+  author
+  moderator
+  admin
+}
+
+enum UserStatus {
+  active
+  banned
+  suspended
+}
+
+model Poem {
+  id            Int     @id @default(autoincrement())
+  title         String
+  slug          String
+  excerpt       String?
+  content       String
+  audioUrl      String?
+  isCommentable Boolean @default(true)
+
+  authorId Int
+  author   User @relation(fields: [authorId], references: [id])
+
+  status           PoemStatus           @default(draft)
+  visibility       PoemVisibility       @default(public)
+  moderationStatus PoemModerationStatus @default(pending)
+  rejectionReason  String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  tags      Tag[]
+  comments  Comment[]
+  poemLikes PoemLike[]
+
+  dedications     PoemDedication[] @relation("PoemDedications")
+
+  @@unique([authorId, slug])
+  @@index([createdAt])
+  @@index([status, visibility])
+  savedPoems SavedPoem[]
+  collectionItems CollectionItem[]
+  userMentions UserMention[] @relation("PoemMentions")
+}
+
+model PoemDedication {
+  id Int @id @default(autoincrement())
+
+  poemId Int
+  poem   Poem @relation("PoemDedications", fields: [poemId], references: [id])
+
+  toUserId Int
+  toUser   User @relation("UserPoemDedications", fields: [toUserId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([poemId, toUserId])
+  @@index([poemId])
+}
+
+
+model Comment {
+  id      Int    @id @default(autoincrement())
+  content String
+
+  createdAt DateTime      @default(now())
+  status    CommentStatus @default(visible)
+
+  authorId Int
+  author   User @relation(fields: [authorId], references: [id])
+
+  poemId Int
+  poem   Poem @relation(fields: [poemId], references: [id])
+
+  parentId Int?
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies  Comment[] @relation("CommentReplies")
+
+  likesRelation CommentLike[]
+
+  @@index([poemId])
+  @@index([parentId])
+  @@index([authorId])
+  userMentions UserMention[]
+}
+
+enum CommentStatus {
+  visible
+  deletedByAuthor
+  deletedByModerator
+}
+
+model CommentLike {
+  userId    Int
+  commentId Int
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
+
+  @@id([userId, commentId])
+  @@index([commentId])
+}
+
+model PoemLike {
+  userId    Int
+  poemId    Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  poem Poem @relation(fields: [poemId], references: [id])
+
+  @@id([userId, poemId])
+}
+
+model Friendship {
+  id Int @id @default(autoincrement())
+
+  userAId Int
+  userBId Int
+
+  createdAt DateTime @default(now())
+
+  userA User @relation("FriendshipUserA", fields: [userAId], references: [id])
+  userB User @relation("FriendshipUserB", fields: [userBId], references: [id])
+
+  @@unique([userAId, userBId])
+}
+
+model FriendshipRequest {
+  id Int @id @default(autoincrement())
+
+  requesterId Int
+  addresseeId Int
+
+  createdAt DateTime @default(now())
+
+  requester User @relation("FriendshipRequestRequester", fields: [requesterId], references: [id])
+  addressee User @relation("FriendshipRequestAddressee", fields: [addresseeId], references: [id])
+
+  @@unique([requesterId, addresseeId])
+}
+
+model BlockedUser {
+  id Int @id @default(autoincrement())
+
+  blockerId Int
+  blockedId Int
+
+  createdAt DateTime @default(now())
+
+  blocker User @relation("BlockedByUser", fields: [blockerId], references: [id])
+  blocked User @relation("BlockedUser", fields: [blockedId], references: [id])
+
+  @@unique([blockerId, blockedId])
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  poems Poem[]
+}
+
+model UserSanction {
+  id Int @id @default(autoincrement())
+
+  userId      Int
+  moderatorId Int
+
+  type   SanctionType
+  reason String
+
+  startAt DateTime  @default(now())
+  endAt   DateTime?
+
+  user      User @relation("SanctionedUser", fields: [userId], references: [id])
+  moderator User @relation("ModeratorSanctions", fields: [moderatorId], references: [id])
+
+  @@index([userId])
+}
+
+enum SanctionType {
+  suspension
+  ban
+}
+
+enum PoemStatus {
+  draft
+  published
+}
+
+enum PoemVisibility {
+  public
+  private
+  unlisted
+  friends
+}
+
+enum PoemModerationStatus {
+  pending
+  approved
+  rejected
+  removed
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+
+  userId    Int
+  type      NotificationType
+
+  actorId   Int?
+  entityId  Int?
+  entityType Entity?
+
+  aggregatedCount Int @default(1)
+
+  data      Json?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  readAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+}
+
+model UserNotificationSetting {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  type   NotificationType
+  enabled Boolean @default(true)
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, type])
+}
+
+enum NotificationType {
+  NEW_FRIEND
+  NEW_FRIEND_REQUEST
+  POEM_LIKED
+  POEM_COMMENT_CREATED
+  POEM_COMMENT_REPLIED
+  POEM_DEDICATED
+  USER_MENTION_IN_POEM
+  POEM_APPROVED
+  POEM_REJECTED
+  POEM_REMOVED
+}
+
+enum Entity {
+  POEM
+  COMMENT
+  USER
+}

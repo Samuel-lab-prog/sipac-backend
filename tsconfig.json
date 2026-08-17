@@ -1,0 +1,66 @@
+{
+	"compilerOptions": {
+		// Environment setup & latest features
+		"lib": ["ESNext"],
+		"target": "ESNext",
+		"module": "Preserve",
+		"moduleDetection": "force",
+		"jsx": "react-jsx",
+		"allowJs": false,
+		"types": ["bun", "node"],
+		"paths": {
+			"@PrismaGenerated/*": [
+				"./src/generic-subdomains/persistance/prisma/generated/*"
+			],
+			"@TestUtils": ["src/generic-subdomains/utils/testing/utils.ts"],
+			"GlobalValidator": ["./src/shared-kernel/validators/Global.ts"],
+			"@Domains/*": ["./src/domains/*"],
+			"@Prisma/*": ["./src/generic-subdomains/persistance/prisma/*"],
+			"@DomainError": ["./src/generic-subdomains/utils/error-handling/domain-error/util.ts"],
+			"@AppError": ["./src/generic-subdomains/utils/error-handling/app-error/util.ts"],
+			"@DatabaseError": ["./src/generic-subdomains/utils/error-handling/database-error/util.ts"],
+			"@SetupPlugin": ["./src/generic-subdomains/utils/security/setupPlugin.ts"],
+			"@GenericSubdomains/*": ["./src/generic-subdomains/*"],
+			"@SharedKernel/*": ["./src/shared-kernel/*"],
+			"@authPlugin": ["./src/generic-subdomains/authentication/composition.ts"],
+			"@ClearDatabase": [
+				"./src/generic-subdomains/persistance/prisma/ClearDatabase.ts"
+			],
+
+			"@PrismaErrorHandler": [
+				"./src/generic-subdomains/persistance/prisma/PrismaErrorHandler.ts"
+			],
+			"@PrismaClient": [
+				"./src/generic-subdomains/persistance/prisma/PrismaClient.ts"
+			],
+			"tests/*": ["./tests/*"],
+			"*": ["./src/*"]
+		},
+
+		// Bundler mode
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"verbatimModuleSyntax": true,
+		"noEmit": true,
+
+		// Best practices
+		"strict": true,
+		"skipLibCheck": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+
+		// Some stricter flags (disabled by default)
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"noPropertyAccessFromIndexSignature": false
+	},
+	"include": [
+		"src/**/*.ts",
+		"architecture-analysis/**/*.ts",
+		"tests/**/*.ts",
+		"prisma.config.ts",
+		"eslint.config.ts"
+	],
+	"exclude": ["node_modules", "src/**/generated/**"]
+}
