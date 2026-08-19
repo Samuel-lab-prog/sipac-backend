@@ -1,4 +1,4 @@
-# HelloPoetry Backend
+# AGIAS (Jose)
 
 Backend for the **HelloPoetry** poetry social network. This repository
 implements the API and business rules using a domain-oriented modular monolith,
