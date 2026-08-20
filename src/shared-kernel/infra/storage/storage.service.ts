@@ -1,5 +1,5 @@
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
-import { S3Client } from '@aws-sdk/s3-presigned-post/node_modules/@aws-sdk/client-s3';
+import { S3Client } from '@aws-sdk/client-s3';
 import { InternalServerError } from '@DomainError';
 import { log } from '@GenericSubdomains/utils/logging/logger';
 import type { StorageService } from '@SharedKernel/ports/Storage';

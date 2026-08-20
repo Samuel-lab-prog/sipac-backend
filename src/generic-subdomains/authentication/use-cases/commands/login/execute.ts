@@ -1,4 +1,5 @@
-﻿import type {
+﻿/* eslint-disable max-lines-per-function */
+import type {
 	TokenService,
 	TokenPayload,
 	LoginClientParams,
@@ -101,7 +102,7 @@ export function loginClientFactory(dependencies: LoginClientDependencies) {
 			status: client?.status ?? null,
 		});
 
-		if (client?.status === 'banned') {
+		if (client?.status === 'blocked') {
 			debugLogin('blocked because client is banned', {
 				email: lockoutKey,
 				clientId: client.id,

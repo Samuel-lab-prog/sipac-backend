@@ -1,9 +1,10 @@
 import { t } from 'elysia';
 import { DateSchema, idSchema } from '@SharedKernel/Schemas';
 
-export const FriendRecordSchema = t.Object({
+export const UserSchema = t.Object({
 	id: idSchema,
-	userAId: idSchema,
-	userBId: idSchema,
+	name: t.String(),
+	email: t.String({ format: 'email' }),
 	createdAt: DateSchema,
+	updatedAt: DateSchema,
 });

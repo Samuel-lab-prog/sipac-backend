@@ -7,88 +7,9 @@ interface DomainEvents {
 		actorAvatarUrl?: string | null;
 		userId: number;
 	};
-	NEW_FRIEND_REQUEST: {
-		requesterNickname: string;
-		requesterId: number;
-		actorAvatarUrl?: string | null;
-		recipientId: number;
-	};
-	POEM_LIKED: {
-		userId: number;
-		poemId: number;
-		likerId: number;
-		likerNickname: string;
-		actorAvatarUrl?: string | null;
-	};
-	COMMENT_LIKED: {
-		userId: number;
-		commentId: number;
-		likerId: number;
-		likerNickname: string;
-		actorAvatarUrl?: string | null;
-	};
-	POEM_COMMENT_CREATED: {
-		commentId: number;
-		poemId: number;
-		poemTitle: string;
-		authorId: number;
-		commenterId: number;
-		commenterNickname: string;
-		actorAvatarUrl?: string | null;
-	};
-	POEM_COMMENT_REPLIED: {
-		commentId: number;
-		parentCommentId: number;
-		poemId: number;
-		replierId: number;
-		originalCommenterId: number;
-		replierNickname: string;
-		poemTitle: string;
-		actorAvatarUrl?: string | null;
-	};
-	POEM_DEDICATED: {
-		poemId: number;
-		poemTitle: string;
-		dedicatorId: number;
-		dedicatorNickname: string;
-		actorAvatarUrl?: string | null;
-		userId: number;
-	};
-	USER_MENTION_IN_POEM: {
-		poemId: number;
-		poemTitle: string;
-		mentionerId: number;
-		mentionerNickname: string;
-		actorAvatarUrl?: string | null;
-		userId: number;
-	};
-	POEM_APPROVED: {
-		poemId: number;
-		poemTitle: string;
-		authorId: number;
-		authorNickname: string;
-		actorAvatarUrl?: string | null;
-	};
-	POEM_REJECTED: {
-		poemId: number;
-		poemTitle: string;
-		authorId: number;
-		authorNickname: string;
-		actorAvatarUrl?: string | null;
-		reason?: string;
-	};
-	POEM_REMOVED: {
-		poemId: number;
-		poemTitle: string;
-		authorId: number;
-		authorNickname: string;
-		actorAvatarUrl?: string | null;
-		reason?: string;
-	};
 }
 
 export type EventName = keyof DomainEvents;
-export type Entity = 'POEM' | 'COMMENT' | 'USER';
 
 type EventPayload<N extends EventName> = DomainEvents[N];
 

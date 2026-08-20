@@ -4,31 +4,7 @@
 		"./src/domains/users-management/use-cases/commands",
 		"./src/domains/users-management/use-cases/queries",
 
-		"./src/domains/poems-management/ports/schemas",
-		"./src/domains/poems-management/use-cases/commands",
-		"./src/domains/poems-management/use-cases/queries",
-
-		"./src/domains/friends-management/ports/schemas",
-		"./src/domains/friends-management/use-cases/commands",
-		"./src/domains/friends-management/use-cases/queries",
-
-		"./src/domains/interactions/ports/schemas",
-		"./src/domains/interactions/use-cases/commands",
-		"./src/domains/interactions/use-cases/queries",
-
-		"./src/domains/moderation/ports/schemas",
-		"./src/domains/moderation/use-cases/commands",
-
-		"./src/domains/feed-engine/ports/schemas",
-		"./src/domains/feed-engine/use-cases/queries",
-
-		"./src/domains/notifications/ports/schemas",
-		"./src/domains/notifications/use-cases/commands",
-		"./src/domains/notifications/use-cases/queries",
-
 		"./architecture-analysis/src/metrics",
-		"./tests/integration/endpoints",
-		"./tests/integration/data",
 
 		"./src/generic-subdomains/authentication/ports/schemas",
 		"./src/generic-subdomains/authentication/use-cases/commands"

@@ -1,5 +1,4 @@
-﻿import type { UserRole } from '@SharedKernel/Enums';
-import type { AuthClient, LoginResponse } from './models';
+﻿import type { AuthClient, LoginResponse } from './models';
 
 export type LoginClientParams = {
 	email: string;
@@ -16,7 +15,7 @@ export interface authPluginServices {
 
 export type TokenPayload = {
 	clientId: number;
-	role: UserRole;
+	role: string;
 	email: string;
 	tokenType: 'access' | 'refresh';
 };

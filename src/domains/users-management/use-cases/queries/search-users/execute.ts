@@ -1,6 +1,4 @@
-﻿import { ForbiddenError } from '@DomainError';
-import type { QueriesRepository, GetUsersParams } from '../../../ports/queries';
-import type { UsersPage } from '../../../ports/models';
+import type { QueriesRepository, SearchUsersParams } from '../../../ports/queries';
 
 interface Dependencies {
 	queriesRepository: QueriesRepository;
@@ -9,28 +7,12 @@ interface Dependencies {
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
 
-export function getUsersFactory({ queriesRepository }: Dependencies) {
-	return function getUsers(params: GetUsersParams): Promise<UsersPage> {
-		const { navigationOptions, filterOptions, sortOptions, requesterStatus } =
-			params;
-
-		if (requesterStatus === 'banned')
-			throw new ForbiddenError('Banned users cannot view users list');
-
+export function searchUsersFactory({ queriesRepository }: Dependencies) {
+	return function searchUsers(params: SearchUsersParams) {
 		return queriesRepository.selectUsers({
-			navigationOptions: {
-				limit: Math.min(navigationOptions.limit ?? DEFAULT_LIMIT, MAX_LIMIT),
-				cursor: navigationOptions.cursor,
-			},
-			sortOptions: {
-				orderBy: sortOptions.by,
-				orderDirection: sortOptions.order,
-			},
-			filterOptions: {
-				searchNickname: filterOptions.searchNickname,
-				role: filterOptions.role,
-				status: filterOptions.status,
-			},
+			searchTerm: params.searchTerm,
+			limit: Math.min(params.limit ?? DEFAULT_LIMIT, MAX_LIMIT),
+			cursor: params.cursor,
 		});
 	};
 }

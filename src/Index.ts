@@ -9,42 +9,16 @@ import { CsrfPlugin } from '@GenericSubdomains/utils/security/csrfPlugin';
 import { SecurityHeadersPlugin } from '@GenericSubdomains/utils/security/securityHeadersPlugin';
 import { SetupPlugin } from '@GenericSubdomains/utils/security/setupPlugin';
 
-// Necessary to register notification event listeners.
-import '@Domains/notifications/EventListeners.ts';
-
 // Routers
-import { feedQueriesRouter } from '@Domains/feed-engine/Composition';
-import {
-	friendsCommandsRouter,
-	friendsQueriesRouter,
-} from '@Domains/friends-management/Composition';
-import {
-	interactionsCommandsRouter,
-	interactionsQueriesRouter,
-} from '@Domains/interactions/Composition';
-import {
-	moderationCommandsRouter,
-	moderationQueriesRouter,
-} from '@Domains/moderation/Composition';
-import {
-	notificationsCommandsRouter,
-	notificationsQueriesRouter,
-} from '@Domains/notifications/Composition';
-import {
-	poemsCommandsRouter,
-	poemsQueriesRouter,
-} from '@Domains/poems-management/Composition';
 import {
 	userCommandsRouter,
 	userCommandsRouterWithFakeHash,
-	userInternalRouter,
-	userInternalRouterWithFakeHash,
 	userQueriesRouter,
 } from '@Domains/users-management/Composition';
 import {
 	authRouter,
 	authRouterWithFakeHash,
-} from '@GenericSubdomains/authentication/composition';
+} from '@GenericSubdomains/authentication/Composition';
 import {
 	ELYSIA_SERVER_SETTINGS,
 	OPEN_API_SETTINGS,
@@ -101,21 +75,9 @@ function makeServer({
 			.use(CsrfPlugin)
 			.use(ErrorPlugin)
 
-			.use(enableRealHash ? userInternalRouter : userInternalRouterWithFakeHash)
 			.use(enableRealHash ? userCommandsRouter : userCommandsRouterWithFakeHash)
 			.use(enableRealHash ? authRouter : authRouterWithFakeHash)
 			.use(userQueriesRouter)
-			.use(poemsCommandsRouter)
-			.use(poemsQueriesRouter)
-			.use(friendsCommandsRouter)
-			.use(friendsQueriesRouter)
-			.use(interactionsCommandsRouter)
-			.use(interactionsQueriesRouter)
-			.use(moderationCommandsRouter)
-			.use(moderationQueriesRouter)
-			.use(feedQueriesRouter)
-			.use(notificationsCommandsRouter)
-			.use(notificationsQueriesRouter)
 	);
 }
 

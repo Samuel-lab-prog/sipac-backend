@@ -1,5 +1,4 @@
-import type { UserRole, UserStatus } from '@SharedKernel/Enums';
-import { authClientSchema } from './schemas';
+import { authClientSchema } from './schemas/AuthClientSchema';
 
 export type AuthClient = (typeof authClientSchema)['static'];
 
@@ -11,8 +10,8 @@ export type LoginResponse = {
 
 export type ClientAuthCredentials = {
 	id: number;
-	role: UserRole;
+	role: string;
 	email: string;
-	status: UserStatus;
+	status: string;
 	passwordHash: string;
 };

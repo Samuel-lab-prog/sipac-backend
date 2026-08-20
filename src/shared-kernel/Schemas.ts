@@ -64,14 +64,3 @@ export const AudioUrlSchema = t.String({
 	...makeValidationError('Audio URL must be a valid http(s) URL'),
 });
 
-export const userStatusSchema = t.UnionEnum(['active', 'suspended', 'banned']);
-export const userRoleSchema = t.UnionEnum(['moderator', 'admin', 'author']);
-
-export const UserPreviewSchema = t.Object({
-	id: idSchema,
-	name: t.String(),
-	nickname: t.String(),
-	avatarUrl: t.Nullable(t.String()),
-	status: t.Optional(userStatusSchema),
-	friendIds: t.Array(idSchema),
-});

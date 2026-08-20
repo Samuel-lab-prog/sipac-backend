@@ -2,7 +2,7 @@ import { prisma } from '@Prisma/PrismaClient';
 
 export async function selectBannedUserIds(): Promise<number[]> {
 	const users = await prisma.user.findMany({
-		where: { status: 'banned', deletedAt: null },
+		where: { status: 'blocked', deletedAt: null },
 		select: { id: true },
 	});
 

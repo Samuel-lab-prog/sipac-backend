@@ -6,13 +6,13 @@ import {
 	setUpCsrfCookieOptions,
 	setUpRefreshCookieOptions,
 } from 'server-config/config';
-import { SetupPlugin } from '../../utils/security/setupPlugin';
+import { SetupPlugin } from '@GenericSubdomains/utils/security/setupPlugin';
 import type { AuthControllerServices } from '../ports/externalServices';
 import {
 	authClientSchema,
 	loginSchema,
 	refreshCookieTokenSchema,
-} from '../ports/schemas';
+} from '../ports/schemas/Index';
 
 export function createAuthRouter(services: AuthControllerServices) {
 	const { login, refreshSession } = services;
@@ -38,8 +38,8 @@ export function createAuthRouter(services: AuthControllerServices) {
 				setUpCsrfCookieOptions(cookie[CSRF_COOKIE_NAME]!);
 
 				auth.clientId = result.client.id;
-				auth.clientRole = result.client.role;
-				auth.clientStatus = result.client.status;
+				auth.clientRole = result.client.role as typeof auth.clientRole;
+				auth.clientStatus = result.client.status as typeof auth.clientStatus;
 
 				return result.client;
 			},
@@ -71,8 +71,8 @@ export function createAuthRouter(services: AuthControllerServices) {
 				setUpRefreshCookieOptions(cookie.refreshToken!);
 
 				auth.clientId = result.client.id;
-				auth.clientRole = result.client.role;
-				auth.clientStatus = result.client.status;
+				auth.clientRole = result.client.role as typeof auth.clientRole;
+				auth.clientStatus = result.client.status as typeof auth.clientStatus;
 
 				return result.client;
 			},

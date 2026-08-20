@@ -2,7 +2,7 @@ import { appErrorSchema } from '@AppError';
 import { SetupPlugin } from '@GenericSubdomains/utils/security/setupPlugin';
 import { Elysia } from 'elysia';
 import type { authPluginServices } from '../ports/externalServices';
-import { cookieTokenSchema } from '../ports/schemas';
+import { cookieTokenSchema } from '../ports/schemas/Index';
 
 export function createAuthPlugin({ authenticate }: authPluginServices) {
 	return new Elysia().use(SetupPlugin).guard({
@@ -14,9 +14,9 @@ export function createAuthPlugin({ authenticate }: authPluginServices) {
 				const token = cookie.token.value;
 				const client = await authenticate(token);
 
-				auth.clientRole = client.role;
+				auth.clientRole = client.role as typeof auth.clientRole;
 				auth.clientId = client.id;
-				auth.clientStatus = client.status;
+				auth.clientStatus = client.status as typeof auth.clientStatus;
 			} finally {
 				store.authTiming = Math.round(performance.now() - authInitiatedAt);
 			}

@@ -31,7 +31,7 @@ export function refreshSessionFactory(
 		const client = await usersContract.selectAuthUserByEmail(payload.email);
 		if (!client) throw new UnauthorizedError('Client not found');
 
-		if (client.status === 'banned')
+		if (client.status === 'blocked')
 			throw new UnauthorizedError('Client is banned');
 
 		const accessTokenPayload: TokenPayload = {

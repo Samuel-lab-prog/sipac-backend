@@ -1,18 +1,8 @@
 import { t } from 'elysia';
-import {
-	NicknameSchema,
-	EmailSchema,
-	PasswordSchema,
-	NameSchema,
-	BioSchema,
-	NullableAvatarUrlSchema,
-} from '../UserFieldsSchemas';
 
 export const CreateUserSchema = t.Object({
-	name: NameSchema,
-	nickname: NicknameSchema,
-	email: EmailSchema,
-	password: PasswordSchema,
-	bio: BioSchema,
-	avatarUrl: t.Optional(NullableAvatarUrlSchema),
+	name: t.String({ minLength: 1 }),
+	nickname: t.String({ minLength: 3, maxLength: 32 }),
+	email: t.String({ format: 'email' }),
+	password: t.String({ minLength: 8 }),
 });
