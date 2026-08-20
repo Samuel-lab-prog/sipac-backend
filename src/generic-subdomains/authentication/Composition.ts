@@ -1,11 +1,11 @@
 import { usersPublicContract } from '@Domains/users-management/public/Index';
 import { BcryptHashService, FakeHashService } from '@SharedKernel/infra/Bcrypt';
-import { createAuthPlugin } from './adapters/authPlugin';
-import { createAuthRouter } from './adapters/authRouter';
+import { createAuthPlugin } from './adapters/AuthPlugin';
+import { createAuthRouter } from './adapters/AuthRouter';
 import {
 	FakeJwtTokenService,
 	JwtTokenService,
-} from './infra/jwt-token-service/jwtTokenService';
+} from './infra/jwt-token-service/JwtTokenService';
 import {
 	refreshSessionFactory,
 	loginClientFactory,

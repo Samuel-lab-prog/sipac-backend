@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'bun:test';
 
 import { expectError } from '@GenericSubdomains/utils/testing/utils';
-import { makeAuthScenario } from '../../test-helpers/helper';
+import { makeAuthScenario } from '../../test-helpers/Helper';
 
 describe.concurrent('USE-CASE - Authentication - RefreshSession', () => {
 	describe('Successful execution', () => {

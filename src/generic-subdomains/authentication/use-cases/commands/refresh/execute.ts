@@ -1,5 +1,5 @@
 ﻿import type { UsersPublicContract } from '@Domains/users-management/public/Index';
-import { UnauthorizedError } from '@GenericSubdomains/utils/error-handling/domain-error/util';
+import { UnauthorizedError } from '@DomainError';
 import {
 	ACCESS_TOKEN_EXPIRATION_TIME,
 	REFRESH_TOKEN_EXPIRATION_TIME,

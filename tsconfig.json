@@ -12,7 +12,7 @@
 			"@PrismaGenerated/*": [
 				"./src/generic-subdomains/persistance/prisma/generated/*"
 			],
-			"@TestUtils": ["src/generic-subdomains/utils/testing/utils.ts"],
+			"@TestUtils": ["./src/generic-subdomains/utils/testing/utils.ts"],
 			"GlobalValidator": ["./src/shared-kernel/validators/Global.ts"],
 			"@Domains/*": ["./src/domains/*"],
 			"@Prisma/*": ["./src/generic-subdomains/persistance/prisma/*"],

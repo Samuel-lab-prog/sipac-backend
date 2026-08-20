@@ -21,20 +21,20 @@ import {
 	givenTokenInvalid,
 	givenTokenValid,
 	type AuthUserOverride,
-} from './givens';
+} from './Givens';
 
 import {
 	DEFAULT_CLIENT_EMAIL,
 	DEFAULT_PASSWORD,
 	DEFAULT_TOKEN,
-} from './constants';
+} from './Constants';
 
 import {
 	authenticateClientFactory,
 	loginClientFactory,
 	refreshSessionFactory,
 } from '../commands';
-import type { AuthSutMocks } from './sutMocks';
+import type { AuthSutMocks } from './SutMocks';
 
 function makeAuthMockFactories() {
 	return {
