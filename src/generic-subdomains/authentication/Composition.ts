@@ -3,12 +3,12 @@ import {
 	BcryptHashService,
 	FakeHashService,
 } from '@SharedKernel/infra/encrypting/bcrypt';
-import { createAuthPlugin } from './adapters/AuthPlugin';
-import { createAuthRouter } from './adapters/AuthRouter';
+import { createAuthPlugin } from './adapters/auth-plugin';
+import { createAuthRouter } from './adapters/auth-router';
 import {
 	FakeJwtTokenService,
 	JwtTokenService,
-} from './infra/jwt-token-service/JwtTokenService';
+} from './infra/jwt-token-service/jwt-token-service';
 import {
 	refreshSessionFactory,
 	loginClientFactory,

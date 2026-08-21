@@ -1,12 +1,17 @@
-﻿import type { AuthClient, LoginResponse } from './models';
+import type { AuthClient } from './models';
 
 export type LoginClientParams = {
 	email: string;
 	password: string;
 };
+
 export interface AuthControllerServices {
-	login: (params: LoginClientParams) => Promise<LoginResponse>;
-	refreshSession: (refreshToken: string) => Promise<LoginResponse>;
+	login: (
+		params: LoginClientParams,
+	) => Promise<import('./models').LoginResponse>;
+	refreshSession: (
+		refreshToken: string,
+	) => Promise<import('./models').LoginResponse>;
 }
 
 export interface authPluginServices {

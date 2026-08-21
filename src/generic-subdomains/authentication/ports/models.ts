@@ -1,4 +1,4 @@
-import { authClientSchema } from './schemas/AuthClientSchema';
+import { authClientSchema } from './schemas/auth-client-schema';
 
 export type AuthClient = (typeof authClientSchema)['static'];
 

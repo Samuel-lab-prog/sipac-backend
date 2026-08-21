@@ -15,11 +15,7 @@ const requireJwtClaims = process.env.JWT_REQUIRE_CLAIMS === 'true';
 
 function generateToken(payload: TokenPayload, expiresIn: number): string {
 	const jwtId = crypto.randomUUID();
-	const options: SignOptions = {
-		algorithm: 'HS256',
-		expiresIn,
-		jwtid: jwtId,
-	};
+	const options: SignOptions = { algorithm: 'HS256', expiresIn, jwtid: jwtId };
 	if (issuer) options.issuer = issuer;
 	if (audience) options.audience = audience;
 	return jwt.sign(payload, secretKey, options);
@@ -40,9 +36,7 @@ function isValidTokenPayload(payload: unknown): payload is TokenPayload {
 
 function verifyToken(token: string): TokenPayload | null {
 	try {
-		const verifyOptions: jwt.VerifyOptions = {
-			ignoreExpiration: false,
-		};
+		const verifyOptions: jwt.VerifyOptions = { ignoreExpiration: false };
 		if (issuer) verifyOptions.issuer = issuer;
 		if (audience) verifyOptions.audience = audience;
 		const decoded = jwt.verify(token, secretKey, verifyOptions);
@@ -63,11 +57,7 @@ function verifyToken(token: string): TokenPayload | null {
 }
 
 function fakeGenerateToken(payload: TokenPayload, _expiresIn: number): string {
-	const role = payload.role;
-	const email = payload.email;
-	const clientId = payload.clientId;
-	const tokenType = payload.tokenType;
-	return `${tokenType}-${role}-${email}-${clientId}`;
+	return `${payload.tokenType}-${payload.role}-${payload.email}-${payload.clientId}`;
 }
 
 function fakeVerifyToken(token: string): TokenPayload | null {
@@ -85,11 +75,7 @@ function fakeVerifyToken(token: string): TokenPayload | null {
 	return { role, email, clientId, tokenType };
 }
 
-export const JwtTokenService: TokenService = {
-	generateToken,
-	verifyToken,
-};
-
+export const JwtTokenService: TokenService = { generateToken, verifyToken };
 export const FakeJwtTokenService: TokenService = {
 	generateToken: fakeGenerateToken,
 	verifyToken: fakeVerifyToken,
