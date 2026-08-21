@@ -23,7 +23,7 @@ function normalizePath(file: string): string {
 
 function getModifiers(node: ts.Node): readonly ts.Node[] | undefined {
 	return 'modifiers' in node
-		? ((node as { modifiers?: readonly ts.Node[] }).modifiers)
+		? (node as { modifiers?: readonly ts.Node[] }).modifiers
 		: undefined;
 }
 

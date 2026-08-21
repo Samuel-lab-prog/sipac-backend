@@ -2,7 +2,10 @@
 import { DatabaseError } from '../database-error/util.ts';
 import Elysia from 'elysia';
 import { log } from '../../logging/logger.ts';
-import { SetupPlugin, type SetupPluginContext } from '../../security/setupPlugin.ts';
+import {
+	SetupPlugin,
+	type SetupPluginContext,
+} from '../../security/setupPlugin.ts';
 import { DomainError } from '../domain-error/util.ts';
 import { AppError } from '../app-error/util.ts';
 import type { ErrorCode } from '../errorCodes.ts';
@@ -152,10 +155,10 @@ function logError(
 			},
 			originalError: originalError
 				? {
-					name: originalError.name,
-					message: originalError.message,
-					stack: originalError.stack,
-				}
+						name: originalError.name,
+						message: originalError.message,
+						stack: originalError.stack,
+					}
 				: undefined,
 		},
 		'An error occurred while processing the request',

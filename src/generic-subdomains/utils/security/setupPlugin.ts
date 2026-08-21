@@ -13,7 +13,7 @@ export const SetupPlugin = new Elysia()
 	.decorate('auth', {
 		clientId: 0,
 		clientRole: 'author',
-		clientStatus: 'banned',
+		clientStatus: 'blocked',
 	} as AuthType satisfies AuthType)
 	.decorate('logger', {
 		log,

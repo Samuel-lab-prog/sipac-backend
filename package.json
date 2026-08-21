@@ -34,7 +34,7 @@
 		"test:all": "bun run test:prepare && bun run test:run",
 		"test:use-case": "cross-env NODE_ENV=test bun test -t USE-CASE",
 		"test:policy": "cross-env NODE_ENV=test bun test -t POLICY --concurrent",
-		"test:unit": "bun run test:use-case && bun run test:policy",
+		"test:unit": "cross-env NODE_ENV=test bun test",
 		"test:integration": "bun run test:prepare && cross-env NODE_ENV=test bun test -t INTEGRATION",
 		"test:e2e": "bun run test:prepare && cross-env NODE_ENV=test playwright test",
 		"check:e2e": "bun run check:env:test && bun run test:e2e",

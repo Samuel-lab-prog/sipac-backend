@@ -1,4 +1,7 @@
-import type { QueriesRepository, SearchUsersParams } from '../../../ports/queries';
+import type {
+	QueriesRepository,
+	SearchUsersParams,
+} from '../../../ports/queries';
 
 interface Dependencies {
 	queriesRepository: QueriesRepository;

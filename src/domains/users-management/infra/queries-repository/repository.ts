@@ -2,7 +2,11 @@ import { prisma } from '@Prisma/PrismaClient';
 import { withPrismaErrorHandling } from '@Prisma/PrismaErrorHandler';
 import type { QueriesRepository } from '../../ports/queries';
 
-async function selectUsers(params: { searchTerm?: string; limit: number; cursor?: number }) {
+function selectUsers(params: {
+	searchTerm?: string;
+	limit: number;
+	cursor?: number;
+}) {
 	return withPrismaErrorHandling(async () => {
 		const users = await prisma.user.findMany({
 			where: {

@@ -61,12 +61,8 @@ function makeServer({
 		new Elysia(ELYSIA_SERVER_SETTINGS)
 			.use(enableDocs ? openapi(OPEN_API_SETTINGS) : undefined)
 			// Global and auth-specific limits are applied separately.
-			.use(
-				enableRateLimit ? safeRateLimit('auth') : undefined,
-			)
-			.use(
-				enableRateLimit ? safeRateLimit('global') : undefined,
-			)
+			.use(enableRateLimit ? safeRateLimit('auth') : undefined)
+			.use(enableRateLimit ? safeRateLimit('global') : undefined)
 			.use(enableLogger ? LoggerPlugin : undefined)
 			.use(cors(corsConfig))
 			.use(SetupPlugin)

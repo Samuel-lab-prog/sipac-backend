@@ -3,13 +3,13 @@ export type { ClientAuthCredentials } from '@GenericSubdomains/authentication/po
 
 export type CommandResult<T> =
 	| {
-		ok: true;
-		data: T;
-	}
+			ok: true;
+			data: T;
+	  }
 	| {
-		ok: false;
-		data: null;
-		error?: Error;
-		code: ErrorCode;
-		message?: string;
-	};
+			ok: false;
+			data: null;
+			error?: Error;
+			code: ErrorCode;
+			message?: string;
+	  };

@@ -9,7 +9,10 @@ import type { UsersCommandsServices } from './ports/commands';
 import type { UsersQueriesRouterServices } from './ports/queries';
 
 const commandsServices: UsersCommandsServices = {
-	createUser: createUserFactory({ commandsRepository, hashServices: BcryptHashService }),
+	createUser: createUserFactory({
+		commandsRepository,
+		hashServices: BcryptHashService,
+	}),
 };
 
 const queriesServices: UsersQueriesRouterServices = {

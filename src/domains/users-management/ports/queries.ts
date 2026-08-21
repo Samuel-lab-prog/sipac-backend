@@ -7,7 +7,9 @@ export type SearchUsersParams = {
 };
 
 export interface UsersQueriesRouterServices {
-	searchUsers: (params: SearchUsersParams) => Promise<{ users: User[]; hasMore: boolean; nextCursor?: number }>;
+	searchUsers: (
+		params: SearchUsersParams,
+	) => Promise<{ users: User[]; hasMore: boolean; nextCursor?: number }>;
 }
 
 export interface QueriesRepository {

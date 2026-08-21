@@ -5,4 +5,5 @@ export const CreateUserSchema = t.Object({
 	nickname: t.String({ minLength: 3, maxLength: 32 }),
 	email: t.String({ format: 'email' }),
 	password: t.String({ minLength: 8 }),
+	bio: t.String({ minLength: 1 }),
 });

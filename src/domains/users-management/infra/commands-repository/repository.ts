@@ -11,10 +11,11 @@ function toPrismaCreateInput(user: CreateUserDB): UserCreateInput {
 		name: user.name,
 		email: user.email,
 		passwordHash: user.passwordHash,
+		bio: user.bio,
 	};
 }
 
-async function insertUser(user: CreateUserDB): Promise<CommandResult<User>> {
+function insertUser(user: CreateUserDB): Promise<CommandResult<User>> {
 	return withPrismaResult(() =>
 		prisma.user.create({
 			data: toPrismaCreateInput(user),

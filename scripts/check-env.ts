@@ -1,4 +1,9 @@
-import '../src/server-config/utils/loadEnv';
+import './load-local-env';
 import { validateServerEnv } from '../src/server-config/utils/validateEnv';
 
-validateServerEnv();
+try {
+	validateServerEnv({ silent: false });
+} catch (error) {
+	console.error(error);
+	process.exit(1);
+}

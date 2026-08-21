@@ -50,7 +50,7 @@ export const usersPublicContract: UsersPublicContract = {
 				exists: false,
 				id: -1,
 				status: 'blocked',
-				role: 'student',
+				role: 'author',
 				nickname: '',
 				avatarUrl: null,
 			};
@@ -64,8 +64,10 @@ export const usersPublicContract: UsersPublicContract = {
 			avatarUrl: user.avatarUrl,
 		};
 	},
-	selectUsersBasicInfo: async (userIds: number[]) =>
-		Promise.all(userIds.map((id) => usersPublicContract.selectUserBasicInfo(id))),
+	selectUsersBasicInfo: (userIds: number[]) =>
+		Promise.all(
+			userIds.map((id) => usersPublicContract.selectUserBasicInfo(id)),
+		),
 	selectAuthUserByEmail: (email: string) =>
 		withPrismaErrorHandling(() =>
 			prisma.user.findFirst({

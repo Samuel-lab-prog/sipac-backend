@@ -12,7 +12,10 @@ function isLoopbackHost(hostname: string): boolean {
 	return LOOPBACK_HOSTS.has(hostname);
 }
 
-function areLoopbackOriginsEquivalent(candidate: string, allowed: string): boolean {
+function areLoopbackOriginsEquivalent(
+	candidate: string,
+	allowed: string,
+): boolean {
 	if (candidate === allowed) return true;
 
 	const candidateUrl = parseOrigin(candidate);
@@ -27,7 +30,10 @@ function areLoopbackOriginsEquivalent(candidate: string, allowed: string): boole
 	);
 }
 
-export function originMatchesAllowlist(origin: string, allowlist: string[]): boolean {
+export function originMatchesAllowlist(
+	origin: string,
+	allowlist: string[],
+): boolean {
 	return allowlist.some((allowedOrigin) =>
 		areLoopbackOriginsEquivalent(origin, allowedOrigin),
 	);

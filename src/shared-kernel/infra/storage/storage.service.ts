@@ -65,13 +65,13 @@ const sessionToken = process.env.AWS_SESSION_TOKEN;
 const s3Client =
 	accessKeyId && secretAccessKey
 		? new S3Client({
-			region,
-			credentials: {
-				accessKeyId,
-				secretAccessKey,
-				sessionToken,
-			},
-		})
+				region,
+				credentials: {
+					accessKeyId,
+					secretAccessKey,
+					sessionToken,
+				},
+			})
 		: new S3Client({ region });
 
 export const storageService: StorageService = {

@@ -1,1 +1,0 @@
-ALTER TYPE "NotificationType" ADD VALUE 'POEM_REJECTED';

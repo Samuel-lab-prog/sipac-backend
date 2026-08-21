@@ -87,7 +87,10 @@ function formatTime(time: unknown): string {
 	});
 }
 
-function formatExtras(entry: Record<string, unknown>, useColor: boolean): string {
+function formatExtras(
+	entry: Record<string, unknown>,
+	useColor: boolean,
+): string {
 	const ignoredKeys = new Set(['level', 'time', 'msg', 'pid', 'hostname', 'v']);
 	const extras = Object.fromEntries(
 		Object.entries(entry).filter(([key]) => !ignoredKeys.has(key)),

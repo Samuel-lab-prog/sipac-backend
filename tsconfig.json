@@ -16,10 +16,18 @@
 			"GlobalValidator": ["./src/shared-kernel/validators/Global.ts"],
 			"@Domains/*": ["./src/domains/*"],
 			"@Prisma/*": ["./src/generic-subdomains/persistance/prisma/*"],
-			"@DomainError": ["./src/generic-subdomains/utils/error-handling/domain-error/util.ts"],
-			"@AppError": ["./src/generic-subdomains/utils/error-handling/app-error/util.ts"],
-			"@DatabaseError": ["./src/generic-subdomains/utils/error-handling/database-error/util.ts"],
-			"@SetupPlugin": ["./src/generic-subdomains/utils/security/setupPlugin.ts"],
+			"@DomainError": [
+				"./src/generic-subdomains/utils/error-handling/domain-error/util.ts"
+			],
+			"@AppError": [
+				"./src/generic-subdomains/utils/error-handling/app-error/util.ts"
+			],
+			"@DatabaseError": [
+				"./src/generic-subdomains/utils/error-handling/database-error/util.ts"
+			],
+			"@SetupPlugin": [
+				"./src/generic-subdomains/utils/security/setupPlugin.ts"
+			],
 			"@GenericSubdomains/*": ["./src/generic-subdomains/*"],
 			"@SharedKernel/*": ["./src/shared-kernel/*"],
 			"@authPlugin": ["./src/generic-subdomains/authentication/composition.ts"],

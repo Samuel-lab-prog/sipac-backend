@@ -32,7 +32,8 @@ const LOCKOUT_DURATION_MS = Number(
 	process.env.AUTH_LOCKOUT_DURATION_MS ?? 15 * 60 * 1000,
 );
 const DEBUG_AUTH_LOGIN =
-	process.env.DEBUG_AUTH_LOGIN === 'true' || process.env.NODE_ENV === 'development';
+	process.env.DEBUG_AUTH_LOGIN === 'true' ||
+	process.env.NODE_ENV === 'development';
 
 function debugLogin(message: string, details?: Record<string, unknown>) {
 	if (!DEBUG_AUTH_LOGIN) return;
