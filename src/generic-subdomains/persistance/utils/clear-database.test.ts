@@ -9,7 +9,7 @@ async function loadClearDatabaseModule(options?: { failures?: Array<Error> }) {
 		return 1;
 	});
 
-	await mock.module('@Prisma/prisma-client', () => ({
+	await mock.module('../prisma/prisma-client', () => ({
 		prisma: {
 			$executeRawUnsafe: executeRawUnsafe,
 		},

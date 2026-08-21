@@ -4,7 +4,7 @@ import {
 	DatabaseNotFoundError,
 	DatabaseUnknownError,
 	DatabaseValidationError,
-} from '@DatabaseError';
+} from '../../utils/error-handling/database-error/util';
 import type { CommandResult } from '@SharedKernel/types/types';
 
 type PrismaMappedError = {

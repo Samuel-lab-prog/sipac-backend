@@ -1,4 +1,4 @@
-import { prisma } from '@Prisma/prisma-client';
+import { prisma } from '../prisma/prisma-client';
 
 export const applicationTables = ['User'] as const;
 

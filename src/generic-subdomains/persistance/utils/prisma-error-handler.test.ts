@@ -4,7 +4,7 @@ import {
 	DatabaseConflictError,
 	DatabaseNotFoundError,
 	DatabaseUnknownError,
-} from '@DatabaseError';
+} from '../../utils/error-handling/database-error/util';
 import {
 	withPrismaErrorHandling,
 	withPrismaResult,
