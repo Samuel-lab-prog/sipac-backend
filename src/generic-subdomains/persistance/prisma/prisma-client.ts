@@ -1,4 +1,4 @@
-import { log } from '@GenericSubdomains/utils/logging/logger';
+import { log } from '../../utils/logging/logger';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { getDatabaseUrl } from 'server-config/config';
 import 'server-config/utils/envBootstrap';

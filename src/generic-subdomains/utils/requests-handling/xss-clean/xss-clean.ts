@@ -4,17 +4,12 @@ import type { Context } from 'elysia';
 
 export function sanitize(value: any): any {
 	if (typeof value === 'string') return xss(value);
-
 	if (Array.isArray(value)) return value.map(sanitize);
-
 	if (typeof value === 'object' && value !== null) {
 		const result: any = {};
-		for (const key in value) {
-			result[key] = sanitize(value[key]);
-		}
+		for (const key in value) result[key] = sanitize(value[key]);
 		return result;
 	}
-
 	return value;
 }
 

@@ -1,5 +1,5 @@
 import { BunAdapter } from 'elysia/adapter/bun';
-import { sanitize } from '@GenericSubdomains/utils/requests-handling/xss-clean/xssClean';
+import { sanitize } from '../generic-subdomains/utils/requests-handling/xss-clean/xss-clean';
 import { MissingEnvVarError } from '@AppError';
 import { parseNumber } from './utils/envParsers';
 import { assertDatabaseSafety } from './utils/databaseSafety';

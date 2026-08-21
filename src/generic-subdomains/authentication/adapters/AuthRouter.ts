@@ -6,7 +6,7 @@ import {
 	setUpCsrfCookieOptions,
 	setUpRefreshCookieOptions,
 } from 'server-config/config';
-import { SetupPlugin } from '@GenericSubdomains/utils/security/setupPlugin';
+import { SetupPlugin } from '../../utils/security/setup-plugin';
 import type { AuthControllerServices } from '../ports/externalServices';
 import {
 	authClientSchema,

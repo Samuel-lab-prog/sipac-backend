@@ -5,10 +5,10 @@ import { log } from '../../logging/logger.ts';
 import {
 	SetupPlugin,
 	type SetupPluginContext,
-} from '../../security/setupPlugin.ts';
+} from '../../security/setup-plugin.ts';
 import { DomainError } from '../domain-error/util.ts';
 import { AppError } from '../app-error/util.ts';
-import type { ErrorCode } from '../errorCodes.ts';
+import type { ErrorCode } from '../error-codes.ts';
 
 function normalizeError(code: unknown, error: unknown): AppError {
 	if (error instanceof AppError) return error;
@@ -26,6 +26,7 @@ function normalizeError(code: unknown, error: unknown): AppError {
 }
 
 function convertDatabaseError(error: DatabaseError): AppError {
+	/* unchanged body */
 	switch (error.type) {
 		case 'NOT_FOUND':
 			return new AppError({
@@ -34,7 +35,6 @@ function convertDatabaseError(error: DatabaseError): AppError {
 				code: 'NOT_FOUND',
 				originalError: error,
 			});
-
 		case 'CONFLICT':
 			return new AppError({
 				statusCode: 409,
@@ -49,7 +49,6 @@ function convertDatabaseError(error: DatabaseError): AppError {
 				code: 'VALIDATION',
 				originalError: error,
 			});
-
 		case 'FORBIDDEN':
 			return new AppError({
 				statusCode: 403,
@@ -57,7 +56,6 @@ function convertDatabaseError(error: DatabaseError): AppError {
 				code: 'FORBIDDEN',
 				originalError: error,
 			});
-
 		default:
 			return new AppError({
 				statusCode: 500,
@@ -77,7 +75,6 @@ function convertElysiaError(code: string, originalError?: Error): AppError {
 				code: 'NOT_FOUND',
 				originalError,
 			});
-
 		case 'PARSE':
 			return new AppError({
 				statusCode: 400,
@@ -85,7 +82,6 @@ function convertElysiaError(code: string, originalError?: Error): AppError {
 				code: 'BAD_REQUEST',
 				originalError,
 			});
-
 		case 'VALIDATION':
 			return new AppError({
 				statusCode: 422,
@@ -93,7 +89,6 @@ function convertElysiaError(code: string, originalError?: Error): AppError {
 				code: 'VALIDATION',
 				originalError,
 			});
-
 		case 'INVALID_COOKIE_SIGNATURE':
 			return new AppError({
 				statusCode: 401,
@@ -101,7 +96,6 @@ function convertElysiaError(code: string, originalError?: Error): AppError {
 				code: 'UNAUTHORIZED',
 				originalError,
 			});
-
 		default:
 			return new AppError({
 				statusCode: 500,
@@ -146,15 +140,10 @@ function logError(
 	originalError?: Error,
 ) {
 	const errorDetails = summarizeError(originalError);
-
 	log.error(
 		{
 			...context,
-			response: {
-				status,
-				message,
-				code,
-			},
+			response: { status, message, code },
 			originalError: errorDetails,
 		},
 		'An error occurred while processing the request',
@@ -163,20 +152,16 @@ function logError(
 
 function summarizeError(error?: Error) {
 	if (!error) return undefined;
-
 	const summary: Record<string, unknown> = {
 		name: error.name,
 		message: error.message,
 	};
-
 	const stackLine = error.stack?.split('\n').at(0)?.trim();
 	if (stackLine) summary.stack = stackLine;
-
 	const validationError = error as Error & {
 		errors?: Array<{ summary?: string; message?: string }>;
 		summary?: string;
 	};
-
 	if (
 		Array.isArray(validationError.errors) &&
 		validationError.errors.length > 0
@@ -187,23 +172,14 @@ function summarizeError(error?: Error) {
 			message: item.message,
 		}));
 	}
-
 	return summary;
 }
 
 function buildErrorContext(request: Request, ctx: SetupPluginContext) {
 	const url = new URL(request.url);
 	const path = url.pathname;
-
 	const segments = path.split('/').filter(Boolean);
-
-	/**
-	 * Example:
-	 * /api/v1/friends/accept/263
-	 * segments => ['api','v1','friends','accept','263']
-	 */
 	const targetId = extractNumericSegment(segments);
-
 	return {
 		request: {
 			reqId: ctx.store.reqId,
@@ -227,7 +203,6 @@ function buildErrorContext(request: Request, ctx: SetupPluginContext) {
 function extractNumericSegment(segments: string[]): number | undefined {
 	const candidate = segments.at(-1);
 	if (!candidate) return undefined;
-
 	const parsed = Number(candidate);
 	return Number.isInteger(parsed) ? parsed : undefined;
 }
@@ -243,12 +218,9 @@ type HandleErrorContext = {
 
 function handleError(ctx: HandleErrorContext) {
 	const { set, error, code, request, store, auth } = ctx;
-
 	const appError = normalizeError(code, error);
 	const context = buildErrorContext(request, { store, auth });
-
 	set.status = appError.statusCode;
-
 	const original =
 		error instanceof Error
 			? error
@@ -262,16 +234,11 @@ function handleError(ctx: HandleErrorContext) {
 		appError.code,
 		original,
 	);
-
 	return sendAppError(appError);
 }
 
 function sendAppError(err: AppError) {
-	return {
-		message: err.message,
-		statusCode: err.statusCode,
-		code: err.code,
-	};
+	return { message: err.message, statusCode: err.statusCode, code: err.code };
 }
 
 export const ErrorPlugin = new Elysia()

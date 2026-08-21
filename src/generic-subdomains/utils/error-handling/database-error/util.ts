@@ -1,4 +1,4 @@
-import type { ErrorCode } from '../errorCodes';
+import type { ErrorCode } from '../error-codes';
 
 export class DatabaseError extends Error {
 	type: ErrorCode;

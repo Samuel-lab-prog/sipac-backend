@@ -1,5 +1,5 @@
 import { t } from 'elysia';
-import { ERROR_CODES, type ErrorCode } from '../errorCodes';
+import { ERROR_CODES, type ErrorCode } from '../error-codes';
 
 export interface AppErrorType {
 	statusCode: number;
@@ -152,6 +152,7 @@ const _ENVOIRMENT_VARIABLE_NAMES = [
 	'S3_SIGNED_URL_EXPIRES_IN',
 	'SECURITY_HEADERS_ENABLED',
 ] as const;
+
 export function MissingEnvVarError(
 	varName: (typeof _ENVOIRMENT_VARIABLE_NAMES)[number],
 ): AppError {
@@ -179,8 +180,6 @@ export function ServerError(
 	return createAppError(500, 'Server error', message, code, originalError);
 }
 
-// These functions are used to help create validation error for Elysia schemas.
-
 export function makeValidationError(message: string) {
 	return {
 		error() {
@@ -188,7 +187,6 @@ export function makeValidationError(message: string) {
 		},
 	};
 }
-
 export function makeBadRequestError(message: string) {
 	return {
 		error() {
@@ -196,7 +194,6 @@ export function makeBadRequestError(message: string) {
 		},
 	};
 }
-
 export function makeUnauthorizedError(message: string) {
 	return {
 		error() {

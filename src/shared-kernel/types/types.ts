@@ -1,4 +1,4 @@
-import type { ErrorCode } from '@GenericSubdomains/utils/error-handling/errorCodes';
+import type { ErrorCode } from '../../generic-subdomains/utils/error-handling/error-codes';
 export type { ClientAuthCredentials } from '@GenericSubdomains/authentication/ports/models';
 
 export type CommandResult<T> =

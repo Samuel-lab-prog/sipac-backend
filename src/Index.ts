@@ -2,12 +2,12 @@ import { Elysia } from 'elysia';
 // Plugins
 import cors from '@elysiajs/cors';
 import { openapi } from '@elysiajs/openapi';
-import { ErrorPlugin } from '@GenericSubdomains/utils/error-handling/error-plugin/util';
-import { LoggerPlugin } from '@GenericSubdomains/utils/logging/loggerPlugin';
-import { RequestCachePlugin } from '@GenericSubdomains/utils/requests-handling/request-caching/requestCachePlugin';
-import { CsrfPlugin } from '@GenericSubdomains/utils/security/csrfPlugin';
-import { SecurityHeadersPlugin } from '@GenericSubdomains/utils/security/securityHeadersPlugin';
-import { SetupPlugin } from '@GenericSubdomains/utils/security/setupPlugin';
+import { ErrorPlugin } from './generic-subdomains/utils/error-handling/error-plugin/util';
+import { LoggerPlugin } from './generic-subdomains/utils/logging/logger-plugin';
+import { RequestCachePlugin } from './generic-subdomains/utils/requests-handling/request-caching/request-cache-plugin';
+import { CsrfPlugin } from './generic-subdomains/utils/security/csrf-plugin';
+import { SecurityHeadersPlugin } from './generic-subdomains/utils/security/security-headers-plugin';
+import { SetupPlugin } from './generic-subdomains/utils/security/setup-plugin';
 
 // Routers
 import {
