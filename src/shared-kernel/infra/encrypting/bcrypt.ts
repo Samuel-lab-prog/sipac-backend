@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import type { HashServices } from '../ports/HashServices';
+import type { HashServices } from '../../ports/hash-services';
 
 const DEFAULT_SALT_ROUNDS = 12;
 const SALT_ROUNDS = Math.max(
@@ -15,10 +15,7 @@ function compare(password: string, hashedPassword: string): Promise<boolean> {
 	return bcrypt.compare(password, hashedPassword);
 }
 
-export const BcryptHashService: HashServices = {
-	hash,
-	compare,
-};
+export const BcryptHashService: HashServices = { hash, compare };
 
 function fakeHash(password: string): Promise<string> {
 	return Promise.resolve(`fake-hash-of-${password}`);

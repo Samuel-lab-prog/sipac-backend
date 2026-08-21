@@ -14,11 +14,11 @@ import {
 	userCommandsRouter,
 	userCommandsRouterWithFakeHash,
 	userQueriesRouter,
-} from '@Domains/users-management/Composition';
+} from '@Domains/users-management/composition';
 import {
 	authRouter,
 	authRouterWithFakeHash,
-} from '@GenericSubdomains/authentication/Composition';
+} from '@GenericSubdomains/authentication/composition';
 import {
 	ELYSIA_SERVER_SETTINGS,
 	OPEN_API_SETTINGS,

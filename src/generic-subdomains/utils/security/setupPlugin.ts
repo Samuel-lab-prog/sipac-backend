@@ -1,7 +1,9 @@
-import type { UserRole, UserStatus } from '@SharedKernel/Enums';
 import Elysia from 'elysia';
 import { appErrorSchema } from '../error-handling/app-error/util.ts';
 import { log } from '../logging/logger';
+
+type UserRole = 'author' | 'moderator' | 'admin';
+type UserStatus = 'active' | 'blocked' | 'suspended';
 
 type AuthType = {
 	clientId: number;

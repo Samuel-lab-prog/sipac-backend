@@ -10,7 +10,7 @@ export const LoggerPlugin = new Elysia()
 	.use(SetupPlugin)
 
 	.onStart(() => {
-		log.info('🚀 Server started at http://localhost:5000/api/v1/docs');
+		log.info({ scope: 'server.start' }, 'Server started');
 	})
 
 	.onRequest(({ store }) => {
@@ -33,6 +33,7 @@ export const LoggerPlugin = new Elysia()
 
 			log.info(
 				{
+					scope: 'request.completed',
 					request: {
 						reqId: store.reqId ?? 'unknown',
 						method: request.method,
@@ -55,7 +56,7 @@ export const LoggerPlugin = new Elysia()
 						authMs,
 					},
 				},
-				'Incoming request completed',
+				'Request completed',
 			);
 
 			store.authTiming = 0;

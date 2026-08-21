@@ -1,5 +1,8 @@
-import { usersPublicContract } from '@Domains/users-management/public/Index';
-import { BcryptHashService, FakeHashService } from '@SharedKernel/infra/Bcrypt';
+import { usersPublicContract } from '@Domains/users-management/public/index';
+import {
+	BcryptHashService,
+	FakeHashService,
+} from '@SharedKernel/infra/encrypting/bcrypt';
 import { createAuthPlugin } from './adapters/AuthPlugin';
 import { createAuthRouter } from './adapters/AuthRouter';
 import {

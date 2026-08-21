@@ -3,7 +3,7 @@ import {
 	UnprocessableEntityError,
 	UnknownError,
 } from '@DomainError';
-import type { HashServices } from '@SharedKernel/ports/HashServices';
+import type { HashServices } from '@SharedKernel/ports/hash-services';
 import type {
 	CommandsRepository,
 	CreateUserParams,

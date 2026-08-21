@@ -1,12 +1,12 @@
-﻿/* eslint-disable max-lines-per-function */
+/* eslint-disable max-lines-per-function */
 import type {
 	TokenService,
 	TokenPayload,
 	LoginClientParams,
 } from '../../../ports/externalServices';
 import type { LoginResponse } from '../../../ports/models';
-import type { UsersPublicContract } from '@Domains/users-management/public/Index';
-import type { HashServices } from '@SharedKernel/ports/HashServices';
+import type { UsersPublicContract } from '@Domains/users-management/public';
+import type { HashServices } from '@SharedKernel/ports/hash-services';
 import { UnauthorizedError } from '@DomainError';
 import {
 	ACCESS_TOKEN_EXPIRATION_TIME,
@@ -38,7 +38,7 @@ const DEBUG_AUTH_LOGIN =
 function debugLogin(message: string, details?: Record<string, unknown>) {
 	if (!DEBUG_AUTH_LOGIN) return;
 
-	console.log('[auth.login]', message, details ?? '');
+	console.debug('[auth.login]', message, details ?? {});
 }
 
 function normalizeKey(email: string) {

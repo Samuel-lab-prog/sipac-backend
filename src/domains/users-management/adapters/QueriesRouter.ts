@@ -1,6 +1,6 @@
 import { appErrorSchema } from '@AppError';
 import { Elysia, t } from 'elysia';
-import { UserSchema } from '../ports/schemas/Index';
+import { userSchema } from '../ports/schemas';
 import type { UsersQueriesRouterServices } from '../ports/queries';
 
 export function createUsersReadRouter(services: UsersQueriesRouterServices) {
@@ -15,7 +15,7 @@ export function createUsersReadRouter(services: UsersQueriesRouterServices) {
 			}),
 			response: {
 				200: t.Object({
-					users: t.Array(UserSchema),
+					users: t.Array(userSchema),
 					hasMore: t.Boolean(),
 					nextCursor: t.Optional(t.Number()),
 				}),

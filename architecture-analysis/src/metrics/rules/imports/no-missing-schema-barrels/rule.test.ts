@@ -5,7 +5,7 @@ import { checkMissingSchemaBarrels } from './rule';
 describe('ARCHITECTURE-RULE - No Missing Schema Barrels', () => {
 	it('ARCHITECTURE-RULE flags schemas folders without index.ts', () => {
 		const cloc = makeClocResult({
-			'src/domains/users-management/ports/schemas/UserSchema.ts': { code: 10 },
+			'src/domains/users-management/ports/schemas/userSchema.ts': { code: 10 },
 			'src/generic-subdomains/authentication/ports/schemas/AuthSchema.ts': {
 				code: 12,
 			},
@@ -28,7 +28,7 @@ describe('ARCHITECTURE-RULE - No Missing Schema Barrels', () => {
 	it('ARCHITECTURE-RULE allows schemas folders with index.ts', () => {
 		const cloc = makeClocResult({
 			'src/domains/users-management/ports/schemas/index.ts': { code: 10 },
-			'src/domains/users-management/ports/schemas/UserSchema.ts': { code: 12 },
+			'src/domains/users-management/ports/schemas/userSchema.ts': { code: 12 },
 		});
 
 		expect(checkMissingSchemaBarrels(cloc)).toHaveLength(0);

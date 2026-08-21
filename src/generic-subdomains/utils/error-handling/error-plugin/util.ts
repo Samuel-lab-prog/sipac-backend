@@ -145,6 +145,8 @@ function logError(
 	code: ErrorCode,
 	originalError?: Error,
 ) {
+	const errorDetails = summarizeError(originalError);
+
 	log.error(
 		{
 			...context,
@@ -153,16 +155,40 @@ function logError(
 				message,
 				code,
 			},
-			originalError: originalError
-				? {
-						name: originalError.name,
-						message: originalError.message,
-						stack: originalError.stack,
-					}
-				: undefined,
+			originalError: errorDetails,
 		},
 		'An error occurred while processing the request',
 	);
+}
+
+function summarizeError(error?: Error) {
+	if (!error) return undefined;
+
+	const summary: Record<string, unknown> = {
+		name: error.name,
+		message: error.message,
+	};
+
+	const stackLine = error.stack?.split('\n').at(0)?.trim();
+	if (stackLine) summary.stack = stackLine;
+
+	const validationError = error as Error & {
+		errors?: Array<{ summary?: string; message?: string }>;
+		summary?: string;
+	};
+
+	if (
+		Array.isArray(validationError.errors) &&
+		validationError.errors.length > 0
+	) {
+		summary.summary = validationError.summary;
+		summary.errors = validationError.errors.map((item) => ({
+			summary: item.summary,
+			message: item.message,
+		}));
+	}
+
+	return summary;
 }
 
 function buildErrorContext(request: Request, ctx: SetupPluginContext) {

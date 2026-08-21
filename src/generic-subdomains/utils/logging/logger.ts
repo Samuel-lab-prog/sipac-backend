@@ -38,10 +38,11 @@ function formatLogLine(rawLine: string, useColor: boolean): string {
 		const entry = JSON.parse(rawLine) as Record<string, unknown>;
 		const level = formatLevel(entry.level, useColor);
 		const time = formatTime(entry.time);
-		const message = typeof entry.msg === 'string' ? entry.msg : '';
+		const scope = formatScope(entry.name, useColor);
+		const message = formatMessage(entry.msg, useColor);
 		const extras = formatExtras(entry, useColor);
 
-		return `${time} ${level} ${message}${extras}\n`;
+		return `${time} ${level}${scope} ${message}${extras}\n`;
 	} catch {
 		return `${rawLine}\n`;
 	}
@@ -78,13 +79,24 @@ function formatLevel(level: unknown, useColor: boolean): string {
 
 function formatTime(time: unknown): string {
 	const date = typeof time === 'number' ? new Date(time) : new Date();
-	return date.toLocaleTimeString('en-US', {
-		hour12: false,
-		hour: '2-digit',
-		minute: '2-digit',
-		second: '2-digit',
-		fractionalSecondDigits: 3,
-	});
+	return date.toISOString().slice(11, 23);
+}
+
+function formatScope(name: unknown, useColor: boolean): string {
+	if (typeof name !== 'string' || name.trim().length === 0) return '';
+
+	const value = `[${name}]`;
+	if (!useColor) return ` ${value}`;
+
+	return ` \u001b[90m${value}\u001b[0m`;
+}
+
+function formatMessage(message: unknown, useColor: boolean): string {
+	if (typeof message !== 'string' || message.trim().length === 0) {
+		return useColor ? '\u001b[90m(no message)\u001b[0m' : '(no message)';
+	}
+
+	return message;
 }
 
 function formatExtras(
@@ -98,9 +110,22 @@ function formatExtras(
 
 	if (Object.keys(extras).length === 0) return '';
 
-	return useColor
-		? ` ${inspect(extras, { colors: true, depth: 6, breakLength: Infinity })}`
-		: ` ${inspect(extras, { colors: false, depth: 6, breakLength: Infinity })}`;
+	const rendered = inspect(extras, {
+		colors: useColor,
+		depth: 6,
+		breakLength: 80,
+		compact: false,
+		sorted: true,
+	});
+
+	return `\n${indentBlock(rendered)}`;
+}
+
+function indentBlock(value: string) {
+	return value
+		.split('\n')
+		.map((line) => `  ${line}`)
+		.join('\n');
 }
 
 export const log = shouldPrettyPrint

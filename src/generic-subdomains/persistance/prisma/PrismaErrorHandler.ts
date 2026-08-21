@@ -5,7 +5,7 @@ import {
 	DatabaseUnknownError,
 	DatabaseValidationError,
 } from '@DatabaseError';
-import type { CommandResult } from '@SharedKernel/Types';
+import type { CommandResult } from '@SharedKernel/types/types';
 
 type PrismaMappedError = {
 	code: 'CONFLICT' | 'NOT_FOUND' | 'VALIDATION' | 'UNKNOWN';

@@ -1,6 +1,6 @@
 import { appErrorSchema } from '@AppError';
 import { Elysia } from 'elysia';
-import { CreateUserSchema, UserSchema } from '../ports/schemas/Index';
+import { createUserSchema, userSchema } from '../ports/schemas';
 import type { UsersCommandsServices } from '../ports/commands';
 
 export function createUsersCommandsRouter(services: UsersCommandsServices) {
@@ -12,8 +12,8 @@ export function createUsersCommandsRouter(services: UsersCommandsServices) {
 			return result;
 		},
 		{
-			body: CreateUserSchema,
-			response: { 201: UserSchema, 409: appErrorSchema, 422: appErrorSchema },
+			body: createUserSchema,
+			response: { 201: userSchema, 409: appErrorSchema, 422: appErrorSchema },
 			detail: { summary: 'Create User', tags: ['Users Management'] },
 		},
 	);

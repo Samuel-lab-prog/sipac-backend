@@ -1,4 +1,4 @@
-import type { CommandResult } from '@SharedKernel/Types';
+import type { CommandResult } from '@SharedKernel/types/types';
 import type { CreateUser, CreateUserDB, User } from './models';
 
 export type CreateUserParams = {

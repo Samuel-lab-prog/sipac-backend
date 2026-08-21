@@ -1,7 +1,7 @@
 import { prisma } from '@Prisma/PrismaClient';
 import { withPrismaResult } from '@Prisma/PrismaErrorHandler';
 import type { UserCreateInput } from '@PrismaGenerated/models';
-import type { CommandResult } from '@SharedKernel/Types';
+import type { CommandResult } from '@SharedKernel/types/types';
 import type { CommandsRepository } from '../../ports/commands';
 import type { CreateUserDB, User } from '../../ports/models';
 

@@ -7,7 +7,13 @@
 		"./architecture-analysis/src/metrics",
 
 		"./src/generic-subdomains/authentication/ports/schemas",
-		"./src/generic-subdomains/authentication/use-cases/commands"
+		"./src/generic-subdomains/authentication/use-cases/commands",
+
+		"./src/shared-kernel/ports",
+		"./src/shared-kernel/schemas",
+		"./src/shared-kernel/types",
+		"./src/shared-kernel/events",
+		"./src/shared-kernel/infra"
 	],
 	"delete": true,
 	"location": "top",

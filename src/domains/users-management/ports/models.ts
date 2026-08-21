@@ -1,7 +1,7 @@
-import { CreateUserSchema, UserSchema } from '../ports/schemas/Index';
+import { createUserSchema, userSchema } from '../ports/schemas';
 
-export type User = (typeof UserSchema)['static'];
-export type CreateUser = (typeof CreateUserSchema)['static'];
+export type User = (typeof userSchema)['static'];
+export type CreateUser = (typeof createUserSchema)['static'];
 export type CreateUserDB = Omit<CreateUser, 'password'> & {
 	passwordHash: string;
 };

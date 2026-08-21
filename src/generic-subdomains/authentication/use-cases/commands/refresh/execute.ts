@@ -1,4 +1,4 @@
-﻿import type { UsersPublicContract } from '@Domains/users-management/public/Index';
+import type { UsersPublicContract } from '@Domains/users-management/public';
 import { UnauthorizedError } from '@DomainError';
 import {
 	ACCESS_TOKEN_EXPIRATION_TIME,
