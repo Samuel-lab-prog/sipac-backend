@@ -4,8 +4,8 @@ import {
 } from '@SharedKernel/infra/encrypting/bcrypt';
 import { commandsRepository } from './infra/commands-repository/repository';
 import { queriesRepository } from './infra/queries-repository/repository';
-import { createUsersCommandsRouter } from './adapters/CommandsRouter';
-import { createUsersReadRouter } from './adapters/QueriesRouter';
+import { createUsersCommandsRouter } from './adapters/commands-router';
+import { createUsersReadRouter } from './adapters/queries-router';
 import { createUserFactory } from './use-cases/commands';
 import { searchUsersFactory } from './use-cases/queries';
 
