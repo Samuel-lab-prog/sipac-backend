@@ -1,5 +1,5 @@
-import { prisma } from '@Prisma/PrismaClient';
-import { withPrismaResult } from '@Prisma/PrismaErrorHandler';
+import { prisma } from '@Prisma/prisma-client';
+import { withPrismaResult } from '@GenericSubdomains/persistance/utils/prisma-error-handler';
 import type { UserCreateInput } from '@PrismaGenerated/models';
 import type { CommandResult } from '@SharedKernel/types/types';
 import type { CommandsRepository } from '../../ports/commands';

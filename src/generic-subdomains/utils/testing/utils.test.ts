@@ -1,4 +1,3 @@
-/* eslint-disable require-await */
 import { describe, expect, it, mock } from 'bun:test';
 import {
 	createMockedContract,

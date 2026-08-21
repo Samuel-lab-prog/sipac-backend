@@ -7,6 +7,8 @@
 		"moduleDetection": "force",
 		"jsx": "react-jsx",
 		"allowJs": false,
+		"baseUrl": ".",
+		"ignoreDeprecations": "6.0",
 		"types": ["bun", "node"],
 		"paths": {
 			"@PrismaGenerated/*": [
@@ -32,14 +34,14 @@
 			"@SharedKernel/*": ["./src/shared-kernel/*"],
 			"@authPlugin": ["./src/generic-subdomains/authentication/composition.ts"],
 			"@ClearDatabase": [
-				"./src/generic-subdomains/persistance/prisma/ClearDatabase.ts"
+				"./src/generic-subdomains/persistance/utils/clear-database.ts"
 			],
 
 			"@PrismaErrorHandler": [
-				"./src/generic-subdomains/persistance/prisma/PrismaErrorHandler.ts"
+				"./src/generic-subdomains/persistance/utils/prisma-error-handler.ts"
 			],
 			"@PrismaClient": [
-				"./src/generic-subdomains/persistance/prisma/PrismaClient.ts"
+				"./src/generic-subdomains/persistance/prisma/prisma-client.ts"
 			],
 			"tests/*": ["./tests/*"],
 			"*": ["./src/*"]

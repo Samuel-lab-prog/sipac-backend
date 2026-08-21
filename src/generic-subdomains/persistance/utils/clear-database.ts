@@ -1,26 +1,6 @@
-import { prisma } from '@Prisma/PrismaClient';
+import { prisma } from '@Prisma/prisma-client';
 
-export const applicationTables = [
-	'_PoemMentions',
-	'_PoemToTag',
-	'BlockedUser',
-	'Collection',
-	'CollectionItem',
-	'Comment',
-	'CommentLike',
-	'Friendship',
-	'FriendshipRequest',
-	'Notification',
-	'Poem',
-	'PoemDedication',
-	'PoemLike',
-	'SavedPoem',
-	'Tag',
-	'User',
-	'UserMention',
-	'UserNotificationSetting',
-	'UserSanction',
-] as const;
+export const applicationTables = ['User'] as const;
 
 const MAX_CLEAR_DATABASE_ATTEMPTS = 3;
 const DEADLOCK_RETRY_DELAY_MS = 50;

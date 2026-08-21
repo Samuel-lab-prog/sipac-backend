@@ -1,5 +1,5 @@
-import { prisma } from '@Prisma/PrismaClient';
-import { withPrismaErrorHandling } from '@Prisma/PrismaErrorHandler';
+import { prisma } from '@Prisma/prisma-client';
+import { withPrismaErrorHandling } from '@GenericSubdomains/persistance/utils/prisma-error-handler';
 import type { QueriesRepository } from '../../ports/queries';
 
 function selectUsers(params: {
