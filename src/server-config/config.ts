@@ -30,6 +30,15 @@ export const OPEN_API_SETTINGS = {
 	},
 };
 
+const CORS_ORIGIN = process.env.CORS_ORIGIN?.trim();
+const FRONTEND_URL = process.env.FRONTEND_URL?.trim();
+
+if (process.env.NODE_ENV === 'production' && !CORS_ORIGIN && !FRONTEND_URL) {
+	console.warn(
+		'Missing CORS_ORIGIN/FRONTEND_URL in production. Cross-site requests will be blocked.',
+	);
+}
+
 /** Elysia server configuration settings. */
 export const ELYSIA_SERVER_SETTINGS = {
 	adapter: BunAdapter,

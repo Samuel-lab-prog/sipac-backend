@@ -1,2 +1,11 @@
 node_modules
 dist
+build
+coverage
+.git
+.github
+.env
+.env.*
+cloc.json
+depcruise.json
+*.log

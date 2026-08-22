@@ -65,22 +65,32 @@ const fileContentTypeToExtension: Record<string, string> = {
 	'image/webp': 'webp',
 };
 
-const region = process.env.AWS_REGION ?? 'us-east-1';
-const bucketName = process.env.S3_BUCKET_NAME ?? 'hellopoetry1392781';
+function resolveEnvValue(value: string | undefined, fallback: string): string {
+	const trimmed = value?.trim();
+	return trimmed ? trimmed : fallback;
+}
+
+const region = resolveEnvValue(process.env.AWS_REGION, 'us-east-1');
+const bucketName = resolveEnvValue(
+	process.env.S3_BUCKET_NAME,
+	'hellopoetry1392781',
+);
 const signedUrlExpiresInSeconds = Number(
-	process.env.S3_SIGNED_URL_EXPIRES_IN ?? 300,
+	resolveEnvValue(process.env.S3_SIGNED_URL_EXPIRES_IN, '300'),
 );
 const maxAvatarUploadBytes = Number(
-	process.env.MAX_AVATAR_UPLOAD_BYTES ?? 5_000_000,
+	resolveEnvValue(process.env.MAX_AVATAR_UPLOAD_BYTES, '5000000'),
 );
 const maxPoemAudioUploadBytes = Number(
-	process.env.MAX_POEM_AUDIO_UPLOAD_BYTES ?? 20_000_000,
+	resolveEnvValue(process.env.MAX_POEM_AUDIO_UPLOAD_BYTES, '20000000'),
 );
 const maxAcademicFileUploadBytes = Number(
-	process.env.MAX_ACADEMIC_FILE_UPLOAD_BYTES ?? 25_000_000,
+	resolveEnvValue(process.env.MAX_ACADEMIC_FILE_UPLOAD_BYTES, '25000000'),
 );
-const defaultPublicBaseUrl =
-	process.env.S3_PUBLIC_BASE_URL ?? `https://${bucketName}.s3.amazonaws.com`;
+const defaultPublicBaseUrl = resolveEnvValue(
+	process.env.S3_PUBLIC_BASE_URL,
+	`https://${bucketName}.s3.amazonaws.com`,
+);
 
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;

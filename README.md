@@ -1,8 +1,7 @@
-# HelloPoetry Backend
+# AGIAS Backend
 
-Backend for the **HelloPoetry** poetry social network. This repository
-implements the API and business rules using a domain-oriented modular monolith,
-CQRS, and ports/adapters.
+Backend for **AGIAS**. This repository implements the API and business rules
+using a domain-oriented modular monolith, CQRS, and ports/adapters.
 
 This is the backend repository only. The frontend is a separate repository that
 may live beside this one on the same machine, but backend scripts should not run
@@ -30,6 +29,8 @@ and local caveats, read [AGENTS.md](AGENTS.md).
   those ports.
 - **Dependency injection**: composition happens at the edge, mostly in domain
   `Composition.ts` files.
+- **Public contracts**: `public/` exposes safe cross-domain types and contracts,
+  such as shared role/status enums and selected repository operations.
 - **Architecture rules are enforced**: dependency direction, domain isolation,
   tests, formatting, linting, build, and metrics are part of the quality gate.
 
@@ -83,6 +84,10 @@ Each domain generally contains:
 - `public/`
 - `use-cases/`
 - `Composition.ts`
+
+`adapters/` is kept mostly manual because it defines edge composition and HTTP
+router wiring. `ports/`, `use-cases/commands`, `use-cases/queries`, and related
+schema folders are good candidates for generated barrels.
 
 ---
 
@@ -275,6 +280,14 @@ The backend includes an internal architecture analysis tool in
 `architecture-analysis/`. It validates structural rules, detects erosion
 signals, and is part of the local/CI gate.
 
+The metrics report also tracks:
+
+- total endpoints
+- total use-cases
+- dependency hotspots
+- domain isolation
+- domain size and change amplification
+
 Run only the architecture analyzer:
 
 ```bash
@@ -295,6 +308,19 @@ Generated artifacts:
 
 If an architecture rule fails, treat it as a design issue first. Fix the drift
 or update the ADR/rule with clear rationale.
+
+### Barrel generation
+
+The repository uses `barrelsby` through `barrels.config.json` for a curated set
+of folders:
+
+- domain `ports/schemas`
+- domain `use-cases/commands`
+- domain `use-cases/queries`
+- selected shared-kernel and architecture-analysis folders
+
+`adapters/` barrels are kept manual to avoid self-referential cycles in router
+composition files.
 
 ---
 
