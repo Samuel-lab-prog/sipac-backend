@@ -31,6 +31,10 @@ export function createCurriculumCommandsRouter(
 					409: appErrorSchema,
 					422: appErrorSchema,
 				},
+				detail: {
+					summary: 'Create Academic Period',
+					tags: ['Curriculum Management'],
+				},
 			},
 		)
 		.post(
@@ -45,6 +49,10 @@ export function createCurriculumCommandsRouter(
 					201: classOfferingSchema,
 					409: appErrorSchema,
 					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Create Class Offering',
+					tags: ['Curriculum Management'],
 				},
 			},
 		);

@@ -39,6 +39,10 @@ export function createScheduleCommandsRouter(
 					409: appErrorSchema,
 					422: appErrorSchema,
 				},
+				detail: {
+					summary: 'Create Class Session',
+					tags: ['Schedule Management'],
+				},
 			},
 		)
 		.put(
@@ -63,6 +67,10 @@ export function createScheduleCommandsRouter(
 					409: appErrorSchema,
 					422: appErrorSchema,
 				},
+				detail: {
+					summary: 'Update Class Session',
+					tags: ['Schedule Management'],
+				},
 			},
 		)
 		.delete(
@@ -81,6 +89,10 @@ export function createScheduleCommandsRouter(
 					401: appErrorSchema,
 					403: appErrorSchema,
 					404: appErrorSchema,
+				},
+				detail: {
+					summary: 'Delete Class Session',
+					tags: ['Schedule Management'],
 				},
 			},
 		);

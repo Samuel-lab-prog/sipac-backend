@@ -17,6 +17,10 @@ export function createAttendanceQueriesRouter(
 					200: t.Array(attendanceRecordSchema),
 					404: appErrorSchema,
 				},
+				detail: {
+					summary: 'List Attendance By Class Session',
+					tags: ['Attendance Management'],
+				},
 			},
 		)
 		.get(
@@ -30,6 +34,10 @@ export function createAttendanceQueriesRouter(
 				response: {
 					200: t.Array(attendanceRecordSchema),
 					404: appErrorSchema,
+				},
+				detail: {
+					summary: 'List Attendance By Student',
+					tags: ['Attendance Management'],
 				},
 			},
 		);

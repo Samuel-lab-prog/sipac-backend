@@ -39,6 +39,10 @@ export function createActivitiesCommandsRouter(
 					409: appErrorSchema,
 					422: appErrorSchema,
 				},
+				detail: {
+					summary: 'Create Academic Activity',
+					tags: ['Activities Management'],
+				},
 			},
 		)
 		.post(
@@ -64,6 +68,10 @@ export function createActivitiesCommandsRouter(
 					403: appErrorSchema,
 					409: appErrorSchema,
 					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Create Academic Activity Submission',
+					tags: ['Activities Management'],
 				},
 			},
 		);

@@ -16,6 +16,10 @@ export function createScheduleQueriesRouter(services: ScheduleQueriesServices) {
 				200: t.Array(classSessionSchema),
 				404: appErrorSchema,
 			},
+			detail: {
+				summary: 'List Class Sessions By Class Offering',
+				tags: ['Schedule Management'],
+			},
 		},
 	);
 }
