@@ -115,3 +115,13 @@ export function assertCanManageAcademicActivityAttachments(
 	assertActorIsActive(ctx.actorStatus);
 	assertActorIsPrivileged(ctx.actorRole);
 }
+
+export function assertCanCreateAcademicActivity(ctx: AcademicPolicyContext) {
+	assertActorIsActive(ctx.actorStatus);
+	assertActorIsPrivileged(ctx.actorRole);
+}
+
+export function assertCanSubmitAcademicActivity(ctx: AcademicPolicyContext) {
+	assertActorIsActive(ctx.actorStatus);
+	assertSelfTarget(ctx);
+}

@@ -1,4 +1,7 @@
 import type {
+	AcademicActivity,
+	AcademicActivityAttachment,
+	AcademicActivitySubmission,
 	AttendanceRecord,
 	AcademicPeriod,
 	ClassOffering,
@@ -50,6 +53,19 @@ export type MarkAttendanceBatchParams = AcademicPolicyContext & {
 };
 export type CreateAcademicPeriodParams = Omit<AcademicPeriod, 'id'>;
 export type CreateClassOfferingParams = Omit<ClassOffering, 'id'>;
+export type CreateAcademicActivityAttachmentParams = Omit<
+	AcademicActivityAttachment,
+	'id' | 'activityId'
+>;
+export type CreateAcademicActivityParams = Omit<AcademicActivity, 'id'> &
+	AcademicPolicyContext & {
+		attachments?: CreateAcademicActivityAttachmentParams[];
+	};
+export type CreateAcademicActivitySubmissionParams = AcademicPolicyContext & {
+	activityId: number;
+	studentProfileId: number;
+	submittedAt?: Date | null;
+};
 export type CreateAcademicActivityAttachmentUploadParams =
 	AcademicPolicyContext & {
 		activityId: number;
@@ -107,6 +123,14 @@ export interface AcademicCommandsRepository {
 	createClassOffering(
 		params: CreateClassOfferingParams,
 	): Promise<import('@SharedKernel/types').CommandResult<ClassOffering>>;
+	createAcademicActivity(
+		params: CreateAcademicActivityParams,
+	): Promise<import('@SharedKernel/types').CommandResult<AcademicActivity>>;
+	createAcademicActivitySubmission(
+		params: CreateAcademicActivitySubmissionParams,
+	): Promise<
+		import('@SharedKernel/types').CommandResult<AcademicActivitySubmission>
+	>;
 }
 
 export interface AcademicCommandsServices {
@@ -145,9 +169,15 @@ export interface AcademicCommandsServices {
 	createAcademicPeriod(
 		params: CreateAcademicPeriodParams,
 	): Promise<AcademicPeriod>;
+	createAcademicActivity(
+		params: CreateAcademicActivityParams,
+	): Promise<AcademicActivity>;
 	createClassOffering(
 		params: CreateClassOfferingParams,
 	): Promise<ClassOffering>;
+	createAcademicActivitySubmission(
+		params: CreateAcademicActivitySubmissionParams,
+	): Promise<AcademicActivitySubmission>;
 	createAcademicActivityAttachmentUploadUrl(
 		params: CreateAcademicActivityAttachmentUploadParams,
 	): Promise<FileUploadUrlResult>;
