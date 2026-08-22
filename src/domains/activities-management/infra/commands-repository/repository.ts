@@ -50,6 +50,33 @@ export function createAcademicActivitySubmission(
 export const commandsRepository: ActivitiesCommandsRepository = {
 	createAcademicActivity,
 	createAcademicActivitySubmission,
+	selectAcademicActivitiesByClassOfferingId,
+	selectAcademicActivitySubmissionsByStudentProfileId,
 };
+
+export function selectAcademicActivitiesByClassOfferingId(
+	classOfferingId: number,
+) {
+	return prisma.academicActivity.findMany({
+		where: { classOfferingId },
+		orderBy: [{ dueAt: 'asc' }, { id: 'asc' }],
+	});
+}
+
+export function selectAcademicActivitySubmissionsByStudentProfileId(
+	studentProfileId: number,
+) {
+	return prisma.academicActivitySubmission
+		.findMany({
+			where: { studentProfileId },
+			orderBy: [{ submittedAt: 'desc' }, { id: 'desc' }],
+		})
+		.then((submissions) =>
+			submissions.map((submission) => ({
+				...submission,
+				grade: submission.grade?.toString() ?? null,
+			})),
+		);
+}
 
 export const queriesRepository = {};

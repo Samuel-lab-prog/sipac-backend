@@ -19,6 +19,12 @@ export interface ActivitiesCommandsRepository {
 	): Promise<
 		import('@SharedKernel/types').CommandResult<AcademicActivitySubmission>
 	>;
+	selectAcademicActivitiesByClassOfferingId(
+		classOfferingId: number,
+	): Promise<AcademicActivity[]>;
+	selectAcademicActivitySubmissionsByStudentProfileId(
+		studentProfileId: number,
+	): Promise<AcademicActivitySubmission[]>;
 }
 
 export interface ActivitiesCommandsServices {

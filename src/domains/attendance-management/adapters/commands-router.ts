@@ -1,16 +1,17 @@
 import { appErrorSchema } from '@AppError';
 import { authPlugin } from '@GenericSubdomains/authentication/composition';
 import { Elysia, t } from 'elysia';
+import type {
+	AttendanceCommandsServices,
+	DeleteAttendanceParams,
+	MarkAttendanceBatchParams,
+	MarkAttendanceParams,
+} from '../ports/commands';
 import {
 	attendanceRecordSchema,
 	markAttendanceBatchSchema,
 	markAttendanceSchema,
 } from '../ports/schemas';
-import type {
-	AttendanceCommandsServices,
-	MarkAttendanceParams,
-	MarkAttendanceBatchParams,
-} from '../ports/commands';
 
 export function createAttendanceCommandsRouter(
 	services: AttendanceCommandsServices,
@@ -69,6 +70,33 @@ export function createAttendanceCommandsRouter(
 				},
 				detail: {
 					summary: 'Mark Attendance Batch',
+					tags: ['Attendance Management'],
+				},
+			},
+		)
+		.delete(
+			'/:classSessionId/students/:studentProfileId',
+			({ params, auth }) =>
+				services.deleteAttendance({
+					classSessionId: Number(params.classSessionId),
+					studentProfileId: Number(params.studentProfileId),
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+				} as DeleteAttendanceParams),
+			{
+				params: t.Object({
+					classSessionId: t.Numeric(),
+					studentProfileId: t.Numeric(),
+				}),
+				response: {
+					200: attendanceRecordSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+				},
+				detail: {
+					summary: 'Delete Attendance',
 					tags: ['Attendance Management'],
 				},
 			},

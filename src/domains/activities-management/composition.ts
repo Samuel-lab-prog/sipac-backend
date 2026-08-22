@@ -15,4 +15,15 @@ export const activitiesCommandsRouter = createActivitiesCommandsRouter({
 	createAcademicActivitySubmission,
 });
 
-export const activitiesQueriesRouter = createActivitiesQueriesRouter();
+export const activitiesQueriesRouter = createActivitiesQueriesRouter({
+	listAcademicActivitiesByClassOfferingId(classOfferingId) {
+		return commandsRepository.selectAcademicActivitiesByClassOfferingId(
+			classOfferingId,
+		);
+	},
+	listAcademicActivitySubmissionsByStudentProfileId(studentProfileId) {
+		return commandsRepository.selectAcademicActivitySubmissionsByStudentProfileId(
+			studentProfileId,
+		);
+	},
+});

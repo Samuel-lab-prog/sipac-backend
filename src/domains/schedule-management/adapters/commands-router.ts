@@ -3,10 +3,15 @@ import { authPlugin } from '@GenericSubdomains/authentication/composition';
 import { Elysia, t } from 'elysia';
 import type {
 	CreateClassSessionParams,
+	DeleteClassSessionParams,
 	ScheduleCommandsServices,
 	UpdateClassSessionParams,
 } from '../ports/commands';
-import { classSessionSchema, createClassSessionSchema, updateClassSessionSchema } from '../ports/schemas';
+import {
+	classSessionSchema,
+	createClassSessionSchema,
+	updateClassSessionSchema,
+} from '../ports/schemas';
 
 export function createScheduleCommandsRouter(
 	services: ScheduleCommandsServices,
@@ -57,6 +62,25 @@ export function createScheduleCommandsRouter(
 					404: appErrorSchema,
 					409: appErrorSchema,
 					422: appErrorSchema,
+				},
+			},
+		)
+		.delete(
+			'/class-sessions/:classSessionId',
+			({ params, auth }) =>
+				services.deleteClassSession({
+					classSessionId: Number(params.classSessionId),
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+				} as DeleteClassSessionParams),
+			{
+				params: t.Object({ classSessionId: t.Numeric() }),
+				response: {
+					200: classSessionSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
 				},
 			},
 		);

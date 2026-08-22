@@ -63,6 +63,39 @@ export function markAttendanceBatch(
 export const commandsRepository: AttendanceCommandsRepository = {
 	markAttendance,
 	markAttendanceBatch,
+	selectAttendanceByClassSessionId,
+	selectAttendanceByStudentProfileId,
+	deleteAttendance,
 };
+
+export function selectAttendanceByClassSessionId(classSessionId: number) {
+	return prisma.attendanceRecord.findMany({
+		where: { classSessionId },
+		orderBy: [{ studentProfileId: 'asc' }],
+	});
+}
+
+export function selectAttendanceByStudentProfileId(studentProfileId: number) {
+	return prisma.attendanceRecord.findMany({
+		where: { studentProfileId },
+		orderBy: [{ classSessionId: 'asc' }],
+	});
+}
+
+export function deleteAttendance(
+	classSessionId: number,
+	studentProfileId: number,
+) {
+	return withPrismaResult(() =>
+		prisma.attendanceRecord.delete({
+			where: {
+				classSessionId_studentProfileId: {
+					classSessionId,
+					studentProfileId,
+				},
+			},
+		}),
+	);
+}
 
 export const queriesRepository = {};
