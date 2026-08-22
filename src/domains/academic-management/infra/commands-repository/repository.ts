@@ -2,6 +2,7 @@ import { prisma } from '@Prisma';
 import { withPrismaErrorHandling, withPrismaResult } from '@PrismaErrorHandler';
 import type { CommandResult } from '@SharedKernel/types';
 import type {
+	AttendanceRecord,
 	ProfessorProfile,
 	StaffProfile,
 	StudentProfile,
@@ -63,10 +64,103 @@ export function selectStaffProfileByUserId(userId: number) {
 	);
 }
 
+export function updateStudentProfile(
+	userId: number,
+	params: Partial<Omit<StudentProfile, 'id' | 'userId'>>,
+): Promise<CommandResult<StudentProfile>> {
+	return withPrismaResult(() =>
+		prisma.studentProfile.update({
+			where: { userId },
+			data: params,
+		}),
+	);
+}
+
+export function updateProfessorProfile(
+	userId: number,
+	params: Partial<Omit<ProfessorProfile, 'id' | 'userId'>>,
+): Promise<CommandResult<ProfessorProfile>> {
+	return withPrismaResult(() =>
+		prisma.professorProfile.update({
+			where: { userId },
+			data: params,
+		}),
+	);
+}
+
+export function updateStaffProfile(
+	userId: number,
+	params: Partial<Omit<StaffProfile, 'id' | 'userId'>>,
+): Promise<CommandResult<StaffProfile>> {
+	return withPrismaResult(() =>
+		prisma.staffProfile.update({
+			where: { userId },
+			data: params,
+		}),
+	);
+}
+
+export function linkStudentToCourse(
+	userId: number,
+	params: Pick<StudentProfile, 'courseId'>,
+): Promise<CommandResult<StudentProfile>> {
+	return updateStudentProfile(userId, params);
+}
+
+export function linkProfessorToDepartment(
+	userId: number,
+	params: Pick<ProfessorProfile, 'departmentId'>,
+): Promise<CommandResult<ProfessorProfile>> {
+	return updateProfessorProfile(userId, params);
+}
+
+export function unlinkStudentFromCourse(
+	userId: number,
+): Promise<CommandResult<StudentProfile>> {
+	return updateStudentProfile(userId, { courseId: null });
+}
+
+export function unlinkProfessorFromDepartment(
+	userId: number,
+): Promise<CommandResult<ProfessorProfile>> {
+	return updateProfessorProfile(userId, { departmentId: null });
+}
+
+export function markAttendance(params: {
+	classSessionId: number;
+	studentProfileId: number;
+	status: string;
+	markedByProfessorProfileId: number | null;
+}): Promise<CommandResult<AttendanceRecord>> {
+	return withPrismaResult(() =>
+		prisma.attendanceRecord.upsert({
+			where: {
+				classSessionId_studentProfileId: {
+					classSessionId: params.classSessionId,
+					studentProfileId: params.studentProfileId,
+				},
+			},
+			create: params,
+			update: {
+				status: params.status,
+				markedByProfessorProfileId: params.markedByProfessorProfileId,
+			},
+		}),
+	);
+}
+
 export const commandsRepository: AcademicCommandsRepository = {
 	insertStudentProfile,
 	createProfessorProfile: insertProfessorProfile,
 	createStaffProfile: insertStaffProfile,
+	updateStudentProfile,
+	updateProfessorProfile,
+	updateStaffProfile,
+	linkStudentToCourse,
+	linkProfessorToDepartment,
+	unlinkStudentFromCourse,
+	unlinkProfessorFromDepartment,
+	markAttendance,
 };
 
 export const queriesRepository: AcademicQueriesRepository = {

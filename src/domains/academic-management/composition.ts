@@ -7,6 +7,14 @@ import { createAcademicQueriesRouter } from './adapters/queries-router';
 import { createProfessorProfileFactory } from './use-cases/commands/create-professor-profile/execute';
 import { createStaffProfileFactory } from './use-cases/commands/create-staff-profile/execute';
 import { createStudentProfileFactory } from './use-cases/commands/create-student-profile/execute';
+import { linkProfessorToDepartmentFactory } from './use-cases/commands/link-professor-to-department/execute';
+import { linkStudentToCourseFactory } from './use-cases/commands/link-student-to-course/execute';
+import { markAttendanceFactory } from './use-cases/commands/mark-attendance/execute';
+import { unlinkProfessorFromDepartmentFactory } from './use-cases/commands/unlink-professor-from-department/execute';
+import { unlinkStudentFromCourseFactory } from './use-cases/commands/unlink-student-from-course/execute';
+import { updateProfessorProfileFactory } from './use-cases/commands/update-professor-profile/execute';
+import { updateStaffProfileFactory } from './use-cases/commands/update-staff-profile/execute';
+import { updateStudentProfileFactory } from './use-cases/commands/update-student-profile/execute';
 import { getProfessorProfileByUserIdFactory } from './use-cases/queries/get-professor-profile-by-user-id/execute';
 import { getStaffProfileByUserIdFactory } from './use-cases/queries/get-staff-profile-by-user-id/execute';
 import { getStudentProfileByUserIdFactory } from './use-cases/queries/get-student-profile-by-user-id/execute';
@@ -18,6 +26,30 @@ const createProfessorProfile = createProfessorProfileFactory({
 	commandsRepository,
 });
 const createStaffProfile = createStaffProfileFactory({
+	commandsRepository,
+});
+const updateStudentProfile = updateStudentProfileFactory({
+	commandsRepository,
+});
+const updateProfessorProfile = updateProfessorProfileFactory({
+	commandsRepository,
+});
+const updateStaffProfile = updateStaffProfileFactory({
+	commandsRepository,
+});
+const linkStudentToCourse = linkStudentToCourseFactory({
+	commandsRepository,
+});
+const linkProfessorToDepartment = linkProfessorToDepartmentFactory({
+	commandsRepository,
+});
+const unlinkStudentFromCourse = unlinkStudentFromCourseFactory({
+	commandsRepository,
+});
+const unlinkProfessorFromDepartment = unlinkProfessorFromDepartmentFactory({
+	commandsRepository,
+});
+const markAttendance = markAttendanceFactory({
 	commandsRepository,
 });
 
@@ -35,6 +67,14 @@ export const academicCommandsRouter = createAcademicCommandsRouter({
 	createStudentProfile,
 	createProfessorProfile,
 	createStaffProfile,
+	updateStudentProfile,
+	updateProfessorProfile,
+	updateStaffProfile,
+	linkStudentToCourse,
+	linkProfessorToDepartment,
+	unlinkStudentFromCourse,
+	unlinkProfessorFromDepartment,
+	markAttendance,
 });
 
 export const academicQueriesRouter = createAcademicQueriesRouter({

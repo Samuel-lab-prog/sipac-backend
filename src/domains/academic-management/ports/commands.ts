@@ -1,4 +1,9 @@
-import type { ProfessorProfile, StaffProfile, StudentProfile } from './models';
+import type {
+	AttendanceRecord,
+	ProfessorProfile,
+	StaffProfile,
+	StudentProfile,
+} from './models';
 import type { AcademicPolicyContext } from '../use-cases/commands/policies';
 
 export type CreateStudentProfileParams = Omit<StudentProfile, 'id'>;
@@ -8,6 +13,29 @@ export type CreateProfessorProfileUseCaseParams = Omit<ProfessorProfile, 'id'> &
 	AcademicPolicyContext;
 export type CreateStaffProfileUseCaseParams = Omit<StaffProfile, 'id'> &
 	AcademicPolicyContext;
+export type UpdateStudentProfileParams = Partial<CreateStudentProfileParams> &
+	AcademicPolicyContext;
+export type UpdateProfessorProfileParams = Partial<
+	Omit<ProfessorProfile, 'id' | 'userId'>
+> &
+	AcademicPolicyContext;
+export type UpdateStaffProfileParams = Partial<
+	Omit<StaffProfile, 'id' | 'userId'>
+> &
+	AcademicPolicyContext;
+export type LinkStudentToCourseParams = AcademicPolicyContext & {
+	courseId: number | null;
+};
+export type LinkProfessorToDepartmentParams = AcademicPolicyContext & {
+	departmentId: number | null;
+};
+export type UnlinkStudentFromCourseParams = AcademicPolicyContext;
+export type UnlinkProfessorFromDepartmentParams = AcademicPolicyContext;
+export type MarkAttendanceParams = AcademicPolicyContext & {
+	classSessionId: number;
+	studentProfileId: number;
+	status: string;
+};
 
 export interface AcademicCommandsRepository {
 	insertStudentProfile: (
@@ -19,6 +47,38 @@ export interface AcademicCommandsRepository {
 	createStaffProfile(
 		params: Omit<StaffProfile, 'id'>,
 	): Promise<import('@SharedKernel/types').CommandResult<StaffProfile>>;
+	updateStudentProfile(
+		userId: number,
+		params: Partial<CreateStudentProfileParams>,
+	): Promise<import('@SharedKernel/types').CommandResult<StudentProfile>>;
+	updateProfessorProfile(
+		userId: number,
+		params: Partial<Omit<ProfessorProfile, 'id' | 'userId'>>,
+	): Promise<import('@SharedKernel/types').CommandResult<ProfessorProfile>>;
+	updateStaffProfile(
+		userId: number,
+		params: Partial<Omit<StaffProfile, 'id' | 'userId'>>,
+	): Promise<import('@SharedKernel/types').CommandResult<StaffProfile>>;
+	linkStudentToCourse(
+		userId: number,
+		params: Pick<StudentProfile, 'courseId'>,
+	): Promise<import('@SharedKernel/types').CommandResult<StudentProfile>>;
+	linkProfessorToDepartment(
+		userId: number,
+		params: Pick<ProfessorProfile, 'departmentId'>,
+	): Promise<import('@SharedKernel/types').CommandResult<ProfessorProfile>>;
+	unlinkStudentFromCourse(
+		userId: number,
+	): Promise<import('@SharedKernel/types').CommandResult<StudentProfile>>;
+	unlinkProfessorFromDepartment(
+		userId: number,
+	): Promise<import('@SharedKernel/types').CommandResult<ProfessorProfile>>;
+	markAttendance(params: {
+		classSessionId: number;
+		studentProfileId: number;
+		status: string;
+		markedByProfessorProfileId: number | null;
+	}): Promise<import('@SharedKernel/types').CommandResult<AttendanceRecord>>;
 }
 
 export interface AcademicCommandsServices {
@@ -31,4 +91,24 @@ export interface AcademicCommandsServices {
 	createStaffProfile(
 		params: CreateStaffProfileUseCaseParams,
 	): Promise<StaffProfile>;
+	updateStudentProfile(
+		params: UpdateStudentProfileParams,
+	): Promise<StudentProfile>;
+	updateProfessorProfile(
+		params: UpdateProfessorProfileParams,
+	): Promise<ProfessorProfile>;
+	updateStaffProfile(params: UpdateStaffProfileParams): Promise<StaffProfile>;
+	linkStudentToCourse(
+		params: LinkStudentToCourseParams,
+	): Promise<StudentProfile>;
+	linkProfessorToDepartment(
+		params: LinkProfessorToDepartmentParams,
+	): Promise<ProfessorProfile>;
+	unlinkStudentFromCourse(
+		params: UnlinkStudentFromCourseParams,
+	): Promise<StudentProfile>;
+	unlinkProfessorFromDepartment(
+		params: UnlinkProfessorFromDepartmentParams,
+	): Promise<ProfessorProfile>;
+	markAttendance(params: MarkAttendanceParams): Promise<AttendanceRecord>;
 }

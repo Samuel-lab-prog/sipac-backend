@@ -62,3 +62,49 @@ export function assertCanCreateStaffProfile(ctx: AcademicPolicyContext) {
 	assertActorIsAdmin(ctx.actorRole);
 	assertNotSelfTarget(ctx);
 }
+
+export function assertCanUpdateStudentProfile(ctx: AcademicPolicyContext) {
+	assertActorIsActive(ctx.actorStatus);
+	assertSelfTarget(ctx);
+}
+
+export function assertCanUpdateProfessorProfile(ctx: AcademicPolicyContext) {
+	assertActorIsActive(ctx.actorStatus);
+	assertActorIsPrivileged(ctx.actorRole);
+	assertNotSelfTarget(ctx);
+}
+
+export function assertCanUpdateStaffProfile(ctx: AcademicPolicyContext) {
+	assertActorIsActive(ctx.actorStatus);
+	assertActorIsAdmin(ctx.actorRole);
+	assertNotSelfTarget(ctx);
+}
+
+export function assertCanLinkStudentToCourse(ctx: AcademicPolicyContext) {
+	assertActorIsActive(ctx.actorStatus);
+	assertSelfTarget(ctx);
+}
+
+export function assertCanLinkProfessorToDepartment(ctx: AcademicPolicyContext) {
+	assertActorIsActive(ctx.actorStatus);
+	assertActorIsPrivileged(ctx.actorRole);
+	assertNotSelfTarget(ctx);
+}
+
+export function assertCanUnlinkStudentFromCourse(ctx: AcademicPolicyContext) {
+	assertActorIsActive(ctx.actorStatus);
+	assertSelfTarget(ctx);
+}
+
+export function assertCanUnlinkProfessorFromDepartment(
+	ctx: AcademicPolicyContext,
+) {
+	assertActorIsActive(ctx.actorStatus);
+	assertActorIsPrivileged(ctx.actorRole);
+	assertNotSelfTarget(ctx);
+}
+
+export function assertCanMarkAttendance(ctx: AcademicPolicyContext) {
+	assertActorIsActive(ctx.actorStatus);
+	assertActorIsPrivileged(ctx.actorRole);
+}

@@ -1,5 +1,4 @@
 import { appErrorSchema } from '@AppError';
-import { NotFoundError } from '@DomainError';
 import { authPlugin } from '@GenericSubdomains/authentication/composition';
 import { Elysia } from 'elysia';
 import {
@@ -14,11 +13,7 @@ export function createAcademicQueriesRouter(services: AcademicQueriesServices) {
 		.use(authPlugin)
 		.get(
 			'/students/profile/me',
-			async ({ auth }) => {
-				const profile = await services.getStudentProfileByUserId(auth.clientId);
-				if (!profile) throw new NotFoundError('Student profile not found');
-				return profile;
-			},
+			({ auth }) => services.getStudentProfileByUserId(auth.clientId),
 			{
 				response: {
 					200: studentProfileSchema,
@@ -33,13 +28,7 @@ export function createAcademicQueriesRouter(services: AcademicQueriesServices) {
 		)
 		.get(
 			'/professors/profile/me',
-			async ({ auth }) => {
-				const profile = await services.getProfessorProfileByUserId(
-					auth.clientId,
-				);
-				if (!profile) throw new NotFoundError('Professor profile not found');
-				return profile;
-			},
+			({ auth }) => services.getProfessorProfileByUserId(auth.clientId),
 			{
 				response: {
 					200: professorProfileSchema,
@@ -54,11 +43,7 @@ export function createAcademicQueriesRouter(services: AcademicQueriesServices) {
 		)
 		.get(
 			'/staff/profile/me',
-			async ({ auth }) => {
-				const profile = await services.getStaffProfileByUserId(auth.clientId);
-				if (!profile) throw new NotFoundError('Staff profile not found');
-				return profile;
-			},
+			({ auth }) => services.getStaffProfileByUserId(auth.clientId),
 			{
 				response: {
 					200: staffProfileSchema,
@@ -73,13 +58,7 @@ export function createAcademicQueriesRouter(services: AcademicQueriesServices) {
 		)
 		.get(
 			'/students/profile/:userId',
-			async ({ params }) => {
-				const profile = await services.getStudentProfileByUserId(
-					Number(params.userId),
-				);
-				if (!profile) throw new NotFoundError('Student profile not found');
-				return profile;
-			},
+			({ params }) => services.getStudentProfileByUserId(Number(params.userId)),
 			{
 				response: {
 					200: studentProfileSchema,

@@ -1,3 +1,4 @@
+import { NotFoundError } from '@DomainError';
 import type { StaffProfile } from '../../../ports/models';
 
 interface Dependencies {
@@ -11,7 +12,12 @@ export function getStaffProfileByUserIdFactory({
 }: Dependencies) {
 	return function getStaffProfileByUserId(
 		userId: number,
-	): Promise<StaffProfile | null> {
-		return queriesRepository.selectStaffProfileByUserId(userId);
+	): Promise<StaffProfile> {
+		return queriesRepository
+			.selectStaffProfileByUserId(userId)
+			.then((profile) => {
+				if (!profile) throw new NotFoundError('Staff profile not found');
+				return profile;
+			});
 	};
 }

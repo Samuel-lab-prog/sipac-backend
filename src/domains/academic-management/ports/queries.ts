@@ -9,7 +9,7 @@ export interface AcademicQueriesRepository {
 }
 
 export interface AcademicQueriesServices {
-	getStudentProfileByUserId(userId: number): Promise<StudentProfile | null>;
-	getProfessorProfileByUserId(userId: number): Promise<ProfessorProfile | null>;
-	getStaffProfileByUserId(userId: number): Promise<StaffProfile | null>;
+	getStudentProfileByUserId(userId: number): Promise<StudentProfile>;
+	getProfessorProfileByUserId(userId: number): Promise<ProfessorProfile>;
+	getStaffProfileByUserId(userId: number): Promise<StaffProfile>;
 }

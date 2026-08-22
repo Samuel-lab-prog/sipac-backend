@@ -2,12 +2,21 @@ import { appErrorSchema } from '@AppError';
 import { authPlugin } from '@GenericSubdomains/authentication/composition';
 import { Elysia } from 'elysia';
 import {
+	attendanceRecordSchema,
 	createProfessorProfileSchema,
 	createStaffProfileSchema,
 	createStudentProfileSchema,
+	linkProfessorToDepartmentSchema,
+	linkStudentToCourseSchema,
+	markAttendanceSchema,
 	professorProfileSchema,
 	staffProfileSchema,
 	studentProfileSchema,
+	unlinkProfessorFromDepartmentSchema,
+	unlinkStudentFromCourseSchema,
+	updateProfessorProfileSchema,
+	updateStaffProfileSchema,
+	updateStudentProfileSchema,
 } from '../ports/schemas';
 import type { AcademicCommandsServices } from '../ports/commands';
 
@@ -95,6 +104,212 @@ export function createAcademicCommandsRouter(
 					summary: 'Create Staff Profile',
 					tags: ['Academic Management'],
 				},
+			},
+		)
+		.put(
+			'/students/profile/me',
+			({ body, auth }) =>
+				services.updateStudentProfile({
+					...body,
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+					targetUserId: auth.clientId,
+					userId: auth.clientId,
+				}),
+			{
+				body: updateStudentProfileSchema,
+				response: {
+					200: studentProfileSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Update Student Profile',
+					tags: ['Academic Management'],
+				},
+			},
+		)
+		.put(
+			'/professors/profile/me',
+			({ body, auth }) =>
+				services.updateProfessorProfile({
+					...body,
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+					targetUserId: auth.clientId,
+				}),
+			{
+				body: updateProfessorProfileSchema,
+				response: {
+					200: professorProfileSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Update Professor Profile',
+					tags: ['Academic Management'],
+				},
+			},
+		)
+		.put(
+			'/staff/profile/me',
+			({ body, auth }) =>
+				services.updateStaffProfile({
+					...body,
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+					targetUserId: auth.clientId,
+				}),
+			{
+				body: updateStaffProfileSchema,
+				response: {
+					200: staffProfileSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Update Staff Profile',
+					tags: ['Academic Management'],
+				},
+			},
+		)
+		.put(
+			'/students/profile/me/course',
+			({ body, auth }) =>
+				services.linkStudentToCourse({
+					...body,
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+					targetUserId: auth.clientId,
+				}),
+			{
+				body: linkStudentToCourseSchema,
+				response: {
+					200: studentProfileSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Link Student to Course',
+					tags: ['Academic Management'],
+				},
+			},
+		)
+		.put(
+			'/professors/profile/me/department',
+			({ body, auth }) =>
+				services.linkProfessorToDepartment({
+					...body,
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+					targetUserId: auth.clientId,
+				}),
+			{
+				body: linkProfessorToDepartmentSchema,
+				response: {
+					200: professorProfileSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Link Professor to Department',
+					tags: ['Academic Management'],
+				},
+			},
+		)
+		.put(
+			'/students/profile/me/course/unlink',
+			({ auth }) =>
+				services.unlinkStudentFromCourse({
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+					targetUserId: auth.clientId,
+				}),
+			{
+				body: unlinkStudentFromCourseSchema,
+				response: {
+					200: studentProfileSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Unlink Student from Course',
+					tags: ['Academic Management'],
+				},
+			},
+		)
+		.put(
+			'/professors/profile/me/department/unlink',
+			({ auth }) =>
+				services.unlinkProfessorFromDepartment({
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+					targetUserId: auth.clientId,
+				}),
+			{
+				body: unlinkProfessorFromDepartmentSchema,
+				response: {
+					200: professorProfileSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Unlink Professor from Department',
+					tags: ['Academic Management'],
+				},
+			},
+		)
+		.post(
+			'/attendance',
+			({ body, auth, set }) => {
+				set.status = 201;
+				return services.markAttendance({
+					...body,
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+					targetUserId: auth.clientId,
+				});
+			},
+			{
+				body: markAttendanceSchema,
+				response: {
+					201: attendanceRecordSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: { summary: 'Mark Attendance', tags: ['Academic Management'] },
 			},
 		);
 }
