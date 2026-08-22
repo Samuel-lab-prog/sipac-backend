@@ -4,6 +4,7 @@ import { Elysia } from 'elysia';
 import {
 	avatarUploadRequestSchema,
 	avatarUploadResponseSchema,
+	changePasswordSchema,
 	setAvatarSchema,
 	createUserSchema,
 	updateUserParamsSchema,
@@ -83,6 +84,24 @@ export function createUsersCommandsRouter(services: UsersCommandsServices) {
 					422: appErrorSchema,
 				},
 				detail: { summary: 'Set Avatar', tags: ['Users Management'] },
+			},
+		)
+		.put(
+			'/me/password',
+			({ body, auth }) =>
+				services.changePassword({
+					data: body,
+					...auth,
+				}),
+			{
+				body: changePasswordSchema,
+				response: {
+					200: userSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: { summary: 'Change Password', tags: ['Users Management'] },
 			},
 		)
 		.put(

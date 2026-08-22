@@ -10,6 +10,7 @@ import { createUsersReadRouter } from './adapters/queries-router';
 import {
 	createUserFactory,
 	createAvatarUploadUrlFactory,
+	changePasswordFactory,
 	setAvatarFactory,
 	deleteUserFactory,
 	updateCurrentUserFactory,
@@ -60,6 +61,11 @@ const setAvatar = setAvatarFactory({
 	commandsRepository,
 });
 
+const changePassword = changePasswordFactory({
+	commandsRepository,
+	hashServices: BcryptHashService,
+});
+
 const deleteUser = deleteUserFactory({
 	commandsRepository,
 });
@@ -74,6 +80,7 @@ export const userCommandsRouter = createUsersCommandsRouter({
 	updateCurrentUser,
 	createAvatarUploadUrl,
 	setAvatar,
+	changePassword,
 	deleteUser,
 	restoreUser,
 });
@@ -84,6 +91,7 @@ export const userCommandsRouterWithFakeHash = createUsersCommandsRouter({
 	updateCurrentUser,
 	createAvatarUploadUrl,
 	setAvatar,
+	changePassword,
 	deleteUser,
 	restoreUser,
 });

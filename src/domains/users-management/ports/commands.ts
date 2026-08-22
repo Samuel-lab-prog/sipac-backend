@@ -11,6 +11,7 @@ import type {
 import {
 	avatarUploadRequestSchema,
 	setAvatarSchema,
+	changePasswordSchema,
 	updateUserParamsSchema,
 	updateUserSchema,
 } from './schemas';
@@ -48,6 +49,13 @@ export type SetAvatarParams = {
 	clientStatus: UserStatus;
 };
 
+export type ChangePasswordParams = {
+	data: Static<typeof changePasswordSchema>;
+	clientId: number;
+	clientRole: UserRole;
+	clientStatus: UserStatus;
+};
+
 export type GetUserByIdParams = {
 	id: number;
 	clientId: number;
@@ -66,6 +74,7 @@ export interface UsersCommandsServices {
 		params: CreateAvatarUploadUrlParams,
 	) => Promise<AvatarUploadUrlResult>;
 	setAvatar: (params: SetAvatarParams) => Promise<User>;
+	changePassword: (params: ChangePasswordParams) => Promise<User>;
 	deleteUser: (params: DeleteUserParams) => Promise<User>;
 	restoreUser: (params: RestoreUserParams) => Promise<User>;
 }
@@ -80,6 +89,7 @@ export interface CommandsRepository {
 		clientId: number,
 		user: Partial<CreateUserDB>,
 	): Promise<CommandResult<User>>;
+	getUserPasswordHashById(id: number): Promise<string | null>;
 	deleteUser(id: number): Promise<CommandResult<User>>;
 	restoreUser(id: number): Promise<CommandResult<User>>;
 }

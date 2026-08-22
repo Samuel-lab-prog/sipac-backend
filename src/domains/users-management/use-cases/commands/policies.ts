@@ -22,6 +22,7 @@ export type UserPolicyContext = {
 
 const ACTIVE_STATUSES = new Set<UserStatus>(['active']);
 const PRIVILEGED_ROLES = new Set<UserRole>(['admin', 'staff']);
+const ADMIN_ROLES = new Set<UserRole>(['admin']);
 
 function assertActorIsActive(actorStatus: UserStatus) {
 	if (!ACTIVE_STATUSES.has(actorStatus)) {
@@ -33,6 +34,12 @@ function assertActorIsActive(actorStatus: UserStatus) {
 
 function assertActorIsPrivileged(actorRole: UserRole) {
 	if (!PRIVILEGED_ROLES.has(actorRole)) {
+		throw new ForbiddenError('You are not allowed to perform this action');
+	}
+}
+
+function assertActorIsAdmin(actorRole: UserRole) {
+	if (!ADMIN_ROLES.has(actorRole)) {
 		throw new ForbiddenError('You are not allowed to perform this action');
 	}
 }
@@ -60,7 +67,7 @@ function canViewSelf(ctx: UserPolicyContext) {
 }
 
 function canUpdateAny(ctx: UserPolicyContext) {
-	assertActorIsPrivileged(ctx.actorRole);
+	assertActorIsAdmin(ctx.actorRole);
 	assertActorIsActive(ctx.actorStatus);
 	assertNotSelfTarget(ctx);
 }
@@ -133,6 +140,12 @@ export function assertCanAccessUser(ctx: UserPolicyContext) {
 
 export function assertCanUpdateUser(ctx: UserPolicyContext) {
 	assertUserPolicy('update_any', ctx);
+}
+
+export function assertCanAdminUpdateUser(ctx: UserPolicyContext) {
+	assertActorIsAdmin(ctx.actorRole);
+	assertActorIsActive(ctx.actorStatus);
+	assertNotSelfTarget(ctx);
 }
 
 export function assertCanUpdateSelf(ctx: UserPolicyContext) {

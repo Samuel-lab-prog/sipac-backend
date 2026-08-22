@@ -92,6 +92,14 @@ function updateCurrentUser(clientId: number, user: Partial<CreateUserDB>) {
 	);
 }
 
+async function getUserPasswordHashById(id: number) {
+	const user = await prisma.user.findUnique({
+		where: { id },
+		select: { passwordHash: true },
+	});
+	return user?.passwordHash ?? null;
+}
+
 function deleteUser(id: number) {
 	return withPrismaResult(() =>
 		prisma.user.update({
@@ -116,6 +124,7 @@ export const commandsRepository: CommandsRepository = {
 	insertUser,
 	updateUser,
 	updateCurrentUser,
+	getUserPasswordHashById,
 	deleteUser,
 	restoreUser,
 };

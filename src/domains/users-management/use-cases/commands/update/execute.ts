@@ -4,7 +4,7 @@ import type {
 	UpdateUserParams,
 } from '../../../ports/commands';
 import type { User } from '../../../ports/models';
-import { assertCanUpdateUser } from '../policies';
+import { assertCanAdminUpdateUser } from '../policies';
 
 interface Dependencies {
 	commandsRepository: CommandsRepository;
@@ -12,7 +12,7 @@ interface Dependencies {
 
 export function updateUserFactory({ commandsRepository }: Dependencies) {
 	return async function updateUser(params: UpdateUserParams): Promise<User> {
-		assertCanUpdateUser({
+		assertCanAdminUpdateUser({
 			actorId: params.clientId,
 			targetId: params.params.id,
 			actorRole: params.clientRole,

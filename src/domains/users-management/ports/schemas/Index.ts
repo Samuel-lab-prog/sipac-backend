@@ -5,6 +5,7 @@
 export * from './field-schemas';
 export * from './commands/avatar-set-schema';
 export * from './commands/avatar-upload-schema';
+export * from './commands/change-password-schema';
 export * from './commands/create-user-schema';
 export * from './commands/manage-user-schema';
 export * from './commands/update-user-schema';

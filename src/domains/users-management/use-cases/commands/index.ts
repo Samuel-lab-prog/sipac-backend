@@ -3,6 +3,7 @@
  */
 
 export * from './policies';
+export * from './change-password/execute';
 export * from './create/execute';
 export * from './create-avatar-upload-url/execute';
 export * from './delete/execute';
