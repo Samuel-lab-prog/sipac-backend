@@ -16,11 +16,6 @@ model User {
 	rg           String @unique
 	cpf          String @unique
 	avatarUrl    String?
-	academicId   String? @unique
-	campus       String?
-	department   String?
-	course       String?
-	admissionYear Int?
 
 	role   UserRole   @default(student)
 	status UserStatus @default(active)
@@ -30,6 +25,119 @@ model User {
   deletedAt       DateTime?
   emailVerifiedAt DateTime?
 
+  studentProfile  StudentProfile?
+  professorProfile ProfessorProfile?
+  staffProfile     StaffProfile?
+
+}
+
+model Department {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  code      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  courses   Course[]
+  professors ProfessorProfile[]
+  staff     StaffProfile[]
+}
+
+model Course {
+  id           Int        @id @default(autoincrement())
+  name         String     @unique
+  code         String     @unique
+  departmentId Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  department Department @relation(fields: [departmentId], references: [id])
+  students   StudentProfile[]
+  classes    ClassOffering[]
+}
+
+model StudentProfile {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @unique
+  academicId    String   @unique
+  courseId      Int?
+  admissionYear Int?
+  status        String   @default("active")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course? @relation(fields: [courseId], references: [id])
+  enrollments Enrollment[]
+}
+
+model ProfessorProfile {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @unique
+  registryCode  String?  @unique
+  departmentId  Int?
+  title         String?
+  workload      Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department Department? @relation(fields: [departmentId], references: [id])
+  teachingAssignments TeachingAssignment[]
+}
+
+model StaffProfile {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @unique
+  departmentId Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department Department? @relation(fields: [departmentId], references: [id])
+}
+
+model ClassOffering {
+  id          Int      @id @default(autoincrement())
+  courseId    Int
+  term        String
+  year        Int
+  code        String   @unique
+  title       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course Course @relation(fields: [courseId], references: [id])
+  enrollments Enrollment[]
+  teachingAssignments TeachingAssignment[]
+}
+
+model Enrollment {
+  id              Int      @id @default(autoincrement())
+  studentProfileId Int
+  classOfferingId  Int
+  status          String   @default("active")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  studentProfile StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+  classOffering  ClassOffering   @relation(fields: [classOfferingId], references: [id], onDelete: Cascade)
+
+  @@unique([studentProfileId, classOfferingId])
+}
+
+model TeachingAssignment {
+  id               Int      @id @default(autoincrement())
+  professorProfileId Int
+  classOfferingId   Int
+  role             String   @default("lead")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  professorProfile ProfessorProfile @relation(fields: [professorProfileId], references: [id], onDelete: Cascade)
+  classOffering    ClassOffering    @relation(fields: [classOfferingId], references: [id], onDelete: Cascade)
+
+  @@unique([professorProfileId, classOfferingId])
 }
 
 enum UserRole {

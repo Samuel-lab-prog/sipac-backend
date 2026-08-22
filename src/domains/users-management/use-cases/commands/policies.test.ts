@@ -24,11 +24,11 @@ const selfCtx = {
 
 describe('POLICY - Users Management Commands', () => {
 	describe('policies', () => {
-		it('allows active admin and staff users to update another user', () => {
+		it('allows active admin users to update another user', () => {
 			expect(() => assertCanUpdateUser(adminCtx)).not.toThrow();
 			expect(() =>
 				assertCanUpdateUser({ ...adminCtx, actorRole: 'staff' }),
-			).not.toThrow();
+			).toThrow(ForbiddenError);
 		});
 
 		it('blocks non-admin roles from updating another user', () => {

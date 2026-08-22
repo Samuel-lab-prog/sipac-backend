@@ -8,9 +8,6 @@ function selectUsers(params: {
 	role?: 'student' | 'professor' | 'staff' | 'admin';
 	status?: 'active' | 'blocked' | 'suspended';
 	deleted?: boolean;
-	campus?: string;
-	department?: string;
-	course?: string;
 	limit: number;
 	cursor?: number;
 }) {
@@ -42,20 +39,6 @@ function selectUsers(params: {
 			}),
 			...(params.role ? { role: params.role } : {}),
 			...(params.status ? { status: params.status } : {}),
-			...(params.campus
-				? { campus: { contains: params.campus, mode: 'insensitive' as const } }
-				: {}),
-			...(params.department
-				? {
-						department: {
-							contains: params.department,
-							mode: 'insensitive' as const,
-						},
-					}
-				: {}),
-			...(params.course
-				? { course: { contains: params.course, mode: 'insensitive' as const } }
-				: {}),
 		};
 
 		const users = await prisma.user.findMany({

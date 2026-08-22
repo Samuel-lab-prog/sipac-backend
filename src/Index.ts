@@ -16,6 +16,10 @@ import {
 	userQueriesRouter,
 } from '@Domains/users-management/composition';
 import {
+	academicCommandsRouter,
+	academicQueriesRouter,
+} from '@Domains/academic-management/composition';
+import {
 	authRouter,
 	authRouterWithFakeHash,
 } from '@GenericSubdomains/authentication/composition';
@@ -72,8 +76,10 @@ function makeServer({
 			.use(ErrorPlugin)
 
 			.use(enableRealHash ? userCommandsRouter : userCommandsRouterWithFakeHash)
+			.use(academicCommandsRouter)
 			.use(enableRealHash ? authRouter : authRouterWithFakeHash)
 			.use(userQueriesRouter)
+			.use(academicQueriesRouter)
 	);
 }
 

@@ -1,15 +1,10 @@
 import { t } from 'elysia';
 import {
-	academicIdSchema,
-	admissionYearSchema,
 	avatarUrlSchema,
-	campusSchema,
-	courseSchema,
 	userCpfSchema,
 	userNameSchema,
 	userNicknameSchema,
 	userRgSchema,
-	departmentSchema,
 	userRoleSchema,
 	userStatusSchema,
 } from '../field-schemas';
@@ -32,9 +27,4 @@ export const updateUserSchema = t.Object({
 	role: t.Optional(userRoleSchema),
 	status: t.Optional(userStatusSchema),
 	avatarUrl: t.Optional(t.Nullable(avatarUrlSchema)),
-	academicId: t.Optional(t.Nullable(academicIdSchema)),
-	campus: t.Optional(t.Nullable(campusSchema)),
-	department: t.Optional(t.Nullable(departmentSchema)),
-	course: t.Optional(t.Nullable(courseSchema)),
-	admissionYear: t.Optional(t.Nullable(admissionYearSchema)),
 });

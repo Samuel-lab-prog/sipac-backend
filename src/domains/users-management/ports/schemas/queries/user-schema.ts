@@ -5,18 +5,13 @@ import {
 	idSchema,
 } from '@SharedKernel/schemas/schemas';
 import {
-	academicIdSchema,
-	admissionYearSchema,
 	avatarUrlSchema,
-	campusSchema,
-	courseSchema,
 	userCpfSchema,
 	userNameSchema,
 	userNicknameSchema,
 	userRgSchema,
 	userRoleSchema,
 	userStatusSchema,
-	departmentSchema,
 } from '../field-schemas';
 
 export const userSchema = t.Object({
@@ -29,11 +24,6 @@ export const userSchema = t.Object({
 	role: userRoleSchema,
 	status: userStatusSchema,
 	avatarUrl: t.Nullable(avatarUrlSchema),
-	academicId: t.Nullable(academicIdSchema),
-	campus: t.Nullable(campusSchema),
-	department: t.Nullable(departmentSchema),
-	course: t.Nullable(courseSchema),
-	admissionYear: t.Nullable(admissionYearSchema),
 	createdAt: dateSchema,
 	updatedAt: dateSchema,
 	deletedAt: t.Nullable(dateSchema),

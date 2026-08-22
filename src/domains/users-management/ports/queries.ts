@@ -7,9 +7,6 @@ export type SearchUsersParams = {
 	role?: UserRole;
 	status?: UserStatus;
 	deleted?: boolean;
-	campus?: string;
-	department?: string;
-	course?: string;
 	limit?: number;
 	cursor?: number;
 };
@@ -37,9 +34,6 @@ export interface QueriesRepository {
 		role?: UserRole;
 		status?: UserStatus;
 		deleted?: boolean;
-		campus?: string;
-		department?: string;
-		course?: string;
 		limit: number;
 		cursor?: number;
 	}): Promise<PaginatedUsers>;

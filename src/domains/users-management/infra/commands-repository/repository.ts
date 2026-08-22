@@ -15,11 +15,6 @@ function toPrismaCreateInput(user: CreateUserDB): UserCreateInput {
 		rg: user.rg,
 		cpf: user.cpf,
 		avatarUrl: user.avatarUrl ?? null,
-		academicId: user.academicId ?? null,
-		campus: user.campus ?? null,
-		department: user.department ?? null,
-		course: user.course ?? null,
-		admissionYear: user.admissionYear ?? null,
 	};
 }
 
@@ -45,17 +40,6 @@ function updateUser(id: number, user: Partial<CreateUserDB>) {
 				...(user.role !== undefined && { role: user.role }),
 				...(user.status !== undefined && { status: user.status }),
 				...(user.avatarUrl !== undefined && { avatarUrl: user.avatarUrl }),
-				...(user.academicId !== undefined && {
-					academicId: user.academicId,
-				}),
-				...(user.campus !== undefined && { campus: user.campus }),
-				...(user.department !== undefined && {
-					department: user.department,
-				}),
-				...(user.course !== undefined && { course: user.course }),
-				...(user.admissionYear !== undefined && {
-					admissionYear: user.admissionYear,
-				}),
 			},
 			select: userSelect,
 		}),
@@ -75,17 +59,6 @@ function updateCurrentUser(clientId: number, user: Partial<CreateUserDB>) {
 				...(user.role !== undefined && { role: user.role }),
 				...(user.status !== undefined && { status: user.status }),
 				...(user.avatarUrl !== undefined && { avatarUrl: user.avatarUrl }),
-				...(user.academicId !== undefined && {
-					academicId: user.academicId,
-				}),
-				...(user.campus !== undefined && { campus: user.campus }),
-				...(user.department !== undefined && {
-					department: user.department,
-				}),
-				...(user.course !== undefined && { course: user.course }),
-				...(user.admissionYear !== undefined && {
-					admissionYear: user.admissionYear,
-				}),
 			},
 			select: userSelect,
 		}),

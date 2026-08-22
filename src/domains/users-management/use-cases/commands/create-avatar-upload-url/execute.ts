@@ -11,7 +11,7 @@ interface Dependencies {
 }
 
 export function createAvatarUploadUrlFactory({ storageService }: Dependencies) {
-	return async function createAvatarUploadUrl(
+	return function createAvatarUploadUrl(
 		params: CreateAvatarUploadUrlParams,
 	): Promise<AvatarUploadUrlResult> {
 		assertCanUpdateSelf({
