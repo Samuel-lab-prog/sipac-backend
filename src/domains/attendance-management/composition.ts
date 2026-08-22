@@ -1,5 +1,6 @@
 import { commandsRepository } from './infra/commands-repository/repository';
 import { createAttendanceCommandsRouter } from './adapters/commands-router';
+import { createDeleteAttendanceCommandsRouter } from './adapters/delete-attendance-commands-router';
 import { createAttendanceQueriesRouter } from './adapters/queries-router';
 import { deleteAttendanceFactory } from './use-cases/commands/delete-attendance/execute';
 import { markAttendanceFactory } from './use-cases/commands/mark-attendance/execute';
@@ -18,8 +19,12 @@ const deleteAttendance = deleteAttendanceFactory({
 export const attendanceCommandsRouter = createAttendanceCommandsRouter({
 	markAttendance,
 	markAttendanceBatch,
-	deleteAttendance,
 });
+
+export const attendanceDeleteCommandsRouter =
+	createDeleteAttendanceCommandsRouter({
+		deleteAttendance,
+	});
 
 export const attendanceQueriesRouter = createAttendanceQueriesRouter({
 	listAttendanceByClassSessionId(classSessionId) {

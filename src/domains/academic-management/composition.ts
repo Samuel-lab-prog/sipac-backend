@@ -2,8 +2,11 @@ import {
 	commandsRepository,
 	queriesRepository,
 } from './infra/commands-repository/repository';
+import { Elysia } from 'elysia';
 import { storageService } from '@SharedKernel/infra/storage/storage-service';
-import { createAcademicCommandsRouter } from './adapters/commands-router';
+import { createAcademicAttachmentCommandsRouter } from './adapters/attachment-commands-router';
+import { createAcademicProfileCommandsRouter } from './adapters/profile-commands-router';
+import { createAcademicRelationCommandsRouter } from './adapters/relation-commands-router';
 import { createAcademicQueriesRouter } from './adapters/queries-router';
 import { createProfessorProfileFactory } from './use-cases/commands/create-professor-profile/execute';
 import { createStaffProfileFactory } from './use-cases/commands/create-staff-profile/execute';
@@ -65,19 +68,32 @@ const getStaffProfileByUserId = getStaffProfileByUserIdFactory({
 	queriesRepository,
 });
 
-export const academicCommandsRouter = createAcademicCommandsRouter({
+const academicProfileCommandsRouter = createAcademicProfileCommandsRouter({
 	createStudentProfile,
 	createProfessorProfile,
 	createStaffProfile,
-	createAcademicActivityAttachmentUploadUrl,
 	updateStudentProfile,
 	updateProfessorProfile,
 	updateStaffProfile,
+});
+
+const academicRelationCommandsRouter = createAcademicRelationCommandsRouter({
 	linkStudentToCourse,
 	linkProfessorToDepartment,
 	unlinkStudentFromCourse,
 	unlinkProfessorFromDepartment,
 });
+
+const academicAttachmentCommandsRouter = createAcademicAttachmentCommandsRouter(
+	{
+		createAcademicActivityAttachmentUploadUrl,
+	},
+);
+
+export const academicCommandsRouter = new Elysia()
+	.use(academicProfileCommandsRouter)
+	.use(academicRelationCommandsRouter)
+	.use(academicAttachmentCommandsRouter);
 
 export const academicQueriesRouter = createAcademicQueriesRouter({
 	getStudentProfileByUserId,

@@ -3,9 +3,13 @@ import {
 	FakeHashService,
 } from '@SharedKernel/infra/encrypting/bcrypt';
 import { storageService } from '@SharedKernel/infra/storage/storage-service';
+import { Elysia } from 'elysia';
 import { commandsRepository } from './infra/commands-repository/repository';
 import { queriesRepository } from './infra/queries-repository/repository';
-import { createUsersCommandsRouter } from './adapters/commands-router';
+import {
+	createUsersAuthenticatedCommandsRouter,
+	createUsersPublicCommandsRouter,
+} from './adapters/commands-router';
 import { createUsersReadRouter } from './adapters/queries-router';
 import {
 	createUserFactory,
@@ -74,27 +78,33 @@ const restoreUser = restoreUserFactory({
 	commandsRepository,
 });
 
-export const userCommandsRouter = createUsersCommandsRouter({
+const usersPublicCommandsRouter = createUsersPublicCommandsRouter({
 	createUser,
-	updateUser,
-	updateCurrentUser,
-	createAvatarUploadUrl,
-	setAvatar,
-	changePassword,
-	deleteUser,
-	restoreUser,
 });
 
-export const userCommandsRouterWithFakeHash = createUsersCommandsRouter({
-	createUser: createUserWithFakeHash,
-	updateUser,
-	updateCurrentUser,
-	createAvatarUploadUrl,
-	setAvatar,
-	changePassword,
-	deleteUser,
-	restoreUser,
-});
+const usersAuthenticatedCommandsRouter = createUsersAuthenticatedCommandsRouter(
+	{
+		updateUser,
+		updateCurrentUser,
+		createAvatarUploadUrl,
+		setAvatar,
+		changePassword,
+		deleteUser,
+		restoreUser,
+	},
+);
+
+export const userCommandsRouter = new Elysia()
+	.use(usersPublicCommandsRouter)
+	.use(usersAuthenticatedCommandsRouter);
+
+export const userCommandsRouterWithFakeHash = new Elysia()
+	.use(
+		createUsersPublicCommandsRouter({
+			createUser: createUserWithFakeHash,
+		}),
+	)
+	.use(usersAuthenticatedCommandsRouter);
 
 export const userQueriesRouter = createUsersReadRouter({
 	searchUsers,

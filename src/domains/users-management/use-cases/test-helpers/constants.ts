@@ -1,0 +1,10 @@
+export const DEFAULT_USER_ID = 1;
+export const DEFAULT_USER_ROLE = 'admin';
+export const DEFAULT_USER_STATUS = 'active';
+export const DEFAULT_USER_NAME = 'Teste Usuario';
+export const DEFAULT_USER_NICKNAME = 'teste';
+export const DEFAULT_USER_EMAIL = 'teste@exemplo.com';
+export const DEFAULT_USER_RG = '1234567';
+export const DEFAULT_USER_CPF = '12345678901';
+export const DEFAULT_USER_PASSWORD = '12341234';
+export const DEFAULT_USER_PASSWORD_HASH = 'hashed:12341234';
