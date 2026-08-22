@@ -1,8 +1,8 @@
-import { prisma } from '../../../generic-subdomains/persistance/prisma/prisma-client';
-import { withPrismaErrorHandling } from '../../../generic-subdomains/persistance/utils/prisma-error-handler';
+import { prisma } from '@Prisma';
+import { withPrismaErrorHandling } from '@PrismaErrorHandler';
 
-type UserRole = 'author' | 'moderator' | 'admin';
-type UserStatus = 'active' | 'blocked' | 'suspended';
+export type UserRole = 'student' | 'professor' | 'staff' | 'admin';
+export type UserStatus = 'active' | 'blocked' | 'suspended';
 
 export type UsersPublicContract = {
 	selectAuthUserByEmail(email: string): Promise<{

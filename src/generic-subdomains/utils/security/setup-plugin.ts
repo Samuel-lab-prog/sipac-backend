@@ -1,7 +1,7 @@
 import Elysia from 'elysia';
 import { appErrorSchema } from '../error-handling/app-error/util.ts';
 import { log } from '../logging/logger';
-type UserRole = 'author' | 'moderator' | 'admin';
+type UserRole = 'student' | 'professor' | 'staff' | 'admin';
 type UserStatus = 'active' | 'blocked' | 'suspended';
 type AuthType = {
 	clientId: number;
@@ -12,7 +12,7 @@ export const SetupPlugin = new Elysia()
 	.as('global')
 	.decorate('auth', {
 		clientId: 0,
-		clientRole: 'author',
+		clientRole: 'student',
 		clientStatus: 'blocked',
 	} as AuthType satisfies AuthType)
 	.decorate('logger', { log })

@@ -1,5 +1,5 @@
-import { prisma } from '../../../../generic-subdomains/persistance/prisma/prisma-client';
-import { withPrismaErrorHandling } from '../../../../generic-subdomains/persistance/utils/prisma-error-handler';
+import { prisma } from '@Prisma';
+import { withPrismaErrorHandling } from '@PrismaErrorHandler';
 import type { QueriesRepository } from '../../ports/queries';
 
 function selectUsers(params: {
@@ -27,9 +27,22 @@ function selectUsers(params: {
 			select: {
 				id: true,
 				name: true,
+				nickname: true,
 				email: true,
+				rg: true,
+				cpf: true,
+				role: true,
+				status: true,
+				avatarUrl: true,
+				academicId: true,
+				campus: true,
+				department: true,
+				course: true,
+				admissionYear: true,
 				createdAt: true,
 				updatedAt: true,
+				deletedAt: true,
+				emailVerifiedAt: true,
 			},
 		});
 

@@ -1,4 +1,5 @@
-import type { User } from './models';
+import type { Static } from 'elysia';
+import { paginatedUsersSchema } from './schemas';
 
 export type SearchUsersParams = {
 	searchTerm?: string;
@@ -6,10 +7,12 @@ export type SearchUsersParams = {
 	cursor?: number;
 };
 
+export type PaginatedUsers = Static<typeof paginatedUsersSchema>;
+
 export interface UsersQueriesRouterServices {
 	searchUsers: (
 		params: SearchUsersParams,
-	) => Promise<{ users: User[]; hasMore: boolean; nextCursor?: number }>;
+	) => Promise<PaginatedUsers>;
 }
 
 export interface QueriesRepository {
@@ -17,5 +20,5 @@ export interface QueriesRepository {
 		searchTerm?: string;
 		limit: number;
 		cursor?: number;
-	}): Promise<{ users: User[]; hasMore: boolean; nextCursor?: number }>;
+	}): Promise<PaginatedUsers>;
 }

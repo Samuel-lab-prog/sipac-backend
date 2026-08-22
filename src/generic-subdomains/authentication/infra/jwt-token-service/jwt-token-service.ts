@@ -68,7 +68,10 @@ function fakeVerifyToken(token: string): TokenPayload | null {
 	if (
 		isNaN(clientId) ||
 		(tokenType !== 'access' && tokenType !== 'refresh') ||
-		(role !== 'admin' && role !== 'author' && role !== 'moderator') ||
+		(role !== 'admin' &&
+			role !== 'student' &&
+			role !== 'professor' &&
+			role !== 'staff') ||
 		!email
 	)
 		return null;

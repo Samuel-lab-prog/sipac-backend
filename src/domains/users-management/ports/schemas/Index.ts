@@ -5,3 +5,4 @@
 export * from './field-schemas';
 export * from './commands/create-user-schema';
 export * from './queries/user-schema';
+export * from './queries/paginated-users-schema';

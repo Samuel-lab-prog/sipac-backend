@@ -21,6 +21,12 @@
 			"@AppError": [
 				"./src/generic-subdomains/utils/error-handling/app-error/util.ts"
 			],
+			"@PrismaErrorHandler": [
+				"./src/generic-subdomains/persistance/utils/prisma-error-handler.ts"
+			],
+			"@Prisma": [
+				"./src/generic-subdomains/persistance/prisma/prisma-client.ts"
+			],
 			"@GenericSubdomains/*": ["./src/generic-subdomains/*"],
 			"@SharedKernel/*": ["./src/shared-kernel/*"],
 			"*": ["./src/*"]
