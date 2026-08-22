@@ -1,5 +1,5 @@
 import { ForbiddenError } from '@DomainError';
-import type { AcademicPolicyContext } from '../../../academic-management/use-cases/commands/policies';
+import type { AcademicPolicyContext } from '@Domains/academic-management/public';
 
 export function assertCanMarkAttendance(ctx: AcademicPolicyContext) {
 	if (ctx.actorStatus !== 'active') {

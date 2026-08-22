@@ -1,7 +1,7 @@
 import { ConflictError, NotFoundError, UnknownError } from '@DomainError';
 import type { MarkAttendanceBatchParams } from '../../../ports/commands';
 import type { AttendanceRecord } from '../../../ports/models';
-import { assertCanMarkAttendance } from '../../../../academic-management/use-cases/commands/policies';
+import { assertCanMarkAttendance } from '@Domains/academic-management/public';
 
 interface Dependencies {
 	commandsRepository: {

@@ -1,5 +1,5 @@
 import type { AcademicActivity, AcademicActivitySubmission } from './models';
-import type { AcademicPolicyContext } from '../../academic-management/use-cases/commands/policies';
+import type { AcademicPolicyContext } from '@Domains/academic-management/public';
 
 export type CreateAcademicActivityParams = Omit<AcademicActivity, 'id'> &
 	AcademicPolicyContext;

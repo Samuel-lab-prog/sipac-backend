@@ -1,7 +1,7 @@
 import { ConflictError, UnknownError } from '@DomainError';
 import type { CreateAcademicActivityParams } from '../../../ports/commands';
 import type { AcademicActivity } from '../../../ports/models';
-import { assertCanCreateAcademicActivity } from '../../../../academic-management/use-cases/commands/policies';
+import { assertCanCreateAcademicActivity } from '@Domains/academic-management/public';
 
 interface Dependencies {
 	commandsRepository: {

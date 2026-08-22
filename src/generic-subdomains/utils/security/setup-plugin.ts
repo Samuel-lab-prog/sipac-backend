@@ -1,13 +1,10 @@
-import Elysia, { type Static } from 'elysia';
+import Elysia from 'elysia';
 import { appErrorSchema } from '../error-handling/app-error/util.ts';
 import { log } from '../logging/logger';
-import {
-	userRoleSchema,
-	userStatusSchema,
-} from '@Domains/users-management/ports/schemas';
 
-type UserRole = Static<typeof userRoleSchema>;
-type UserStatus = Static<typeof userStatusSchema>;
+type UserRole = 'student' | 'professor' | 'staff' | 'admin';
+type UserStatus = 'active' | 'blocked' | 'suspended';
+
 type AuthType = {
 	clientId: number;
 	clientRole: UserRole;

@@ -1,24 +1,21 @@
 import { describe, expect, it } from 'bun:test';
-import { getStudentProfileByUserIdFactory } from './execute';
+import { NotFoundError } from '@DomainError';
+import { makeAcademicScenario } from '../../test-helpers';
 
 describe('academic-management > getStudentProfileByUserId', () => {
 	it('returns the profile for the given user', async () => {
-		const sut = getStudentProfileByUserIdFactory({
-			queriesRepository: {
-				selectStudentProfileByUserId: async (userId) =>
-					userId === 1
-						? {
-								id: 2,
-								userId,
-								academicId: '2026000123',
-								courseId: null,
-								admissionYear: 2026,
-								status: 'active',
-							}
-						: null,
-			},
-		});
+		const scenario = makeAcademicScenario().withStudentProfile();
 
-		await expect(sut(1)).resolves.toMatchObject({ userId: 1 });
+		await expect(scenario.executeGetStudentProfile()).resolves.toMatchObject({
+			userId: 1,
+		});
+	});
+
+	it('throws NotFoundError when the profile does not exist', async () => {
+		const scenario = makeAcademicScenario();
+
+		await expect(scenario.executeGetStudentProfile()).rejects.toBeInstanceOf(
+			NotFoundError,
+		);
 	});
 });
