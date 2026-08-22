@@ -30,9 +30,7 @@ export function createUsersCommandsRouter(services: UsersCommandsServices) {
 			'/me',
 			({ body, auth }) =>
 				services.updateCurrentUser({
-					clientId: auth.clientId,
-					clientRole: auth.clientRole,
-					clientStatus: auth.clientStatus,
+					...auth,
 					data: body,
 				}),
 			{
@@ -52,9 +50,7 @@ export function createUsersCommandsRouter(services: UsersCommandsServices) {
 				services.updateUser({
 					params,
 					data: body,
-					clientId: auth.clientId,
-					clientRole: auth.clientRole,
-					clientStatus: auth.clientStatus,
+					...auth,
 				}),
 			{
 				params: updateUserParamsSchema,
@@ -74,9 +70,7 @@ export function createUsersCommandsRouter(services: UsersCommandsServices) {
 			({ params, auth }) =>
 				services.deleteUser({
 					id: params.id,
-					clientId: auth.clientId,
-					clientRole: auth.clientRole,
-					clientStatus: auth.clientStatus,
+					...auth,
 				}),
 			{
 				params: userIdParamsSchema,
@@ -94,9 +88,7 @@ export function createUsersCommandsRouter(services: UsersCommandsServices) {
 			({ params, auth }) =>
 				services.restoreUser({
 					id: params.id,
-					clientId: auth.clientId,
-					clientRole: auth.clientRole,
-					clientStatus: auth.clientStatus,
+					...auth,
 				}),
 			{
 				params: userIdParamsSchema,

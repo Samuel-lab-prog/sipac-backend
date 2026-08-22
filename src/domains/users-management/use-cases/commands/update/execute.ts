@@ -12,7 +12,12 @@ interface Dependencies {
 
 export function updateUserFactory({ commandsRepository }: Dependencies) {
 	return async function updateUser(params: UpdateUserParams): Promise<User> {
-		assertCanUpdateUser(params.clientRole, params.clientStatus);
+		assertCanUpdateUser({
+			actorId: params.clientId,
+			targetId: params.params.id,
+			actorRole: params.clientRole,
+			actorStatus: params.clientStatus,
+		});
 		const result = await commandsRepository.updateUser(
 			params.params.id,
 			params.data,

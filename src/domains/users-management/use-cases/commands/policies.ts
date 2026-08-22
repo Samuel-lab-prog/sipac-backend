@@ -1,35 +1,128 @@
 import { ForbiddenError } from '@DomainError';
 
-const ALLOWED_ADMIN_UPDATE_ROLES = new Set(['admin', 'staff']);
-const ALLOWED_ADMIN_UPDATE_STATUSES = new Set(['active']);
-const ALLOWED_SELF_UPDATE_STATUSES = new Set(['active']);
-const ALLOWED_ADMIN_ACCESS_ROLES = new Set(['admin', 'staff']);
+export type UserRole = 'student' | 'professor' | 'staff' | 'admin';
+export type UserStatus = 'active' | 'blocked' | 'suspended';
 
-export function assertCanUpdateUser(role: string, status: string) {
-	if (!ALLOWED_ADMIN_UPDATE_ROLES.has(role)) {
-		throw new ForbiddenError('You are not allowed to update this user');
-	}
+export type UserPolicyAction =
+	| 'view_any'
+	| 'view_self'
+	| 'update_any'
+	| 'update_self'
+	| 'delete_any'
+	| 'restore_any';
 
-	if (!ALLOWED_ADMIN_UPDATE_STATUSES.has(status)) {
-		throw new ForbiddenError('User account is not allowed to update data');
-	}
-}
+export type UserPolicyContext = {
+	actorRole: UserRole;
+	actorStatus: UserStatus;
+	actorId: number;
+	targetId: number;
+};
 
-export function assertCanUpdateSelf(status: string) {
-	if (!ALLOWED_SELF_UPDATE_STATUSES.has(status)) {
-		throw new ForbiddenError('User account is not allowed to update data');
-	}
-}
+const ACTIVE_STATUSES = new Set<UserStatus>(['active']);
+const PRIVILEGED_ROLES = new Set<UserRole>(['admin', 'staff']);
 
-export function assertCanAccessUser(role: string, status: string) {
-	if (!ALLOWED_ADMIN_ACCESS_ROLES.has(role)) {
-		throw new ForbiddenError('You are not allowed to access this user');
-	}
-
-	if (!ALLOWED_ADMIN_UPDATE_STATUSES.has(status)) {
-		throw new ForbiddenError('User account is not allowed to access data');
+function assertActorIsActive(actorStatus: UserStatus) {
+	if (!ACTIVE_STATUSES.has(actorStatus)) {
+		throw new ForbiddenError(
+			'User account is not allowed to perform this action',
+		);
 	}
 }
 
-export const assertCanDeleteUser = assertCanAccessUser;
-export const assertCanRestoreUser = assertCanAccessUser;
+function assertActorIsPrivileged(actorRole: UserRole) {
+	if (!PRIVILEGED_ROLES.has(actorRole)) {
+		throw new ForbiddenError('You are not allowed to perform this action');
+	}
+}
+
+function assertSelfTarget(ctx: UserPolicyContext) {
+	if (ctx.actorId !== ctx.targetId) {
+		throw new ForbiddenError('You can only access your own record');
+	}
+}
+
+function assertNotSelfTarget(ctx: UserPolicyContext) {
+	if (ctx.actorId === ctx.targetId) {
+		throw new ForbiddenError('Use the self-service route for your own record');
+	}
+}
+
+function canViewAny(ctx: UserPolicyContext) {
+	assertActorIsPrivileged(ctx.actorRole);
+	assertActorIsActive(ctx.actorStatus);
+}
+
+function canViewSelf(ctx: UserPolicyContext) {
+	assertActorIsActive(ctx.actorStatus);
+	assertSelfTarget(ctx);
+}
+
+function canUpdateAny(ctx: UserPolicyContext) {
+	assertActorIsPrivileged(ctx.actorRole);
+	assertActorIsActive(ctx.actorStatus);
+	assertNotSelfTarget(ctx);
+}
+
+function canUpdateSelf(ctx: UserPolicyContext) {
+	assertActorIsActive(ctx.actorStatus);
+	assertSelfTarget(ctx);
+}
+
+function canDeleteAny(ctx: UserPolicyContext) {
+	assertActorIsPrivileged(ctx.actorRole);
+	assertActorIsActive(ctx.actorStatus);
+	assertNotSelfTarget(ctx);
+}
+
+function canRestoreAny(ctx: UserPolicyContext) {
+	assertActorIsPrivileged(ctx.actorRole);
+	assertActorIsActive(ctx.actorStatus);
+	assertNotSelfTarget(ctx);
+}
+
+export function assertUserPolicy(
+	action: UserPolicyAction,
+	ctx: UserPolicyContext,
+) {
+	// eslint-disable-next-line default-case
+	switch (action) {
+		case 'view_any':
+			canViewAny(ctx);
+			return;
+		case 'view_self':
+			canViewSelf(ctx);
+			return;
+		case 'update_any':
+			canUpdateAny(ctx);
+			return;
+		case 'update_self':
+			canUpdateSelf(ctx);
+			return;
+		case 'delete_any':
+			canDeleteAny(ctx);
+			return;
+		case 'restore_any':
+			canRestoreAny(ctx);
+			return;
+	}
+}
+
+export function assertCanAccessUser(ctx: UserPolicyContext) {
+	assertUserPolicy('view_any', ctx);
+}
+
+export function assertCanUpdateUser(ctx: UserPolicyContext) {
+	assertUserPolicy('update_any', ctx);
+}
+
+export function assertCanUpdateSelf(ctx: UserPolicyContext) {
+	assertUserPolicy('update_self', ctx);
+}
+
+export function assertCanDeleteUser(ctx: UserPolicyContext) {
+	assertUserPolicy('delete_any', ctx);
+}
+
+export function assertCanRestoreUser(ctx: UserPolicyContext) {
+	assertUserPolicy('restore_any', ctx);
+}

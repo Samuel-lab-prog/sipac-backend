@@ -12,7 +12,12 @@ interface Dependencies {
 
 export function restoreUserFactory({ commandsRepository }: Dependencies) {
 	return async function restoreUser(params: RestoreUserParams): Promise<User> {
-		assertCanRestoreUser(params.clientRole, params.clientStatus);
+		assertCanRestoreUser({
+			actorId: params.clientId,
+			targetId: params.id,
+			actorRole: params.clientRole,
+			actorStatus: params.clientStatus,
+		});
 		const result = await commandsRepository.restoreUser(params.id);
 		if (result.ok) return result.data;
 		throw new NotFoundError('User not found');

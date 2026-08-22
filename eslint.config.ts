@@ -60,7 +60,7 @@ export default defineConfig([
 		},
 	},
 	{
-		files: ['**/*Router.ts'],
+		files: ['**/*Router.ts', '**/*commands-router.ts', '**/*queries-router.ts'],
 		rules: {
 			'max-lines': 'off',
 			'max-lines-per-function': 'off',

@@ -1,6 +1,12 @@
 import type { CommandResult } from '@SharedKernel/types/types';
 import type { Static } from 'elysia';
-import type { CreateUser, CreateUserDB, User } from './models';
+import type {
+	CreateUser,
+	CreateUserDB,
+	User,
+	UserRole,
+	UserStatus,
+} from './models';
 import { updateUserParamsSchema, updateUserSchema } from './schemas';
 
 export type CreateUserParams = {
@@ -10,23 +16,23 @@ export type CreateUserParams = {
 export type UpdateUserParams = {
 	params: Static<typeof updateUserParamsSchema>;
 	data: Static<typeof updateUserSchema>;
-	clientRole: string;
-	clientStatus: string;
+	clientRole: UserRole;
+	clientStatus: UserStatus;
 	clientId: number;
 };
 
 export type UpdateCurrentUserParams = {
 	data: Static<typeof updateUserSchema>;
 	clientId: number;
-	clientRole: string;
-	clientStatus: string;
+	clientRole: UserRole;
+	clientStatus: UserStatus;
 };
 
 export type GetUserByIdParams = {
 	id: number;
 	clientId: number;
-	clientRole: string;
-	clientStatus: string;
+	clientRole: UserRole;
+	clientStatus: UserStatus;
 };
 
 export type DeleteUserParams = GetUserByIdParams;

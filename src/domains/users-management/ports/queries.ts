@@ -1,6 +1,6 @@
 import type { Static } from 'elysia';
 import { paginatedUsersSchema } from './schemas';
-import type { User } from './models';
+import type { User, UserRole, UserStatus } from './models';
 
 export type SearchUsersParams = {
 	searchTerm?: string;
@@ -15,8 +15,8 @@ export interface UsersQueriesRouterServices {
 	getUserById: (params: {
 		id: number;
 		clientId: number;
-		clientRole: string;
-		clientStatus: string;
+		clientRole: UserRole;
+		clientStatus: UserStatus;
 	}) => Promise<User>;
 }
 

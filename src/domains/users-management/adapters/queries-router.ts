@@ -2,14 +2,17 @@ import { appErrorSchema } from '@AppError';
 import { authPlugin } from '@GenericSubdomains/authentication/composition';
 import { idSchema } from '@SharedKernel/schemas/schemas';
 import { Elysia, t } from 'elysia';
-import { paginatedUsersSchema, userSchema, userIdParamsSchema } from '../ports/schemas';
+import {
+	paginatedUsersSchema,
+	userSchema,
+	userIdParamsSchema,
+} from '../ports/schemas';
 import type { UsersQueriesRouterServices } from '../ports/queries';
 
 export function createUsersReadRouter(services: UsersQueriesRouterServices) {
-	return new Elysia({ prefix: '/users' }).use(authPlugin).get(
-		'/',
-		({ query }) => services.searchUsers(query),
-		{
+	return new Elysia({ prefix: '/users' })
+		.use(authPlugin)
+		.get('/', ({ query }) => services.searchUsers(query), {
 			query: t.Object({
 				searchTerm: t.Optional(t.String()),
 				limit: t.Optional(t.Number({ minimum: 1, maximum: 100 })),
@@ -20,25 +23,24 @@ export function createUsersReadRouter(services: UsersQueriesRouterServices) {
 				422: appErrorSchema,
 			},
 			detail: { summary: 'Search Users', tags: ['Users Management'] },
-		},
-	).get(
-		'/:id',
-		({ params, auth }) =>
-			services.getUserById({
-				id: params.id,
-				clientId: auth.clientId,
-				clientRole: auth.clientRole,
-				clientStatus: auth.clientStatus,
-			}),
-		{
-			params: userIdParamsSchema,
-			response: {
-				200: userSchema,
-				401: appErrorSchema,
-				403: appErrorSchema,
-				404: appErrorSchema,
+		})
+		.use(authPlugin)
+		.get(
+			'/:id',
+			({ params, auth }) =>
+				services.getUserById({
+					id: params.id,
+					...auth,
+				}),
+			{
+				params: userIdParamsSchema,
+				response: {
+					200: userSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+				},
+				detail: { summary: 'Get User By Id', tags: ['Users Management'] },
 			},
-			detail: { summary: 'Get User By Id', tags: ['Users Management'] },
-		},
-	);
+		);
 }

@@ -14,7 +14,12 @@ export function updateCurrentUserFactory({ commandsRepository }: Dependencies) {
 	return async function updateCurrentUser(
 		params: UpdateCurrentUserParams,
 	): Promise<User> {
-		assertCanUpdateSelf(params.clientStatus);
+		assertCanUpdateSelf({
+			actorId: params.clientId,
+			targetId: params.clientId,
+			actorRole: params.clientRole,
+			actorStatus: params.clientStatus,
+		});
 		const result = await commandsRepository.updateCurrentUser(
 			params.clientId,
 			params.data,

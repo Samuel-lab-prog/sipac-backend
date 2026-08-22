@@ -1,4 +1,5 @@
-import { ForbiddenError, NotFoundError } from '@DomainError';
+import { NotFoundError } from '@DomainError';
+import type { GetUserByIdParams } from '../../../ports/commands';
 import type { User } from '../../../ports/models';
 import type { QueriesRepository } from '../../../ports/queries';
 import { assertCanAccessUser } from '../../../use-cases/commands/policies';
@@ -8,13 +9,13 @@ interface Dependencies {
 }
 
 export function getUserByIdFactory({ queriesRepository }: Dependencies) {
-	return async function getUserById(params: {
-		id: number;
-		clientId: number;
-		clientRole: string;
-		clientStatus: string;
-	}): Promise<User> {
-		assertCanAccessUser(params.clientRole, params.clientStatus);
+	return async function getUserById(params: GetUserByIdParams): Promise<User> {
+		assertCanAccessUser({
+			actorId: params.clientId,
+			targetId: params.id,
+			actorRole: params.clientRole,
+			actorStatus: params.clientStatus,
+		});
 		const user = await queriesRepository.selectUserById(params.id);
 		if (user) return user;
 		throw new NotFoundError('User not found');
