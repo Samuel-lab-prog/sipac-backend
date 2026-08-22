@@ -2,6 +2,9 @@ import { appErrorSchema } from '@AppError';
 import { authPlugin } from '@GenericSubdomains/authentication/composition';
 import { Elysia } from 'elysia';
 import {
+	avatarUploadRequestSchema,
+	avatarUploadResponseSchema,
+	setAvatarSchema,
 	createUserSchema,
 	updateUserParamsSchema,
 	userIdParamsSchema,
@@ -42,6 +45,44 @@ export function createUsersCommandsRouter(services: UsersCommandsServices) {
 					401: appErrorSchema,
 				},
 				detail: { summary: 'Update Current User', tags: ['Users Management'] },
+			},
+		)
+		.post(
+			'/me/avatar/upload-url',
+			({ body, auth }) =>
+				services.createAvatarUploadUrl({
+					data: body,
+					...auth,
+				}),
+			{
+				body: avatarUploadRequestSchema,
+				response: {
+					200: avatarUploadResponseSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+				},
+				detail: {
+					summary: 'Create Avatar Upload URL',
+					tags: ['Users Management'],
+				},
+			},
+		)
+		.put(
+			'/me/avatar',
+			({ body, auth }) =>
+				services.setAvatar({
+					data: body,
+					...auth,
+				}),
+			{
+				body: setAvatarSchema,
+				response: {
+					200: userSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: { summary: 'Set Avatar', tags: ['Users Management'] },
 			},
 		)
 		.put(

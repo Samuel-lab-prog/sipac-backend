@@ -4,7 +4,9 @@
 
 export * from './policies';
 export * from './create/execute';
+export * from './create-avatar-upload-url/execute';
 export * from './delete/execute';
 export * from './restore/execute';
+export * from './set-avatar/execute';
 export * from './update/execute';
 export * from './update-current/execute';

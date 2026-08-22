@@ -1,4 +1,5 @@
 import type { CommandResult } from '@SharedKernel/types/types';
+import type { AvatarUploadUrlResult } from '@SharedKernel/ports/storage';
 import type { Static } from 'elysia';
 import type {
 	CreateUser,
@@ -7,7 +8,12 @@ import type {
 	UserRole,
 	UserStatus,
 } from './models';
-import { updateUserParamsSchema, updateUserSchema } from './schemas';
+import {
+	avatarUploadRequestSchema,
+	setAvatarSchema,
+	updateUserParamsSchema,
+	updateUserSchema,
+} from './schemas';
 
 export type CreateUserParams = {
 	data: CreateUser;
@@ -28,6 +34,20 @@ export type UpdateCurrentUserParams = {
 	clientStatus: UserStatus;
 };
 
+export type CreateAvatarUploadUrlParams = {
+	data: Static<typeof avatarUploadRequestSchema>;
+	clientId: number;
+	clientRole: UserRole;
+	clientStatus: UserStatus;
+};
+
+export type SetAvatarParams = {
+	data: Static<typeof setAvatarSchema>;
+	clientId: number;
+	clientRole: UserRole;
+	clientStatus: UserStatus;
+};
+
 export type GetUserByIdParams = {
 	id: number;
 	clientId: number;
@@ -42,6 +62,10 @@ export interface UsersCommandsServices {
 	createUser: (params: CreateUserParams) => Promise<User>;
 	updateUser: (params: UpdateUserParams) => Promise<User>;
 	updateCurrentUser: (params: UpdateCurrentUserParams) => Promise<User>;
+	createAvatarUploadUrl: (
+		params: CreateAvatarUploadUrlParams,
+	) => Promise<AvatarUploadUrlResult>;
+	setAvatar: (params: SetAvatarParams) => Promise<User>;
 	deleteUser: (params: DeleteUserParams) => Promise<User>;
 	restoreUser: (params: RestoreUserParams) => Promise<User>;
 }

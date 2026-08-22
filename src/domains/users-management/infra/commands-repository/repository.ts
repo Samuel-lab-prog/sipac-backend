@@ -42,6 +42,8 @@ function updateUser(id: number, user: Partial<CreateUserDB>) {
 				...(user.email !== undefined && { email: user.email }),
 				...(user.rg !== undefined && { rg: user.rg }),
 				...(user.cpf !== undefined && { cpf: user.cpf }),
+				...(user.role !== undefined && { role: user.role }),
+				...(user.status !== undefined && { status: user.status }),
 				...(user.avatarUrl !== undefined && { avatarUrl: user.avatarUrl }),
 				...(user.academicId !== undefined && {
 					academicId: user.academicId,
@@ -70,6 +72,8 @@ function updateCurrentUser(clientId: number, user: Partial<CreateUserDB>) {
 				...(user.email !== undefined && { email: user.email }),
 				...(user.rg !== undefined && { rg: user.rg }),
 				...(user.cpf !== undefined && { cpf: user.cpf }),
+				...(user.role !== undefined && { role: user.role }),
+				...(user.status !== undefined && { status: user.status }),
 				...(user.avatarUrl !== undefined && { avatarUrl: user.avatarUrl }),
 				...(user.academicId !== undefined && {
 					academicId: user.academicId,

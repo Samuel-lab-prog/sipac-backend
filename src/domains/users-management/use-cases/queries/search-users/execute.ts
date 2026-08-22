@@ -13,9 +13,8 @@ const MAX_LIMIT = 100;
 export function searchUsersFactory({ queriesRepository }: Dependencies) {
 	return function searchUsers(params: SearchUsersParams) {
 		return queriesRepository.selectUsers({
-			searchTerm: params.searchTerm,
+			...params,
 			limit: Math.min(params.limit ?? DEFAULT_LIMIT, MAX_LIMIT),
-			cursor: params.cursor,
 		});
 	};
 }

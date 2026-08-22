@@ -10,6 +10,8 @@ import {
 	userNicknameSchema,
 	userRgSchema,
 	departmentSchema,
+	userRoleSchema,
+	userStatusSchema,
 } from '../field-schemas';
 import { emailSchema, idSchema } from '@SharedKernel/schemas/schemas';
 
@@ -27,6 +29,8 @@ export const updateUserSchema = t.Object({
 	email: t.Optional(emailSchema),
 	rg: t.Optional(userRgSchema),
 	cpf: t.Optional(userCpfSchema),
+	role: t.Optional(userRoleSchema),
+	status: t.Optional(userStatusSchema),
 	avatarUrl: t.Optional(t.Nullable(avatarUrlSchema)),
 	academicId: t.Optional(t.Nullable(academicIdSchema)),
 	campus: t.Optional(t.Nullable(campusSchema)),

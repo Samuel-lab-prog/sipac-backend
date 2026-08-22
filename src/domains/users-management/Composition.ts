@@ -2,18 +2,25 @@ import {
 	BcryptHashService,
 	FakeHashService,
 } from '@SharedKernel/infra/encrypting/bcrypt';
+import { storageService } from '@SharedKernel/infra/storage/storage-service';
 import { commandsRepository } from './infra/commands-repository/repository';
 import { queriesRepository } from './infra/queries-repository/repository';
 import { createUsersCommandsRouter } from './adapters/commands-router';
 import { createUsersReadRouter } from './adapters/queries-router';
 import {
 	createUserFactory,
+	createAvatarUploadUrlFactory,
+	setAvatarFactory,
 	deleteUserFactory,
 	updateCurrentUserFactory,
 	restoreUserFactory,
 	updateUserFactory,
 } from './use-cases/commands';
-import { getUserByIdFactory, searchUsersFactory } from './use-cases/queries';
+import {
+	getCurrentUserFactory,
+	getUserByIdFactory,
+	searchUsersFactory,
+} from './use-cases/queries';
 
 const createUser = createUserFactory({
 	commandsRepository,
@@ -33,11 +40,23 @@ const getUserById = getUserByIdFactory({
 	queriesRepository,
 });
 
+const getCurrentUser = getCurrentUserFactory({
+	queriesRepository,
+});
+
 const updateUser = updateUserFactory({
 	commandsRepository,
 });
 
 const updateCurrentUser = updateCurrentUserFactory({
+	commandsRepository,
+});
+
+const createAvatarUploadUrl = createAvatarUploadUrlFactory({
+	storageService,
+});
+
+const setAvatar = setAvatarFactory({
 	commandsRepository,
 });
 
@@ -53,6 +72,8 @@ export const userCommandsRouter = createUsersCommandsRouter({
 	createUser,
 	updateUser,
 	updateCurrentUser,
+	createAvatarUploadUrl,
+	setAvatar,
 	deleteUser,
 	restoreUser,
 });
@@ -61,6 +82,8 @@ export const userCommandsRouterWithFakeHash = createUsersCommandsRouter({
 	createUser: createUserWithFakeHash,
 	updateUser,
 	updateCurrentUser,
+	createAvatarUploadUrl,
+	setAvatar,
 	deleteUser,
 	restoreUser,
 });
@@ -68,4 +91,5 @@ export const userCommandsRouterWithFakeHash = createUsersCommandsRouter({
 export const userQueriesRouter = createUsersReadRouter({
 	searchUsers,
 	getUserById,
+	getCurrentUser,
 });

@@ -8,6 +8,8 @@ export type UserPolicyAction =
 	| 'view_self'
 	| 'update_any'
 	| 'update_self'
+	| 'change_status'
+	| 'change_role'
 	| 'delete_any'
 	| 'restore_any';
 
@@ -68,6 +70,18 @@ function canUpdateSelf(ctx: UserPolicyContext) {
 	assertSelfTarget(ctx);
 }
 
+function canChangeStatus(ctx: UserPolicyContext) {
+	assertActorIsPrivileged(ctx.actorRole);
+	assertActorIsActive(ctx.actorStatus);
+	assertNotSelfTarget(ctx);
+}
+
+function canChangeRole(ctx: UserPolicyContext) {
+	assertActorIsPrivileged(ctx.actorRole);
+	assertActorIsActive(ctx.actorStatus);
+	assertNotSelfTarget(ctx);
+}
+
 function canDeleteAny(ctx: UserPolicyContext) {
 	assertActorIsPrivileged(ctx.actorRole);
 	assertActorIsActive(ctx.actorStatus);
@@ -98,6 +112,12 @@ export function assertUserPolicy(
 		case 'update_self':
 			canUpdateSelf(ctx);
 			return;
+		case 'change_status':
+			canChangeStatus(ctx);
+			return;
+		case 'change_role':
+			canChangeRole(ctx);
+			return;
 		case 'delete_any':
 			canDeleteAny(ctx);
 			return;
@@ -117,6 +137,14 @@ export function assertCanUpdateUser(ctx: UserPolicyContext) {
 
 export function assertCanUpdateSelf(ctx: UserPolicyContext) {
 	assertUserPolicy('update_self', ctx);
+}
+
+export function assertCanChangeStatus(ctx: UserPolicyContext) {
+	assertUserPolicy('change_status', ctx);
+}
+
+export function assertCanChangeRole(ctx: UserPolicyContext) {
+	assertUserPolicy('change_role', ctx);
 }
 
 export function assertCanDeleteUser(ctx: UserPolicyContext) {
