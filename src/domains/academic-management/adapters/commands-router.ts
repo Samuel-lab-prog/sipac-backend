@@ -4,22 +4,15 @@ import { Elysia, t } from 'elysia';
 import {
 	academicActivitySchema,
 	academicActivitySubmissionSchema,
-	academicPeriodSchema,
-	attendanceRecordSchema,
-	classOfferingSchema,
 	createAcademicActivitySchema,
 	createAcademicActivitySubmissionSchema,
 	createAcademicActivityAttachmentUploadResponseSchema,
 	createAcademicActivityAttachmentUploadSchema,
-	createAcademicPeriodSchema,
-	createClassOfferingSchema,
 	createProfessorProfileSchema,
 	createStaffProfileSchema,
 	createStudentProfileSchema,
 	linkProfessorToDepartmentSchema,
 	linkStudentToCourseSchema,
-	markAttendanceBatchSchema,
-	markAttendanceSchema,
 	professorProfileSchema,
 	staffProfileSchema,
 	studentProfileSchema,
@@ -31,10 +24,8 @@ import {
 } from '../ports/schemas';
 import type {
 	AcademicCommandsServices,
-	CreateAcademicPeriodParams,
 	CreateAcademicActivityParams,
 	CreateAcademicActivitySubmissionParams,
-	CreateClassOfferingParams,
 } from '../ports/commands';
 
 export function createAcademicCommandsRouter(
@@ -97,48 +88,6 @@ export function createAcademicCommandsRouter(
 				},
 				detail: {
 					summary: 'Submit Academic Activity',
-					tags: ['Academic Management'],
-				},
-			},
-		)
-		.post(
-			'/academic-periods',
-			({ body, set }) => {
-				set.status = 201;
-				return services.createAcademicPeriod(
-					body as CreateAcademicPeriodParams,
-				);
-			},
-			{
-				body: createAcademicPeriodSchema,
-				response: {
-					201: academicPeriodSchema,
-					401: appErrorSchema,
-					409: appErrorSchema,
-					422: appErrorSchema,
-				},
-				detail: {
-					summary: 'Create Academic Period',
-					tags: ['Academic Management'],
-				},
-			},
-		)
-		.post(
-			'/class-offerings',
-			({ body, set }) => {
-				set.status = 201;
-				return services.createClassOffering(body as CreateClassOfferingParams);
-			},
-			{
-				body: createClassOfferingSchema,
-				response: {
-					201: classOfferingSchema,
-					401: appErrorSchema,
-					409: appErrorSchema,
-					422: appErrorSchema,
-				},
-				detail: {
-					summary: 'Create Class Offering',
 					tags: ['Academic Management'],
 				},
 			},
@@ -401,62 +350,6 @@ export function createAcademicCommandsRouter(
 				},
 				detail: {
 					summary: 'Unlink Professor from Department',
-					tags: ['Academic Management'],
-				},
-			},
-		)
-		.post(
-			'/attendance',
-			({ body, auth, set }) => {
-				set.status = 201;
-				return services.markAttendance({
-					...body,
-					actorId: auth.clientId,
-					actorRole: auth.clientRole,
-					actorStatus: auth.clientStatus,
-					targetUserId: auth.clientId,
-				});
-			},
-			{
-				body: markAttendanceSchema,
-				response: {
-					201: attendanceRecordSchema,
-					401: appErrorSchema,
-					403: appErrorSchema,
-					404: appErrorSchema,
-					409: appErrorSchema,
-					422: appErrorSchema,
-				},
-				detail: {
-					summary: 'Mark Attendance',
-					tags: ['Academic Management'],
-				},
-			},
-		)
-		.post(
-			'/attendance/batch',
-			({ body, auth, set }) => {
-				set.status = 201;
-				return services.markAttendanceBatch({
-					...body,
-					actorId: auth.clientId,
-					actorRole: auth.clientRole,
-					actorStatus: auth.clientStatus,
-					targetUserId: auth.clientId,
-				});
-			},
-			{
-				body: markAttendanceBatchSchema,
-				response: {
-					201: t.Array(attendanceRecordSchema),
-					401: appErrorSchema,
-					403: appErrorSchema,
-					404: appErrorSchema,
-					409: appErrorSchema,
-					422: appErrorSchema,
-				},
-				detail: {
-					summary: 'Mark Attendance Batch',
 					tags: ['Academic Management'],
 				},
 			},

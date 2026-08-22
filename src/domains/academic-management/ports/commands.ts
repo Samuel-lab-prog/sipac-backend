@@ -2,9 +2,6 @@ import type {
 	AcademicActivity,
 	AcademicActivityAttachment,
 	AcademicActivitySubmission,
-	AttendanceRecord,
-	AcademicPeriod,
-	ClassOffering,
 	ProfessorProfile,
 	StaffProfile,
 	StudentProfile,
@@ -39,20 +36,6 @@ export type LinkProfessorToDepartmentParams = AcademicPolicyContext & {
 };
 export type UnlinkStudentFromCourseParams = AcademicPolicyContext;
 export type UnlinkProfessorFromDepartmentParams = AcademicPolicyContext;
-export type MarkAttendanceParams = AcademicPolicyContext & {
-	classSessionId: number;
-	studentProfileId: number;
-	status: string;
-};
-export type MarkAttendanceBatchParams = AcademicPolicyContext & {
-	classSessionId: number;
-	attendances: Array<{
-		studentProfileId: number;
-		status: string;
-	}>;
-};
-export type CreateAcademicPeriodParams = Omit<AcademicPeriod, 'id'>;
-export type CreateClassOfferingParams = Omit<ClassOffering, 'id'>;
 export type CreateAcademicActivityAttachmentParams = Omit<
 	AcademicActivityAttachment,
 	'id' | 'activityId'
@@ -108,21 +91,6 @@ export interface AcademicCommandsRepository {
 	unlinkProfessorFromDepartment(
 		userId: number,
 	): Promise<import('@SharedKernel/types').CommandResult<ProfessorProfile>>;
-	markAttendance(params: {
-		classSessionId: number;
-		studentProfileId: number;
-		status: string;
-		markedByProfessorProfileId: number | null;
-	}): Promise<import('@SharedKernel/types').CommandResult<AttendanceRecord>>;
-	markAttendanceBatch(
-		params: MarkAttendanceBatchParams,
-	): Promise<import('@SharedKernel/types').CommandResult<AttendanceRecord[]>>;
-	createAcademicPeriod(
-		params: CreateAcademicPeriodParams,
-	): Promise<import('@SharedKernel/types').CommandResult<AcademicPeriod>>;
-	createClassOffering(
-		params: CreateClassOfferingParams,
-	): Promise<import('@SharedKernel/types').CommandResult<ClassOffering>>;
 	createAcademicActivity(
 		params: CreateAcademicActivityParams,
 	): Promise<import('@SharedKernel/types').CommandResult<AcademicActivity>>;
@@ -162,19 +130,9 @@ export interface AcademicCommandsServices {
 	unlinkProfessorFromDepartment(
 		params: UnlinkProfessorFromDepartmentParams,
 	): Promise<ProfessorProfile>;
-	markAttendance(params: MarkAttendanceParams): Promise<AttendanceRecord>;
-	markAttendanceBatch(
-		params: MarkAttendanceBatchParams,
-	): Promise<AttendanceRecord[]>;
-	createAcademicPeriod(
-		params: CreateAcademicPeriodParams,
-	): Promise<AcademicPeriod>;
 	createAcademicActivity(
 		params: CreateAcademicActivityParams,
 	): Promise<AcademicActivity>;
-	createClassOffering(
-		params: CreateClassOfferingParams,
-	): Promise<ClassOffering>;
 	createAcademicActivitySubmission(
 		params: CreateAcademicActivitySubmissionParams,
 	): Promise<AcademicActivitySubmission>;

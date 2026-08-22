@@ -20,6 +20,14 @@ import {
 	academicQueriesRouter,
 } from '@Domains/academic-management/composition';
 import {
+	attendanceCommandsRouter,
+	attendanceQueriesRouter,
+} from '@Domains/attendance-management/composition';
+import {
+	curriculumCommandsRouter,
+	curriculumQueriesRouter,
+} from '@Domains/curriculum-management/composition';
+import {
 	authRouter,
 	authRouterWithFakeHash,
 } from '@GenericSubdomains/authentication/composition';
@@ -77,9 +85,13 @@ function makeServer({
 
 			.use(enableRealHash ? userCommandsRouter : userCommandsRouterWithFakeHash)
 			.use(academicCommandsRouter)
+			.use(attendanceCommandsRouter)
+			.use(curriculumCommandsRouter)
 			.use(enableRealHash ? authRouter : authRouterWithFakeHash)
 			.use(userQueriesRouter)
 			.use(academicQueriesRouter)
+			.use(attendanceQueriesRouter)
+			.use(curriculumQueriesRouter)
 	);
 }
 

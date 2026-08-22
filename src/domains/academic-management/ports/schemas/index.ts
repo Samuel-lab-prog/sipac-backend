@@ -1,7 +1,6 @@
 export * from './create-student-profile-schema';
 export * from './create-professor-profile-schema';
 export * from './create-staff-profile-schema';
-export * from './attendance-record-schema';
 export * from './academic-period-schema';
 export * from './create-academic-period-schema';
 export * from './create-class-offering-schema';
@@ -14,8 +13,6 @@ export * from './create-academic-activity-attachment-upload-response-schema';
 export * from './link-professor-to-department-schema';
 export * from './link-student-to-course-schema';
 export * from './class-offering-schema';
-export * from './mark-attendance-schema';
-export * from './mark-attendance-batch-schema';
 export * from './unlink-professor-from-department-schema';
 export * from './unlink-student-from-course-schema';
 export * from './professor-profile-schema';

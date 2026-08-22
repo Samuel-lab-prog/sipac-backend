@@ -1,23 +1,28 @@
 # Domains and Use Cases Roadmap
 
-This document lists the domains and use cases that are interesting for a SIGAA-like academic system.
+This document lists the domains and use cases that are interesting for a
+SIGAA-like academic system.
 
 ## Phase Backlog
 
-The roadmap below is organized so that Phase 1 establishes identity and access, while Phase 2 focuses on the academic core.
+The roadmap below is organized so that Phase 1 establishes identity and access,
+while Phase 2 focuses on the academic core.
 
 ## Phase 1. Foundation
 
 ### Main Goal
+
 - Establish identity, authentication, and account lifecycle.
 
 ### Core Domains
+
 - `users-management`
 - `authentication`
 - `authorization`
 - `sessions`
 
 ### Core Use Cases
+
 - Create user
 - Update user
 - Disable user
@@ -37,15 +42,18 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## Phase 2. Academic Core
 
 ### Main Goal
+
 - Model the operational heart of the academic system.
 
 ### Domains
+
 - `academic-management`
 - `curriculum-management`
 - `class-management`
 - `enrollment-management`
 
 ### Priority Use Cases
+
 - Create student profile
 - Create professor profile
 - Create staff profile
@@ -69,6 +77,7 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 - Close academic period
 
 ### Supporting Use Cases
+
 - Create subject
 - Update subject
 - Define prerequisites
@@ -97,9 +106,11 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## Phase 3. Academic Expansion
 
 ### Main Goal
+
 - Extend the academic core with courses, schedules, and operational support.
 
 ### Domains
+
 - `courses-management`
 - `subjects-management`
 - `schedule-management`
@@ -108,6 +119,7 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 - `attendance-management`
 
 ### Use Cases
+
 - Create course
 - Update course
 - Archive course
@@ -139,6 +151,7 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 6. Activities and Assessments
 
 ### Domains
+
 - `activities-management`
 - `assignments-management`
 - `assessments-management`
@@ -146,6 +159,7 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 - `grades-management`
 
 ### Use Cases
+
 - Create activity
 - Update activity
 - Attach file
@@ -161,11 +175,13 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 7. Files and Storage
 
 ### Domains
+
 - `files-management`
 - `media-management`
 - `documents-management`
 
 ### Use Cases
+
 - Generate upload URL
 - Register uploaded file
 - Link file to activity
@@ -178,12 +194,14 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 8. Communication
 
 ### Domains
+
 - `announcements-management`
 - `messages-management`
 - `notifications-management`
 - `messaging`
 
 ### Use Cases
+
 - Create announcement
 - Update announcement
 - Publish announcement
@@ -197,12 +215,14 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 9. Academic Records
 
 ### Domains
+
 - `transcripts-management`
 - `certificates-management`
 - `history-management`
 - `documents-management`
 
 ### Use Cases
+
 - Generate transcript
 - Calculate average
 - Consolidate approval or failure
@@ -215,10 +235,12 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 10. Enrollment Lifecycle
 
 ### Domains
+
 - `enrollment-management`
 - `registration-management`
 
 ### Use Cases
+
 - Create enrollment
 - Renew enrollment
 - Freeze enrollment
@@ -231,12 +253,14 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 11. People and Profiles
 
 ### Domains
+
 - `student-management`
 - `professor-management`
 - `staff-management`
 - `guardian-management`
 
 ### Use Cases
+
 - Create profile
 - Update profile
 - View profile
@@ -248,12 +272,14 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 12. Organization
 
 ### Domains
+
 - `campus-management`
 - `department-management`
 - `room-management`
 - `building-management`
 
 ### Use Cases
+
 - Create campus
 - Create department
 - Create building
@@ -266,11 +292,13 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 13. Academic Planning
 
 ### Domains
+
 - `planning-management`
 - `semester-planning`
 - `teaching-assignment`
 
 ### Use Cases
+
 - Plan semester
 - Distribute faculty
 - Define offered subjects
@@ -281,11 +309,13 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 14. Finance and Billing
 
 ### Domains
+
 - `billing-management`
 - `fees-management`
 - `scholarship-management`
 
 ### Use Cases
+
 - Generate charge
 - Register payment
 - Apply discount
@@ -296,11 +326,13 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 15. Support and Audit
 
 ### Domains
+
 - `support-management`
 - `audit-log`
 - `incident-management`
 
 ### Use Cases
+
 - Open ticket
 - Add ticket comment
 - Close ticket
@@ -311,11 +343,13 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 16. Reporting and Analytics
 
 ### Domains
+
 - `reports-management`
 - `dashboard-management`
 - `analytics`
 
 ### Use Cases
+
 - Attendance report
 - Performance report
 - Dropout report
@@ -327,11 +361,13 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 17. Integration
 
 ### Domains
+
 - `integrations`
 - `import-export`
 - `sync-management`
 
 ### Use Cases
+
 - Import students
 - Import professors
 - Import classes
@@ -343,11 +379,13 @@ The roadmap below is organized so that Phase 1 establishes identity and access, 
 ## 18. Security and Compliance
 
 ### Domains
+
 - `security-management`
 - `consent-management`
 - `privacy-management`
 
 ### Use Cases
+
 - Register consent
 - Revoke consent
 - Mask sensitive data
