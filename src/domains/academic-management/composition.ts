@@ -7,6 +7,8 @@ import { createAcademicQueriesRouter } from './adapters/queries-router';
 import { createProfessorProfileFactory } from './use-cases/commands/create-professor-profile/execute';
 import { createStaffProfileFactory } from './use-cases/commands/create-staff-profile/execute';
 import { createStudentProfileFactory } from './use-cases/commands/create-student-profile/execute';
+import { createAcademicPeriodFactory } from './use-cases/commands/create-academic-period/execute';
+import { createClassOfferingFactory } from './use-cases/commands/create-class-offering/execute';
 import { linkProfessorToDepartmentFactory } from './use-cases/commands/link-professor-to-department/execute';
 import { linkStudentToCourseFactory } from './use-cases/commands/link-student-to-course/execute';
 import { markAttendanceFactory } from './use-cases/commands/mark-attendance/execute';
@@ -26,6 +28,12 @@ const createProfessorProfile = createProfessorProfileFactory({
 	commandsRepository,
 });
 const createStaffProfile = createStaffProfileFactory({
+	commandsRepository,
+});
+const createAcademicPeriod = createAcademicPeriodFactory({
+	commandsRepository,
+});
+const createClassOffering = createClassOfferingFactory({
 	commandsRepository,
 });
 const updateStudentProfile = updateStudentProfileFactory({
@@ -67,6 +75,8 @@ export const academicCommandsRouter = createAcademicCommandsRouter({
 	createStudentProfile,
 	createProfessorProfile,
 	createStaffProfile,
+	createAcademicPeriod,
+	createClassOffering,
 	updateStudentProfile,
 	updateProfessorProfile,
 	updateStaffProfile,

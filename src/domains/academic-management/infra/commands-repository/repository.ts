@@ -3,6 +3,8 @@ import { withPrismaErrorHandling, withPrismaResult } from '@PrismaErrorHandler';
 import type { CommandResult } from '@SharedKernel/types';
 import type {
 	AttendanceRecord,
+	AcademicPeriod,
+	ClassOffering,
 	ProfessorProfile,
 	StaffProfile,
 	StudentProfile,
@@ -149,6 +151,18 @@ export function markAttendance(params: {
 	);
 }
 
+export function createAcademicPeriod(
+	params: import('../../ports/commands').CreateAcademicPeriodParams,
+): Promise<CommandResult<AcademicPeriod>> {
+	return withPrismaResult(() => prisma.academicPeriod.create({ data: params }));
+}
+
+export function createClassOffering(
+	params: import('../../ports/commands').CreateClassOfferingParams,
+): Promise<CommandResult<ClassOffering>> {
+	return withPrismaResult(() => prisma.classOffering.create({ data: params }));
+}
+
 export const commandsRepository: AcademicCommandsRepository = {
 	insertStudentProfile,
 	createProfessorProfile: insertProfessorProfile,
@@ -161,6 +175,8 @@ export const commandsRepository: AcademicCommandsRepository = {
 	unlinkStudentFromCourse,
 	unlinkProfessorFromDepartment,
 	markAttendance,
+	createAcademicPeriod,
+	createClassOffering,
 };
 
 export const queriesRepository: AcademicQueriesRepository = {

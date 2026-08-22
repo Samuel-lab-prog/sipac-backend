@@ -2,7 +2,11 @@ import { appErrorSchema } from '@AppError';
 import { authPlugin } from '@GenericSubdomains/authentication/composition';
 import { Elysia } from 'elysia';
 import {
+	academicPeriodSchema,
 	attendanceRecordSchema,
+	classOfferingSchema,
+	createAcademicPeriodSchema,
+	createClassOfferingSchema,
 	createProfessorProfileSchema,
 	createStaffProfileSchema,
 	createStudentProfileSchema,
@@ -18,13 +22,59 @@ import {
 	updateStaffProfileSchema,
 	updateStudentProfileSchema,
 } from '../ports/schemas';
-import type { AcademicCommandsServices } from '../ports/commands';
+import type {
+	CreateAcademicPeriodParams,
+	CreateClassOfferingParams,
+	AcademicCommandsServices,
+} from '../ports/commands';
 
 export function createAcademicCommandsRouter(
 	services: AcademicCommandsServices,
 ) {
 	return new Elysia({ prefix: '/academic' })
 		.use(authPlugin)
+		.post(
+			'/academic-periods',
+			({ body, set }) => {
+				set.status = 201;
+				return services.createAcademicPeriod(
+					body as CreateAcademicPeriodParams,
+				);
+			},
+			{
+				body: createAcademicPeriodSchema,
+				response: {
+					201: academicPeriodSchema,
+					401: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Create Academic Period',
+					tags: ['Academic Management'],
+				},
+			},
+		)
+		.post(
+			'/class-offerings',
+			({ body, set }) => {
+				set.status = 201;
+				return services.createClassOffering(body as CreateClassOfferingParams);
+			},
+			{
+				body: createClassOfferingSchema,
+				response: {
+					201: classOfferingSchema,
+					401: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Create Class Offering',
+					tags: ['Academic Management'],
+				},
+			},
+		)
 		.post(
 			'/students/profile',
 			({ body, auth, set }) => {
@@ -309,7 +359,10 @@ export function createAcademicCommandsRouter(
 					409: appErrorSchema,
 					422: appErrorSchema,
 				},
-				detail: { summary: 'Mark Attendance', tags: ['Academic Management'] },
+				detail: {
+					summary: 'Mark Attendance',
+					tags: ['Academic Management'],
+				},
 			},
 		);
 }

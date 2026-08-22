@@ -1,5 +1,7 @@
 import type {
 	AttendanceRecord,
+	AcademicPeriod,
+	ClassOffering,
 	ProfessorProfile,
 	StaffProfile,
 	StudentProfile,
@@ -36,6 +38,8 @@ export type MarkAttendanceParams = AcademicPolicyContext & {
 	studentProfileId: number;
 	status: string;
 };
+export type CreateAcademicPeriodParams = Omit<AcademicPeriod, 'id'>;
+export type CreateClassOfferingParams = Omit<ClassOffering, 'id'>;
 
 export interface AcademicCommandsRepository {
 	insertStudentProfile: (
@@ -79,6 +83,12 @@ export interface AcademicCommandsRepository {
 		status: string;
 		markedByProfessorProfileId: number | null;
 	}): Promise<import('@SharedKernel/types').CommandResult<AttendanceRecord>>;
+	createAcademicPeriod(
+		params: CreateAcademicPeriodParams,
+	): Promise<import('@SharedKernel/types').CommandResult<AcademicPeriod>>;
+	createClassOffering(
+		params: CreateClassOfferingParams,
+	): Promise<import('@SharedKernel/types').CommandResult<ClassOffering>>;
 }
 
 export interface AcademicCommandsServices {
@@ -111,4 +121,10 @@ export interface AcademicCommandsServices {
 		params: UnlinkProfessorFromDepartmentParams,
 	): Promise<ProfessorProfile>;
 	markAttendance(params: MarkAttendanceParams): Promise<AttendanceRecord>;
+	createAcademicPeriod(
+		params: CreateAcademicPeriodParams,
+	): Promise<AcademicPeriod>;
+	createClassOffering(
+		params: CreateClassOfferingParams,
+	): Promise<ClassOffering>;
 }
