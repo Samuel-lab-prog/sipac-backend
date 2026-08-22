@@ -4,7 +4,7 @@ import type { CommandResult } from '@SharedKernel/types';
 import type {
 	ProfessorProfile,
 	StaffProfile,
-	StudentProfile
+	StudentProfile,
 } from '../../ports/models';
 import type { AcademicCommandsRepository } from '../../ports/commands';
 import type { AcademicQueriesRepository } from '../../ports/queries';
