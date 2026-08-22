@@ -1,7 +1,5 @@
 import { ForbiddenError } from '@DomainError';
-
-export type UserRole = 'student' | 'professor' | 'staff' | 'admin';
-export type UserStatus = 'active' | 'blocked' | 'suspended';
+import type { UserRole, UserStatus } from '../../public';
 
 export type UserPolicyAction =
 	| 'view_any'

@@ -4,7 +4,7 @@
 
 export * from './get-current-user/execute';
 export * from './get-user-by-id/execute';
-export * from './get-users-by-role/index';
-export * from './get-users-by-status/index';
-export * from './list-deleted-users/index';
+export * from './get-users-by-role/execute';
+export * from './get-users-by-status/execute';
+export * from './list-deleted-users/execute';
 export * from './search-users/execute';

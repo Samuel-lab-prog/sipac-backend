@@ -61,7 +61,7 @@ describe('academic-management > createAcademicActivityAttachmentUploadUrl', () =
 				...actor,
 				activityId: 1,
 				data: {
-					contentType: 'application/x-msdownload',
+					contentType: 'application/x-msdownload' as any,
 					contentLength: 10,
 					fileName: 'file.exe',
 				},

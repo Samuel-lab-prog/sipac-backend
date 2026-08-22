@@ -13,7 +13,7 @@ const USE_CASE_PATTERN =
 	/(?:^|[\\/])src[\\/](domains|generic-subdomains)[\\/][^\\/]+[\\/]use-cases[\\/].+[\\/]execute\.ts$/;
 
 const ROUTER_PATTERN =
-	/(?:^|[\\/])src[\\/](domains|generic-subdomains)[\\/][^\\/]+[\\/]adapters[\\/].+Router\.ts$/;
+	/(?:^|[\\/])src[\\/](domains|generic-subdomains)[\\/][^\\/]+[\\/]adapters[\\/].*router\.ts$/i;
 
 const ENDPOINT_CALL_PATTERN =
 	/\.(get|post|put|patch|delete|options|head)\s*\(/g;
