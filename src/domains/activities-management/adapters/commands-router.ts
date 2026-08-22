@@ -6,7 +6,7 @@ import {
 	academicActivitySubmissionSchema,
 	createAcademicActivitySchema,
 	createAcademicActivitySubmissionSchema,
-} from '../../academic-management/ports/schemas';
+} from '../ports/schemas';
 import type {
 	ActivitiesCommandsServices,
 	CreateAcademicActivityParams,
@@ -58,7 +58,13 @@ export function createActivitiesCommandsRouter(
 			{
 				params: t.Object({ activityId: t.Numeric() }),
 				body: createAcademicActivitySubmissionSchema,
-				response: { 201: academicActivitySubmissionSchema, 401: appErrorSchema, 403: appErrorSchema, 409: appErrorSchema, 422: appErrorSchema },
+				response: {
+					201: academicActivitySubmissionSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
 			},
 		);
 }

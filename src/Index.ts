@@ -24,6 +24,10 @@ import {
 	attendanceQueriesRouter,
 } from '@Domains/attendance-management/composition';
 import {
+	activitiesCommandsRouter,
+	activitiesQueriesRouter,
+} from '@Domains/activities-management/composition';
+import {
 	curriculumCommandsRouter,
 	curriculumQueriesRouter,
 } from '@Domains/curriculum-management/composition';
@@ -85,11 +89,13 @@ function makeServer({
 
 			.use(enableRealHash ? userCommandsRouter : userCommandsRouterWithFakeHash)
 			.use(academicCommandsRouter)
+			.use(activitiesCommandsRouter)
 			.use(attendanceCommandsRouter)
 			.use(curriculumCommandsRouter)
 			.use(enableRealHash ? authRouter : authRouterWithFakeHash)
 			.use(userQueriesRouter)
 			.use(academicQueriesRouter)
+			.use(activitiesQueriesRouter)
 			.use(attendanceQueriesRouter)
 			.use(curriculumQueriesRouter)
 	);

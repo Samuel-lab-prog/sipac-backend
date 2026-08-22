@@ -1,7 +1,7 @@
 import { ConflictError, UnknownError } from '@DomainError';
 import type { CreateAcademicActivitySubmissionParams } from '../../../ports/commands';
 import type { AcademicActivitySubmission } from '../../../ports/models';
-import { assertCanSubmitAcademicActivity } from '../policies';
+import { assertCanSubmitAcademicActivity } from '../../../../academic-management/use-cases/commands/policies';
 
 interface Dependencies {
 	commandsRepository: {

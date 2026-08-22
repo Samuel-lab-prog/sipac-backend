@@ -2,10 +2,6 @@ import { appErrorSchema } from '@AppError';
 import { authPlugin } from '@GenericSubdomains/authentication/composition';
 import { Elysia, t } from 'elysia';
 import {
-	academicActivitySchema,
-	academicActivitySubmissionSchema,
-	createAcademicActivitySchema,
-	createAcademicActivitySubmissionSchema,
 	createAcademicActivityAttachmentUploadResponseSchema,
 	createAcademicActivityAttachmentUploadSchema,
 	createProfessorProfileSchema,
@@ -22,76 +18,13 @@ import {
 	updateStaffProfileSchema,
 	updateStudentProfileSchema,
 } from '../ports/schemas';
-import type {
-	AcademicCommandsServices,
-	CreateAcademicActivityParams,
-	CreateAcademicActivitySubmissionParams,
-} from '../ports/commands';
+import type { AcademicCommandsServices } from '../ports/commands';
 
 export function createAcademicCommandsRouter(
 	services: AcademicCommandsServices,
 ) {
 	return new Elysia({ prefix: '/academic' })
 		.use(authPlugin)
-		.post(
-			'/activities',
-			({ body, auth, set }) => {
-				set.status = 201;
-				return services.createAcademicActivity({
-					...body,
-					actorId: auth.clientId,
-					actorRole: auth.clientRole,
-					actorStatus: auth.clientStatus,
-					targetUserId: auth.clientId,
-				} as CreateAcademicActivityParams);
-			},
-			{
-				body: createAcademicActivitySchema,
-				response: {
-					201: academicActivitySchema,
-					401: appErrorSchema,
-					403: appErrorSchema,
-					409: appErrorSchema,
-					422: appErrorSchema,
-				},
-				detail: {
-					summary: 'Create Academic Activity',
-					tags: ['Academic Management'],
-				},
-			},
-		)
-		.post(
-			'/activities/:activityId/submissions/me',
-			({ params, body, auth, set }) => {
-				set.status = 201;
-				return services.createAcademicActivitySubmission({
-					activityId: Number(params.activityId),
-					studentProfileId: body.studentProfileId,
-					submittedAt: body.submittedAt,
-					actorId: auth.clientId,
-					actorRole: auth.clientRole,
-					actorStatus: auth.clientStatus,
-					targetUserId: auth.clientId,
-				} as CreateAcademicActivitySubmissionParams);
-			},
-			{
-				params: t.Object({
-					activityId: t.Numeric(),
-				}),
-				body: createAcademicActivitySubmissionSchema,
-				response: {
-					201: academicActivitySubmissionSchema,
-					401: appErrorSchema,
-					403: appErrorSchema,
-					409: appErrorSchema,
-					422: appErrorSchema,
-				},
-				detail: {
-					summary: 'Submit Academic Activity',
-					tags: ['Academic Management'],
-				},
-			},
-		)
 		.post(
 			'/students/profile',
 			({ body, auth, set }) => {

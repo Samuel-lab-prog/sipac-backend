@@ -8,8 +8,6 @@ import { createAcademicQueriesRouter } from './adapters/queries-router';
 import { createProfessorProfileFactory } from './use-cases/commands/create-professor-profile/execute';
 import { createStaffProfileFactory } from './use-cases/commands/create-staff-profile/execute';
 import { createStudentProfileFactory } from './use-cases/commands/create-student-profile/execute';
-import { createAcademicActivityFactory } from './use-cases/commands/create-academic-activity/execute';
-import { createAcademicActivitySubmissionFactory } from './use-cases/commands/create-academic-activity-submission/execute';
 import { createAcademicActivityAttachmentUploadUrlFactory } from './use-cases/commands/create-academic-activity-attachment-upload-url/execute';
 import { linkProfessorToDepartmentFactory } from './use-cases/commands/link-professor-to-department/execute';
 import { linkStudentToCourseFactory } from './use-cases/commands/link-student-to-course/execute';
@@ -31,13 +29,6 @@ const createProfessorProfile = createProfessorProfileFactory({
 const createStaffProfile = createStaffProfileFactory({
 	commandsRepository,
 });
-const createAcademicActivity = createAcademicActivityFactory({
-	commandsRepository,
-});
-const createAcademicActivitySubmission =
-	createAcademicActivitySubmissionFactory({
-		commandsRepository,
-	});
 const createAcademicActivityAttachmentUploadUrl =
 	createAcademicActivityAttachmentUploadUrlFactory({
 		storageService,
@@ -78,8 +69,6 @@ export const academicCommandsRouter = createAcademicCommandsRouter({
 	createStudentProfile,
 	createProfessorProfile,
 	createStaffProfile,
-	createAcademicActivity,
-	createAcademicActivitySubmission,
 	createAcademicActivityAttachmentUploadUrl,
 	updateStudentProfile,
 	updateProfessorProfile,

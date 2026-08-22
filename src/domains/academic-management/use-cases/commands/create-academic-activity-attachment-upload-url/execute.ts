@@ -5,6 +5,7 @@ import type {
 import { ForbiddenError } from '@DomainError';
 import type { CreateAcademicActivityAttachmentUploadParams } from '../../../ports/commands';
 import { assertCanManageAcademicActivityAttachments } from '../policies';
+import { createFileUploadUrlFactory } from '../../../../../generic-subdomains/files/use-cases/commands/create-file-upload-url/execute';
 
 interface Dependencies {
 	storageService: StorageService;
@@ -13,6 +14,8 @@ interface Dependencies {
 export function createAcademicActivityAttachmentUploadUrlFactory({
 	storageService,
 }: Dependencies) {
+	const uploadUrlFactory = createFileUploadUrlFactory({ storageService });
+
 	return function createAcademicActivityAttachmentUploadUrl(
 		params: CreateAcademicActivityAttachmentUploadParams,
 	): Promise<FileUploadUrlResult> {
@@ -28,11 +31,11 @@ export function createAcademicActivityAttachmentUploadUrlFactory({
 			throw new ForbiddenError('Invalid activity attachment content type');
 		}
 
-		return storageService.generateFileUploadUrl(
-			'academic-activities',
+		return uploadUrlFactory({
+			prefix: 'academic-activities',
 			fileName,
 			contentType,
 			contentLength,
-		);
+		});
 	};
 }

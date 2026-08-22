@@ -1,11 +1,4 @@
-import type {
-	AcademicActivity,
-	AcademicActivityAttachment,
-	AcademicActivitySubmission,
-	ProfessorProfile,
-	StaffProfile,
-	StudentProfile,
-} from './models';
+import type { ProfessorProfile, StaffProfile, StudentProfile } from './models';
 import type { AcademicPolicyContext } from '../use-cases/commands/policies';
 import type { FileUploadUrlResult } from '@SharedKernel/ports/storage';
 import type { Static } from 'elysia';
@@ -36,19 +29,6 @@ export type LinkProfessorToDepartmentParams = AcademicPolicyContext & {
 };
 export type UnlinkStudentFromCourseParams = AcademicPolicyContext;
 export type UnlinkProfessorFromDepartmentParams = AcademicPolicyContext;
-export type CreateAcademicActivityAttachmentParams = Omit<
-	AcademicActivityAttachment,
-	'id' | 'activityId'
->;
-export type CreateAcademicActivityParams = Omit<AcademicActivity, 'id'> &
-	AcademicPolicyContext & {
-		attachments?: CreateAcademicActivityAttachmentParams[];
-	};
-export type CreateAcademicActivitySubmissionParams = AcademicPolicyContext & {
-	activityId: number;
-	studentProfileId: number;
-	submittedAt?: Date | null;
-};
 export type CreateAcademicActivityAttachmentUploadParams =
 	AcademicPolicyContext & {
 		activityId: number;
@@ -91,14 +71,6 @@ export interface AcademicCommandsRepository {
 	unlinkProfessorFromDepartment(
 		userId: number,
 	): Promise<import('@SharedKernel/types').CommandResult<ProfessorProfile>>;
-	createAcademicActivity(
-		params: CreateAcademicActivityParams,
-	): Promise<import('@SharedKernel/types').CommandResult<AcademicActivity>>;
-	createAcademicActivitySubmission(
-		params: CreateAcademicActivitySubmissionParams,
-	): Promise<
-		import('@SharedKernel/types').CommandResult<AcademicActivitySubmission>
-	>;
 }
 
 export interface AcademicCommandsServices {
@@ -130,12 +102,6 @@ export interface AcademicCommandsServices {
 	unlinkProfessorFromDepartment(
 		params: UnlinkProfessorFromDepartmentParams,
 	): Promise<ProfessorProfile>;
-	createAcademicActivity(
-		params: CreateAcademicActivityParams,
-	): Promise<AcademicActivity>;
-	createAcademicActivitySubmission(
-		params: CreateAcademicActivitySubmissionParams,
-	): Promise<AcademicActivitySubmission>;
 	createAcademicActivityAttachmentUploadUrl(
 		params: CreateAcademicActivityAttachmentUploadParams,
 	): Promise<FileUploadUrlResult>;
