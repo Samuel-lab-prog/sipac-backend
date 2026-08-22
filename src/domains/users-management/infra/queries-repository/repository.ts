@@ -1,6 +1,7 @@
 import { prisma } from '@Prisma';
 import { withPrismaErrorHandling } from '@PrismaErrorHandler';
 import type { QueriesRepository } from '../../ports/queries';
+import { userSelect } from '../commands-repository/selects';
 
 function selectUsers(params: {
 	searchTerm?: string;
@@ -24,26 +25,7 @@ function selectUsers(params: {
 				skip: 1,
 			}),
 			orderBy: { id: 'desc' },
-			select: {
-				id: true,
-				name: true,
-				nickname: true,
-				email: true,
-				rg: true,
-				cpf: true,
-				role: true,
-				status: true,
-				avatarUrl: true,
-				academicId: true,
-				campus: true,
-				department: true,
-				course: true,
-				admissionYear: true,
-				createdAt: true,
-				updatedAt: true,
-				deletedAt: true,
-				emailVerifiedAt: true,
-			},
+			select: userSelect,
 		});
 
 		const hasMore = users.length > params.limit;

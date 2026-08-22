@@ -6,7 +6,11 @@ import { commandsRepository } from './infra/commands-repository/repository';
 import { queriesRepository } from './infra/queries-repository/repository';
 import { createUsersCommandsRouter } from './adapters/commands-router';
 import { createUsersReadRouter } from './adapters/queries-router';
-import { createUserFactory } from './use-cases/commands';
+import {
+	createUserFactory,
+	updateCurrentUserFactory,
+	updateUserFactory,
+} from './use-cases/commands';
 import { searchUsersFactory } from './use-cases/queries';
 
 const createUser = createUserFactory({
@@ -23,12 +27,24 @@ const searchUsers = searchUsersFactory({
 	queriesRepository,
 });
 
+const updateUser = updateUserFactory({
+	commandsRepository,
+});
+
+const updateCurrentUser = updateCurrentUserFactory({
+	commandsRepository,
+});
+
 export const userCommandsRouter = createUsersCommandsRouter({
 	createUser,
+	updateUser,
+	updateCurrentUser,
 });
 
 export const userCommandsRouterWithFakeHash = createUsersCommandsRouter({
 	createUser: createUserWithFakeHash,
+	updateUser,
+	updateCurrentUser,
 });
 
 export const userQueriesRouter = createUsersReadRouter({

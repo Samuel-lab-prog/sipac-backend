@@ -1,5 +1,9 @@
 import { t } from 'elysia';
-import { dateSchema, emailSchema, idSchema } from '@SharedKernel/schemas/schemas';
+import {
+	dateSchema,
+	emailSchema,
+	idSchema,
+} from '@SharedKernel/schemas/schemas';
 import {
 	academicIdSchema,
 	admissionYearSchema,

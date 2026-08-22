@@ -10,9 +10,7 @@ export type SearchUsersParams = {
 export type PaginatedUsers = Static<typeof paginatedUsersSchema>;
 
 export interface UsersQueriesRouterServices {
-	searchUsers: (
-		params: SearchUsersParams,
-	) => Promise<PaginatedUsers>;
+	searchUsers: (params: SearchUsersParams) => Promise<PaginatedUsers>;
 }
 
 export interface QueriesRepository {

@@ -48,7 +48,7 @@ export const userCpfSchema = t.String({
 
 export const userPasswordSchema = t.String({
 	minLength: 8,
-	example: 'P@ssw0rd',
+	example: '12341234',
 	maxLength: 64,
 	...makeValidationError(
 		'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character',

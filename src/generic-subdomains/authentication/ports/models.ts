@@ -10,8 +10,8 @@ export type LoginResponse = {
 
 export type ClientAuthCredentials = {
 	id: number;
-	role: string;
+	role: AuthClient['role'];
 	email: string;
-	status: string;
+	status: AuthClient['status'];
 	passwordHash: string;
 };

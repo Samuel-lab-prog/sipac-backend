@@ -23,6 +23,6 @@ export const nonNegativeIntegerSchema = t.Numeric({
 });
 export const emailSchema = t.String({
 	format: 'email',
-	example: 'samuelmonni@example.com',
+	example: 'teste@exemplo.com',
 	...makeValidationError('Email must be a valid email address'),
 });

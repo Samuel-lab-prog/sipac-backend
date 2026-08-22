@@ -1,8 +1,6 @@
 import { prisma } from '@Prisma';
 import { withPrismaErrorHandling } from '@PrismaErrorHandler';
-
-export type UserRole = 'student' | 'professor' | 'staff' | 'admin';
-export type UserStatus = 'active' | 'blocked' | 'suspended';
+import type { UserRole, UserStatus } from '../ports/models';
 
 export type UsersPublicContract = {
 	selectAuthUserByEmail(email: string): Promise<{
