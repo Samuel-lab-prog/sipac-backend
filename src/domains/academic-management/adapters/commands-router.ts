@@ -1,10 +1,12 @@
 import { appErrorSchema } from '@AppError';
 import { authPlugin } from '@GenericSubdomains/authentication/composition';
-import { Elysia } from 'elysia';
+import { Elysia, t } from 'elysia';
 import {
 	academicPeriodSchema,
 	attendanceRecordSchema,
 	classOfferingSchema,
+	createAcademicActivityAttachmentUploadResponseSchema,
+	createAcademicActivityAttachmentUploadSchema,
 	createAcademicPeriodSchema,
 	createClassOfferingSchema,
 	createProfessorProfileSchema,
@@ -12,6 +14,7 @@ import {
 	createStudentProfileSchema,
 	linkProfessorToDepartmentSchema,
 	linkStudentToCourseSchema,
+	markAttendanceBatchSchema,
 	markAttendanceSchema,
 	professorProfileSchema,
 	staffProfileSchema,
@@ -23,9 +26,9 @@ import {
 	updateStudentProfileSchema,
 } from '../ports/schemas';
 import type {
+	AcademicCommandsServices,
 	CreateAcademicPeriodParams,
 	CreateClassOfferingParams,
-	AcademicCommandsServices,
 } from '../ports/commands';
 
 export function createAcademicCommandsRouter(
@@ -361,6 +364,62 @@ export function createAcademicCommandsRouter(
 				},
 				detail: {
 					summary: 'Mark Attendance',
+					tags: ['Academic Management'],
+				},
+			},
+		)
+		.post(
+			'/attendance/batch',
+			({ body, auth, set }) => {
+				set.status = 201;
+				return services.markAttendanceBatch({
+					...body,
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+					targetUserId: auth.clientId,
+				});
+			},
+			{
+				body: markAttendanceBatchSchema,
+				response: {
+					201: t.Array(attendanceRecordSchema),
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Mark Attendance Batch',
+					tags: ['Academic Management'],
+				},
+			},
+		)
+		.post(
+			'/activities/:activityId/attachments/upload-url',
+			({ params, body, auth }) =>
+				services.createAcademicActivityAttachmentUploadUrl({
+					activityId: Number(params.activityId),
+					data: body,
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+					targetUserId: auth.clientId,
+				}),
+			{
+				params: t.Object({
+					activityId: t.Numeric(),
+				}),
+				body: createAcademicActivityAttachmentUploadSchema,
+				response: {
+					200: createAcademicActivityAttachmentUploadResponseSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Create Academic Activity Attachment Upload URL',
 					tags: ['Academic Management'],
 				},
 			},

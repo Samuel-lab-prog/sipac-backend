@@ -10,6 +10,12 @@ export type AudioUploadUrlResult = {
 	fileUrl: string;
 };
 
+export type FileUploadUrlResult = {
+	uploadUrl: string;
+	fields: Record<string, string>;
+	fileUrl: string;
+};
+
 export interface StorageService {
 	generateAvatarUploadUrl(
 		userId: string,
@@ -23,4 +29,11 @@ export interface StorageService {
 		contentLength?: number,
 	): Promise<AudioUploadUrlResult>;
 	validateAudioContentType(contentType: string): boolean;
+	generateFileUploadUrl(
+		prefix: string,
+		fileName: string,
+		contentType?: string,
+		contentLength?: number,
+	): Promise<FileUploadUrlResult>;
+	validateFileContentType(contentType: string): boolean;
 }

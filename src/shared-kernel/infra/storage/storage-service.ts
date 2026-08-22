@@ -24,6 +24,16 @@ const allowedAudioTypes = new Set([
 	'audio/x-m4a',
 ]);
 
+const allowedFileTypes = new Set([
+	'application/pdf',
+	'application/msword',
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+	'image/jpeg',
+	'image/jpg',
+	'image/png',
+	'image/webp',
+]);
+
 const contentTypeToExtension: Record<string, string> = {
 	'image/jpeg': 'jpg',
 	'image/jpg': 'jpg',
@@ -44,6 +54,17 @@ const audioContentTypeToExtension: Record<string, string> = {
 	'audio/x-m4a': 'm4a',
 };
 
+const fileContentTypeToExtension: Record<string, string> = {
+	'application/pdf': 'pdf',
+	'application/msword': 'doc',
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+		'docx',
+	'image/jpeg': 'jpg',
+	'image/jpg': 'jpg',
+	'image/png': 'png',
+	'image/webp': 'webp',
+};
+
 const region = process.env.AWS_REGION ?? 'us-east-1';
 const bucketName = process.env.S3_BUCKET_NAME ?? 'hellopoetry1392781';
 const signedUrlExpiresInSeconds = Number(
@@ -54,6 +75,9 @@ const maxAvatarUploadBytes = Number(
 );
 const maxPoemAudioUploadBytes = Number(
 	process.env.MAX_POEM_AUDIO_UPLOAD_BYTES ?? 20_000_000,
+);
+const maxAcademicFileUploadBytes = Number(
+	process.env.MAX_ACADEMIC_FILE_UPLOAD_BYTES ?? 25_000_000,
 );
 const defaultPublicBaseUrl =
 	process.env.S3_PUBLIC_BASE_URL ?? `https://${bucketName}.s3.amazonaws.com`;
@@ -81,6 +105,10 @@ export const storageService: StorageService = {
 	validateAudioContentType(contentType: string): boolean {
 		const normalizedType = contentType.toLowerCase().split(';')[0] ?? '';
 		return allowedAudioTypes.has(normalizedType);
+	},
+	validateFileContentType(contentType: string): boolean {
+		const normalizedType = contentType.toLowerCase().split(';')[0] ?? '';
+		return allowedFileTypes.has(normalizedType);
 	},
 	async generateAvatarUploadUrl(
 		userId: string,
@@ -185,6 +213,64 @@ export const storageService: StorageService = {
 				'Failed to generate S3 presigned POST',
 			);
 			throw new InternalServerError('Failed to generate audio upload URL');
+		}
+
+		return {
+			uploadUrl,
+			fields,
+			fileUrl,
+		};
+	},
+	async generateFileUploadUrl(
+		prefix: string,
+		fileName: string,
+		contentType?: string,
+		_contentLength?: number,
+	) {
+		if (!bucketName)
+			throw new InternalServerError('S3 bucket name is not configured');
+
+		if (!region) throw new InternalServerError('AWS region is not configured');
+
+		const id = crypto.randomUUID();
+		const resolvedContentType = contentType?.toLowerCase().split(';')[0];
+		const ext =
+			(resolvedContentType &&
+				fileContentTypeToExtension[resolvedContentType]) ||
+			fileContentTypeToExtension['application/pdf'];
+		const safeFileName = fileName.replace(/[^a-zA-Z0-9_.-]+/g, '-');
+		const objectKey = `${prefix}/${id}-${safeFileName}.${ext}`;
+		const fileUrl = `${defaultPublicBaseUrl}/${objectKey}`;
+
+		let uploadUrl: string;
+		let fields: Record<string, string>;
+		try {
+			const presignedPost = await createPresignedPost(s3Client, {
+				Bucket: bucketName,
+				Key: objectKey,
+				Expires: signedUrlExpiresInSeconds,
+				Fields: {
+					'Content-Type': resolvedContentType ?? 'application/pdf',
+				},
+				Conditions: [
+					['content-length-range', 1, maxAcademicFileUploadBytes],
+					['eq', '$Content-Type', resolvedContentType ?? 'application/pdf'],
+				],
+			});
+			uploadUrl = presignedPost.url;
+			fields = presignedPost.fields;
+		} catch (error) {
+			log.error(
+				{
+					error,
+					bucketName,
+					region,
+					objectKey,
+					hasAccessKey: !!accessKeyId,
+				},
+				'Failed to generate S3 presigned POST',
+			);
+			throw new InternalServerError('Failed to generate file upload URL');
 		}
 
 		return {

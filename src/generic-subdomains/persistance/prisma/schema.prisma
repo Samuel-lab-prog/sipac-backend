@@ -210,9 +210,26 @@ model AcademicActivity {
 
   classOffering ClassOffering @relation(fields: [classOfferingId], references: [id], onDelete: Cascade)
   createdByProfessor ProfessorProfile? @relation(fields: [createdByProfessorProfileId], references: [id])
+  attachments AcademicActivityAttachment[]
   submissions AcademicActivitySubmission[]
 
   @@index([classOfferingId, dueAt])
+}
+
+model AcademicActivityAttachment {
+  id              Int      @id @default(autoincrement())
+  activityId      Int
+  fileName        String
+  fileUrl         String
+  fileKey         String
+  contentType     String?
+  fileSize        Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  activity AcademicActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@index([activityId])
 }
 
 model AcademicActivitySubmission {

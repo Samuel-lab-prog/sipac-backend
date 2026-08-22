@@ -7,6 +7,9 @@ import type {
 	StudentProfile,
 } from './models';
 import type { AcademicPolicyContext } from '../use-cases/commands/policies';
+import type { FileUploadUrlResult } from '@SharedKernel/ports/storage';
+import type { Static } from 'elysia';
+import { createAcademicActivityAttachmentUploadSchema } from './schemas';
 
 export type CreateStudentProfileParams = Omit<StudentProfile, 'id'>;
 export type CreateStudentProfileUseCaseParams = CreateStudentProfileParams &
@@ -38,8 +41,20 @@ export type MarkAttendanceParams = AcademicPolicyContext & {
 	studentProfileId: number;
 	status: string;
 };
+export type MarkAttendanceBatchParams = AcademicPolicyContext & {
+	classSessionId: number;
+	attendances: Array<{
+		studentProfileId: number;
+		status: string;
+	}>;
+};
 export type CreateAcademicPeriodParams = Omit<AcademicPeriod, 'id'>;
 export type CreateClassOfferingParams = Omit<ClassOffering, 'id'>;
+export type CreateAcademicActivityAttachmentUploadParams =
+	AcademicPolicyContext & {
+		activityId: number;
+		data: Static<typeof createAcademicActivityAttachmentUploadSchema>;
+	};
 
 export interface AcademicCommandsRepository {
 	insertStudentProfile: (
@@ -83,6 +98,9 @@ export interface AcademicCommandsRepository {
 		status: string;
 		markedByProfessorProfileId: number | null;
 	}): Promise<import('@SharedKernel/types').CommandResult<AttendanceRecord>>;
+	markAttendanceBatch(
+		params: MarkAttendanceBatchParams,
+	): Promise<import('@SharedKernel/types').CommandResult<AttendanceRecord[]>>;
 	createAcademicPeriod(
 		params: CreateAcademicPeriodParams,
 	): Promise<import('@SharedKernel/types').CommandResult<AcademicPeriod>>;
@@ -121,10 +139,16 @@ export interface AcademicCommandsServices {
 		params: UnlinkProfessorFromDepartmentParams,
 	): Promise<ProfessorProfile>;
 	markAttendance(params: MarkAttendanceParams): Promise<AttendanceRecord>;
+	markAttendanceBatch(
+		params: MarkAttendanceBatchParams,
+	): Promise<AttendanceRecord[]>;
 	createAcademicPeriod(
 		params: CreateAcademicPeriodParams,
 	): Promise<AcademicPeriod>;
 	createClassOffering(
 		params: CreateClassOfferingParams,
 	): Promise<ClassOffering>;
+	createAcademicActivityAttachmentUploadUrl(
+		params: CreateAcademicActivityAttachmentUploadParams,
+	): Promise<FileUploadUrlResult>;
 }

@@ -9,7 +9,10 @@ import type {
 	StaffProfile,
 	StudentProfile,
 } from '../../ports/models';
-import type { AcademicCommandsRepository } from '../../ports/commands';
+import type {
+	AcademicCommandsRepository,
+	MarkAttendanceBatchParams,
+} from '../../ports/commands';
 import type { AcademicQueriesRepository } from '../../ports/queries';
 
 export function insertStudentProfile(
@@ -151,6 +154,37 @@ export function markAttendance(params: {
 	);
 }
 
+export function markAttendanceBatch(
+	params: MarkAttendanceBatchParams,
+): Promise<CommandResult<AttendanceRecord[]>> {
+	return withPrismaResult(async () => {
+		const records = await Promise.all(
+			params.attendances.map(
+				(attendance: MarkAttendanceBatchParams['attendances'][number]) =>
+					prisma.attendanceRecord.upsert({
+						where: {
+							classSessionId_studentProfileId: {
+								classSessionId: params.classSessionId,
+								studentProfileId: attendance.studentProfileId,
+							},
+						},
+						create: {
+							classSessionId: params.classSessionId,
+							studentProfileId: attendance.studentProfileId,
+							status: attendance.status,
+							markedByProfessorProfileId: params.targetUserId,
+						},
+						update: {
+							status: attendance.status,
+							markedByProfessorProfileId: params.targetUserId,
+						},
+					}),
+			),
+		);
+		return records;
+	});
+}
+
 export function createAcademicPeriod(
 	params: import('../../ports/commands').CreateAcademicPeriodParams,
 ): Promise<CommandResult<AcademicPeriod>> {
@@ -175,6 +209,7 @@ export const commandsRepository: AcademicCommandsRepository = {
 	unlinkStudentFromCourse,
 	unlinkProfessorFromDepartment,
 	markAttendance,
+	markAttendanceBatch,
 	createAcademicPeriod,
 	createClassOffering,
 };

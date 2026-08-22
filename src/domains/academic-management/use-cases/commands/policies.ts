@@ -108,3 +108,10 @@ export function assertCanMarkAttendance(ctx: AcademicPolicyContext) {
 	assertActorIsActive(ctx.actorStatus);
 	assertActorIsPrivileged(ctx.actorRole);
 }
+
+export function assertCanManageAcademicActivityAttachments(
+	ctx: AcademicPolicyContext,
+) {
+	assertActorIsActive(ctx.actorStatus);
+	assertActorIsPrivileged(ctx.actorRole);
+}

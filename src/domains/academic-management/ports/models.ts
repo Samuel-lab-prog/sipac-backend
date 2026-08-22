@@ -49,3 +49,13 @@ export type ClassOffering = {
 	code: string;
 	title: string;
 };
+
+export type AcademicActivityAttachment = {
+	id: number;
+	activityId: number;
+	fileName: string;
+	fileUrl: string;
+	fileKey: string;
+	contentType: string | null;
+	fileSize: number | null;
+};
