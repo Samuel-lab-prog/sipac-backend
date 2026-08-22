@@ -1,7 +1,7 @@
 import type { ClocResult, DepcruiseResult } from '../Types';
 import { red, yellow, green } from 'kleur/colors';
 import { printTable, type TableColumn } from '../../utils/PrintTable';
-import { attachLocToFanOut, buildLocMap } from '../Index';
+import { attachLocToFanOut, buildLocMap } from '../index';
 import { ADR, withAdr } from '../adr-labels';
 
 const IGNORED_MODULES = [

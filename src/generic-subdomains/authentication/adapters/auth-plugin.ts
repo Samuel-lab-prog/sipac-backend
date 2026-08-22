@@ -2,7 +2,7 @@ import { appErrorSchema } from '@AppError';
 import { Elysia } from 'elysia';
 import { SetupPlugin } from '../../utils/security/setup-plugin';
 import type { authPluginServices } from '../ports/externalServices';
-import { cookieTokenSchema } from '../ports/schemas/Index';
+import { cookieTokenSchema } from '../ports/schemas';
 
 export function createAuthPlugin({ authenticate }: authPluginServices) {
 	return new Elysia().use(SetupPlugin).guard({

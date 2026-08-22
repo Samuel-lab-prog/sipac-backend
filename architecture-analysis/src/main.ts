@@ -29,7 +29,7 @@ import {
 	printNoInvalidUseCaseFactories,
 	printNoInvalidUseCaseErrorImports,
 	printNoCaseMismatchImports,
-} from './metrics/Index';
+} from './metrics/index';
 
 function metrics(): void {
 	const depcruise = loadDepcruiseData();

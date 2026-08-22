@@ -12,7 +12,7 @@ import {
 	authClientSchema,
 	loginSchema,
 	refreshCookieTokenSchema,
-} from '../ports/schemas/Index';
+} from '../ports/schemas';
 
 export function createAuthRouter(services: AuthControllerServices) {
 	const { login, refreshSession } = services;
