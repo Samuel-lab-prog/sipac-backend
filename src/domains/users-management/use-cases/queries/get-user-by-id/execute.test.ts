@@ -2,29 +2,29 @@ import { describe, expect, it } from 'bun:test';
 import { ForbiddenError, NotFoundError } from '@DomainError';
 import { makeUsersScenario } from '../../test-helpers';
 
-describe('users-management > getCurrentUser', () => {
-	it('returns the current user', async () => {
+describe('UNIT - Users Management > Get User By Id', () => {
+	it('returns a user by id', async () => {
 		const scenario = makeUsersScenario().withUser();
 
-		await expect(scenario.executeGetCurrentUser()).resolves.toMatchObject({
+		await expect(scenario.executeGetUserById()).resolves.toMatchObject({
 			id: 1,
 			email: 'teste@exemplo.com',
 		});
 	});
 
-	it('blocks inactive users from reading their profile', async () => {
+	it('blocks unauthorized access to another user', async () => {
 		const scenario = makeUsersScenario();
 
 		await expect(
-			scenario.executeGetCurrentUser({ clientStatus: 'blocked' }),
+			scenario.executeGetUserById({ clientRole: 'student' }),
 		).rejects.toBeInstanceOf(ForbiddenError);
 	});
 
-	it('throws NotFoundError when the current user does not exist', async () => {
+	it('throws NotFoundError when the user does not exist', async () => {
 		const scenario = makeUsersScenario();
 		scenario.mocks.queriesRepository.selectUserById.mockResolvedValue(null);
 
-		await expect(scenario.executeGetCurrentUser()).rejects.toBeInstanceOf(
+		await expect(scenario.executeGetUserById()).rejects.toBeInstanceOf(
 			NotFoundError,
 		);
 	});
