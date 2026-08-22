@@ -22,10 +22,22 @@ export type UpdateCurrentUserParams = {
 	clientStatus: string;
 };
 
+export type GetUserByIdParams = {
+	id: number;
+	clientId: number;
+	clientRole: string;
+	clientStatus: string;
+};
+
+export type DeleteUserParams = GetUserByIdParams;
+export type RestoreUserParams = GetUserByIdParams;
+
 export interface UsersCommandsServices {
 	createUser: (params: CreateUserParams) => Promise<User>;
 	updateUser: (params: UpdateUserParams) => Promise<User>;
 	updateCurrentUser: (params: UpdateCurrentUserParams) => Promise<User>;
+	deleteUser: (params: DeleteUserParams) => Promise<User>;
+	restoreUser: (params: RestoreUserParams) => Promise<User>;
 }
 
 export interface CommandsRepository {
@@ -38,4 +50,6 @@ export interface CommandsRepository {
 		clientId: number,
 		user: Partial<CreateUserDB>,
 	): Promise<CommandResult<User>>;
+	deleteUser(id: number): Promise<CommandResult<User>>;
+	restoreUser(id: number): Promise<CommandResult<User>>;
 }

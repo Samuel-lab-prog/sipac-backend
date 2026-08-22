@@ -3,3 +3,4 @@
  */
 
 export * from './search-users/execute';
+export * from './get-user-by-id/execute';

@@ -88,8 +88,30 @@ function updateCurrentUser(clientId: number, user: Partial<CreateUserDB>) {
 	);
 }
 
+function deleteUser(id: number) {
+	return withPrismaResult(() =>
+		prisma.user.update({
+			where: { id },
+			data: { deletedAt: new Date() },
+			select: userSelect,
+		}),
+	);
+}
+
+function restoreUser(id: number) {
+	return withPrismaResult(() =>
+		prisma.user.update({
+			where: { id },
+			data: { deletedAt: null },
+			select: userSelect,
+		}),
+	);
+}
+
 export const commandsRepository: CommandsRepository = {
 	insertUser,
 	updateUser,
 	updateCurrentUser,
+	deleteUser,
+	restoreUser,
 };

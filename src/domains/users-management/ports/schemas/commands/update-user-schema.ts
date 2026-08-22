@@ -17,6 +17,10 @@ export const updateUserParamsSchema = t.Object({
 	id: idSchema,
 });
 
+export const userIdParamsSchema = t.Object({
+	id: idSchema,
+});
+
 export const updateUserSchema = t.Object({
 	name: t.Optional(userNameSchema),
 	nickname: t.Optional(userNicknameSchema),

@@ -39,6 +39,16 @@ function selectUsers(params: {
 	});
 }
 
+function selectUserById(id: number) {
+	return withPrismaErrorHandling(() =>
+		prisma.user.findUnique({
+			where: { id },
+			select: userSelect,
+		}),
+	);
+}
+
 export const queriesRepository: QueriesRepository = {
 	selectUsers,
+	selectUserById,
 };

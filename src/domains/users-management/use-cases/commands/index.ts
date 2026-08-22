@@ -4,5 +4,7 @@
 
 export * from './policies';
 export * from './create/execute';
+export * from './delete/execute';
+export * from './restore/execute';
 export * from './update/execute';
 export * from './update-current/execute';

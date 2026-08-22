@@ -4,6 +4,7 @@ import { Elysia } from 'elysia';
 import {
 	createUserSchema,
 	updateUserParamsSchema,
+	userIdParamsSchema,
 	updateUserSchema,
 	userSchema,
 } from '../ports/schemas';
@@ -66,6 +67,46 @@ export function createUsersCommandsRouter(services: UsersCommandsServices) {
 					401: appErrorSchema,
 				},
 				detail: { summary: 'Update User', tags: ['Users Management'] },
+			},
+		)
+		.delete(
+			'/:id',
+			({ params, auth }) =>
+				services.deleteUser({
+					id: params.id,
+					clientId: auth.clientId,
+					clientRole: auth.clientRole,
+					clientStatus: auth.clientStatus,
+				}),
+			{
+				params: userIdParamsSchema,
+				response: {
+					200: userSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+				},
+				detail: { summary: 'Delete User', tags: ['Users Management'] },
+			},
+		)
+		.post(
+			'/:id/restore',
+			({ params, auth }) =>
+				services.restoreUser({
+					id: params.id,
+					clientId: auth.clientId,
+					clientRole: auth.clientRole,
+					clientStatus: auth.clientStatus,
+				}),
+			{
+				params: userIdParamsSchema,
+				response: {
+					200: userSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					404: appErrorSchema,
+				},
+				detail: { summary: 'Restore User', tags: ['Users Management'] },
 			},
 		);
 }

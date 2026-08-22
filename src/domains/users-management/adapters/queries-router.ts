@@ -1,11 +1,12 @@
 import { appErrorSchema } from '@AppError';
+import { authPlugin } from '@GenericSubdomains/authentication/composition';
+import { idSchema } from '@SharedKernel/schemas/schemas';
 import { Elysia, t } from 'elysia';
-import { paginatedUsersSchema } from '../ports/schemas';
+import { paginatedUsersSchema, userSchema, userIdParamsSchema } from '../ports/schemas';
 import type { UsersQueriesRouterServices } from '../ports/queries';
-import { idSchema } from '@SharedKernel/index';
 
 export function createUsersReadRouter(services: UsersQueriesRouterServices) {
-	return new Elysia({ prefix: '/users' }).get(
+	return new Elysia({ prefix: '/users' }).use(authPlugin).get(
 		'/',
 		({ query }) => services.searchUsers(query),
 		{
@@ -19,6 +20,25 @@ export function createUsersReadRouter(services: UsersQueriesRouterServices) {
 				422: appErrorSchema,
 			},
 			detail: { summary: 'Search Users', tags: ['Users Management'] },
+		},
+	).get(
+		'/:id',
+		({ params, auth }) =>
+			services.getUserById({
+				id: params.id,
+				clientId: auth.clientId,
+				clientRole: auth.clientRole,
+				clientStatus: auth.clientStatus,
+			}),
+		{
+			params: userIdParamsSchema,
+			response: {
+				200: userSchema,
+				401: appErrorSchema,
+				403: appErrorSchema,
+				404: appErrorSchema,
+			},
+			detail: { summary: 'Get User By Id', tags: ['Users Management'] },
 		},
 	);
 }
