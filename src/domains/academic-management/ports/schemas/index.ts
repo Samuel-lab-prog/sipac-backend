@@ -17,3 +17,4 @@ export * from './update-professor-profile-schema';
 export * from './update-staff-profile-schema';
 export * from './update-student-profile-schema';
 export * from './student-profile-schema';
+export * from './student-dashboard-schema';

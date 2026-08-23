@@ -22,6 +22,7 @@ import { updateStudentProfileFactory } from './use-cases/commands/update-student
 import { getProfessorProfileByUserIdFactory } from './use-cases/queries/get-professor-profile-by-user-id/execute';
 import { getStaffProfileByUserIdFactory } from './use-cases/queries/get-staff-profile-by-user-id/execute';
 import { getStudentProfileByUserIdFactory } from './use-cases/queries/get-student-profile-by-user-id/execute';
+import { getStudentDashboardByUserIdFactory } from './use-cases/queries/get-student-dashboard-by-user-id/execute';
 
 const createStudentProfile = createStudentProfileFactory({
 	commandsRepository,
@@ -61,6 +62,9 @@ const unlinkProfessorFromDepartment = unlinkProfessorFromDepartmentFactory({
 const getStudentProfileByUserId = getStudentProfileByUserIdFactory({
 	queriesRepository,
 });
+const getStudentDashboardByUserId = getStudentDashboardByUserIdFactory({
+	queriesRepository,
+});
 const getProfessorProfileByUserId = getProfessorProfileByUserIdFactory({
 	queriesRepository,
 });
@@ -97,6 +101,7 @@ export const academicCommandsRouter = new Elysia()
 
 export const academicQueriesRouter = createAcademicQueriesRouter({
 	getStudentProfileByUserId,
+	getStudentDashboardByUserId,
 	getProfessorProfileByUserId,
 	getStaffProfileByUserId,
 });

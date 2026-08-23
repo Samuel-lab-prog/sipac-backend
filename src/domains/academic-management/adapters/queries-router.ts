@@ -3,6 +3,7 @@ import { authPlugin } from '@GenericSubdomains/authentication/composition';
 import { Elysia } from 'elysia';
 import {
 	professorProfileSchema,
+	studentDashboardSchema,
 	staffProfileSchema,
 	studentProfileSchema,
 } from '../ports/schemas';
@@ -11,6 +12,21 @@ import type { AcademicQueriesServices } from '../ports/queries';
 export function createAcademicQueriesRouter(services: AcademicQueriesServices) {
 	return new Elysia({ prefix: '/academic' })
 		.use(authPlugin)
+		.get(
+			'/students/dashboard/me',
+			({ auth }) => services.getStudentDashboardByUserId(auth.clientId),
+			{
+				response: {
+					200: studentDashboardSchema,
+					401: appErrorSchema,
+					404: appErrorSchema,
+				},
+				detail: {
+					summary: 'Get My Student Dashboard',
+					tags: ['Academic Management'],
+				},
+			},
+		)
 		.get(
 			'/students/profile/me',
 			({ auth }) => services.getStudentProfileByUserId(auth.clientId),

@@ -3,6 +3,9 @@
 	"main": "Server.ts",
 	"type": "module",
 	"private": true,
+	"prisma": {
+		"seed": "bun prisma/seed.ts"
+	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
 		"@playwright/test": "^1.62.0",

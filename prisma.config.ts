@@ -19,6 +19,7 @@ export default defineConfig({
 
 	migrations: {
 		path: 'src/generic-subdomains/persistance/migrations',
+		seed: 'bun src/generic-subdomains/persistance/seed.ts',
 	},
 
 	datasource: {
