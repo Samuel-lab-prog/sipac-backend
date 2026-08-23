@@ -25,23 +25,23 @@ model User {
   deletedAt       DateTime?
   emailVerifiedAt DateTime?
 
-  studentProfile  StudentProfile?
-  professorProfile ProfessorProfile?
-  staffProfile     StaffProfile?
-  claimedStudentRegistrationCode StudentRegistrationCode?
+	studentProfile  StudentProfile?
+	professorProfile ProfessorProfile?
+	staffProfile     StaffProfile?
+	studentRegistration StudentRegistration?
 
 }
 
-model StudentRegistrationCode {
-  id             Int      @id @default(autoincrement())
-  code           String   @unique
-  cpf            String   @unique
-  claimedAt      DateTime?
-  claimedByUserId Int?     @unique
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+model StudentRegistration {
+  id          Int      @id @default(autoincrement())
+  academicId  String   @unique
+  cpf         String   @unique
+  userId      Int?     @unique
+  activatedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  claimedByUser User? @relation(fields: [claimedByUserId], references: [id], onDelete: SetNull)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model Department {

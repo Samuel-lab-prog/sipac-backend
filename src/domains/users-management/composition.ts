@@ -6,7 +6,6 @@ import { storageService } from '@SharedKernel/infra/storage/storage-service';
 import { Elysia } from 'elysia';
 import { commandsRepository } from './infra/commands-repository/repository';
 import { queriesRepository } from './infra/queries-repository/repository';
-import { commandsRepository as academicCommandsRepository } from '@Domains/academic-management/infra/commands-repository/repository';
 import {
 	createUsersAuthenticatedCommandsRouter,
 	createUsersPublicCommandsRouter,
@@ -30,13 +29,11 @@ import {
 
 const createUser = createUserFactory({
 	commandsRepository,
-	academicCommandsRepository,
 	hashServices: BcryptHashService,
 });
 
 const createUserWithFakeHash = createUserFactory({
 	commandsRepository,
-	academicCommandsRepository,
 	hashServices: FakeHashService,
 });
 

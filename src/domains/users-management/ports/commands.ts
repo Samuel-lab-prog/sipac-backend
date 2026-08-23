@@ -7,6 +7,7 @@ import type {
 	User,
 	UserRole,
 	UserStatus,
+	StudentRegistration,
 } from './models';
 import {
 	avatarUploadRequestSchema,
@@ -81,6 +82,11 @@ export interface UsersCommandsServices {
 
 export interface CommandsRepository {
 	insertUser(user: CreateUserDB): Promise<CommandResult<User>>;
+	selectLastStudentRegistrationAcademicId(): Promise<string | null>;
+	insertStudentAccount(
+		user: CreateUserDB,
+		registration: Omit<StudentRegistration, 'id' | 'createdAt' | 'updatedAt'>,
+	): Promise<CommandResult<User>>;
 	updateUser(
 		id: number,
 		user: Partial<CreateUserDB>,

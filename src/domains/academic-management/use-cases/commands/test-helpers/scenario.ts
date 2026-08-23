@@ -27,6 +27,7 @@ import {
 
 function commandsMocks() {
 	return {
+		selectLastStudentAcademicId: mock(),
 		insertStudentProfile: mock(),
 		createProfessorProfile: mock(),
 		createStaffProfile: mock(),

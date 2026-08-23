@@ -36,15 +36,17 @@ export const userStatusSchema = t.Union([
 export const userRgSchema = t.String({
 	minLength: 5,
 	maxLength: 20,
-	example: '12.345.678-9',
-	...makeValidationError('RG must be a valid identifier'),
+	pattern: '^\\d+$',
+	example: '123456789',
+	...makeValidationError('RG must contain digits only'),
 });
 
 export const userCpfSchema = t.String({
 	minLength: 11,
-	maxLength: 14,
-	example: '123.456.789-00',
-	...makeValidationError('CPF must be a valid identifier'),
+	maxLength: 11,
+	pattern: '^\\d+$',
+	example: '12345678901',
+	...makeValidationError('CPF must contain digits only'),
 });
 
 export const userPasswordSchema = t.String({

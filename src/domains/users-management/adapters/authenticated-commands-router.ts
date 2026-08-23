@@ -11,6 +11,7 @@ import {
 	updateUserParamsSchema,
 	updateUserSchema,
 	userIdParamsSchema,
+	createdUserSchema,
 	userSchema,
 } from '../ports/schemas';
 import type { AvatarUploadUrlResult } from '@SharedKernel/ports/storage';
@@ -24,10 +25,10 @@ import type {
 	UpdateUserParams,
 	CreateUserParams,
 } from '../ports/commands';
-import type { User } from '../ports/models';
+import type { CreatedUser, User } from '../ports/models';
 
 type UsersAuthenticatedCommandsServices = {
-	createUser(params: CreateUserParams): Promise<User>;
+	createUser(params: CreateUserParams): Promise<CreatedUser>;
 	updateUser(params: UpdateUserParams): Promise<User>;
 	updateCurrentUser(params: UpdateCurrentUserParams): Promise<User>;
 	createAvatarUploadUrl(
@@ -59,7 +60,7 @@ export function createUsersAuthenticatedCommandsRouter(
 			{
 				body: createUserSchema,
 				response: {
-					201: userSchema,
+					201: createdUserSchema,
 					401: appErrorSchema,
 					403: appErrorSchema,
 					409: appErrorSchema,

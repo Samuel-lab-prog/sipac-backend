@@ -36,6 +36,7 @@ export type CreateAcademicActivityAttachmentUploadParams =
 	};
 
 export interface AcademicCommandsRepository {
+	selectLastStudentAcademicId(): Promise<string | null>;
 	insertStudentProfile: (
 		params: CreateStudentProfileParams,
 	) => Promise<import('@SharedKernel/types').CommandResult<StudentProfile>>;

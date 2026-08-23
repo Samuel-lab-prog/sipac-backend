@@ -39,6 +39,39 @@ describe('UNIT - Users Management > Create User', () => {
 		);
 	});
 
+	it('creates a student account with a generated registration and uses the matricula as initial password', async () => {
+		const scenario = makeUsersScenario().withCreatedStudent();
+
+		await expect(scenario.executeCreateStudentUser()).resolves.toMatchObject({
+			id: DEFAULT_USER_ID,
+			email: DEFAULT_USER_EMAIL,
+		});
+
+		expect(
+			scenario.mocks.commandsRepository.selectLastStudentRegistrationAcademicId,
+		).toHaveBeenCalledTimes(1);
+		expect(
+			scenario.mocks.commandsRepository.insertStudentAccount,
+		).toHaveBeenCalledWith(
+			expect.objectContaining({
+				name: DEFAULT_USER_NAME,
+				nickname: DEFAULT_USER_NICKNAME,
+				email: DEFAULT_USER_EMAIL,
+				passwordHash: 'hashed:2026000008',
+				rg: DEFAULT_USER_RG,
+				cpf: DEFAULT_USER_CPF,
+				role: 'student',
+				status: 'pending',
+			}),
+			expect.objectContaining({
+				academicId: '2026000008',
+				cpf: DEFAULT_USER_CPF,
+				userId: null,
+				activatedAt: null,
+			}),
+		);
+	});
+
 	it('throws UnprocessableEntityError when the repository rejects validation', async () => {
 		const scenario = makeUsersScenario();
 		scenario.mocks.commandsRepository.insertUser.mockResolvedValue({

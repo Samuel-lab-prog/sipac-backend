@@ -19,6 +19,15 @@ export function insertStudentProfile(
 	);
 }
 
+export function selectLastStudentAcademicId() {
+	return withPrismaErrorHandling(() =>
+		prisma.studentProfile.findFirst({
+			orderBy: { academicId: 'desc' },
+			select: { academicId: true },
+		}),
+	).then((profile) => profile?.academicId ?? null);
+}
+
 export function selectStudentProfileByUserId(userId: number) {
 	return withPrismaErrorHandling(() =>
 		prisma.studentProfile.findUnique({
@@ -126,6 +135,7 @@ export function unlinkProfessorFromDepartment(
 }
 
 export const commandsRepository: AcademicCommandsRepository = {
+	selectLastStudentAcademicId,
 	insertStudentProfile,
 	createProfessorProfile: insertProfessorProfile,
 	createStaffProfile: insertStaffProfile,

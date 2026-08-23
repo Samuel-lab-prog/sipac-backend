@@ -6,9 +6,22 @@ export type UserRole = Static<typeof userRoleSchema>;
 export type UserStatus = Static<typeof userStatusSchema>;
 
 export type User = (typeof userSchema)['static'];
+export type CreatedUser = User & {
+	academicId?: string;
+};
 export type CreateUser = (typeof createUserSchema)['static'];
 export type CreateUserDB = Omit<CreateUser, 'password'> & {
 	passwordHash: string;
 	role?: UserRole;
 	status?: UserStatus;
+};
+
+export type StudentRegistration = {
+	id: number;
+	academicId: string;
+	cpf: string;
+	userId: number | null;
+	activatedAt: Date | null;
+	createdAt: Date;
+	updatedAt: Date;
 };

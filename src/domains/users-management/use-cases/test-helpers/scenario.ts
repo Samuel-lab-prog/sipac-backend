@@ -3,7 +3,6 @@ import { mock } from 'bun:test';
 import { makeParams, makeSut } from '@GenericSubdomains/utils/testing/utils';
 import type { HashServices } from '@SharedKernel/ports/hash-services';
 import type { StorageService } from '@SharedKernel/ports/storage';
-import type { AcademicCommandsRepository } from '@Domains/academic-management/ports/commands';
 import type { CommandsRepository } from '../../ports/commands';
 import type { QueriesRepository } from '../../ports/queries';
 import { createUserFactory } from '../commands/create/execute';
@@ -44,24 +43,14 @@ function usersScenarioMockFactories() {
 	return {
 		commandsRepository: {
 			insertUser: mock(),
+			selectLastStudentRegistrationAcademicId: mock(),
+			insertStudentAccount: mock(),
 			updateUser: mock(),
 			updateCurrentUser: mock(),
 			getUserPasswordHashById: mock(),
 			deleteUser: mock(),
 			restoreUser: mock(),
 		} satisfies CommandsRepository,
-		academicCommandsRepository: {
-			insertStudentProfile: mock(),
-			createProfessorProfile: mock(),
-			createStaffProfile: mock(),
-			updateStudentProfile: mock(),
-			updateProfessorProfile: mock(),
-			updateStaffProfile: mock(),
-			linkStudentToCourse: mock(),
-			linkProfessorToDepartment: mock(),
-			unlinkStudentFromCourse: mock(),
-			unlinkProfessorFromDepartment: mock(),
-		} satisfies AcademicCommandsRepository,
 		queriesRepository: {
 			selectUsers: mock(),
 			selectUserById: mock(),
@@ -89,7 +78,6 @@ export function makeUsersScenario() {
 		(m) => ({
 			createUser: createUserFactory({
 				commandsRepository: m.commandsRepository,
-				academicCommandsRepository: m.academicCommandsRepository,
 				hashServices: hashServices as HashServices,
 			}),
 			createAvatarUploadUrl: createAvatarUploadUrlFactory({
@@ -143,6 +131,30 @@ export function makeUsersScenario() {
 		},
 		withCreatedUser(overrides = {}) {
 			givenCreatedUser(mocks.commandsRepository, overrides);
+			return this;
+		},
+		withCreatedStudent() {
+			mocks.commandsRepository.selectLastStudentRegistrationAcademicId.mockResolvedValue(
+				'2026000007',
+			);
+			mocks.commandsRepository.insertStudentAccount.mockResolvedValue({
+				ok: true,
+				data: {
+					id: DEFAULT_USER_ID,
+					name: DEFAULT_USER_NAME,
+					nickname: DEFAULT_USER_NICKNAME,
+					email: DEFAULT_USER_EMAIL,
+					rg: DEFAULT_USER_RG,
+					cpf: DEFAULT_USER_CPF,
+					role: 'student',
+					status: 'pending',
+					avatarUrl: null,
+					createdAt: new Date('2026-01-01T00:00:00.000Z'),
+					updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+					deletedAt: null,
+					emailVerifiedAt: null,
+				},
+			});
 			return this;
 		},
 		withCurrentPasswordHash(hash = DEFAULT_USER_PASSWORD_HASH) {
@@ -200,6 +212,25 @@ export function makeUsersScenario() {
 							avatarUrl: null,
 							role: DEFAULT_USER_ROLE,
 							status: DEFAULT_USER_STATUS,
+						},
+					},
+					params,
+				),
+			);
+		},
+		executeCreateStudentUser(params = {}) {
+			return sut.createUser(
+				makeParams(
+					{
+						data: {
+							name: DEFAULT_USER_NAME,
+							nickname: DEFAULT_USER_NICKNAME,
+							email: DEFAULT_USER_EMAIL,
+							rg: DEFAULT_USER_RG,
+							cpf: DEFAULT_USER_CPF,
+							avatarUrl: null,
+							role: 'student',
+							status: undefined,
 						},
 					},
 					params,

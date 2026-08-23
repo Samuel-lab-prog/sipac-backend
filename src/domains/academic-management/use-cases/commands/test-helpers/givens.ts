@@ -36,6 +36,14 @@ export function givenStudentProfile(
 		});
 }
 
+export function givenLastStudentAcademicId(
+	commandsRepository: AcademicCommandsRepository,
+	academicId: string | null = DEFAULT_STUDENT_ACADEMIC_ID,
+) {
+	commandsRepository.selectLastStudentAcademicId = () =>
+		Promise.resolve(academicId);
+}
+
 export function givenProfessorProfile(
 	commandsRepository: AcademicCommandsRepository,
 	overrides: Partial<ProfessorProfile> = {},
