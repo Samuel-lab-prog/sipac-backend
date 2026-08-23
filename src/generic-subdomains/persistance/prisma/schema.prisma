@@ -29,6 +29,7 @@ model User {
 	professorProfile ProfessorProfile?
 	staffProfile     StaffProfile?
 	studentRegistration StudentRegistration?
+	announcementsCreated Announcement[]
 
 }
 
@@ -75,6 +76,7 @@ model Course {
   id           Int        @id @default(autoincrement())
   name         String     @unique
   code         String     @unique
+  level        String
   departmentId Int
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
@@ -82,6 +84,24 @@ model Course {
   department Department @relation(fields: [departmentId], references: [id])
   students   StudentProfile[] @relation("StudentCourse")
   classes    ClassOffering[]
+}
+
+model Announcement {
+  id            Int      @id @default(autoincrement())
+  title         String
+  body          String
+  audience      String   @default("all")
+  isPinned      Boolean  @default(false)
+  publishedAt   DateTime?
+  expiresAt     DateTime?
+  createdByUserId Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  createdBy User @relation(fields: [createdByUserId], references: [id], onDelete: Cascade)
+
+  @@index([audience, publishedAt])
+  @@index([createdByUserId, createdAt])
 }
 
 model StudentProfile {

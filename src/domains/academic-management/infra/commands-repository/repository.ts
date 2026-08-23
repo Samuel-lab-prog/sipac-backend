@@ -9,6 +9,7 @@ import type {
 import type { AcademicCommandsRepository } from '../../ports/commands';
 import type {
 	AcademicQueriesRepository,
+	StudentDashboardAttendanceSummary,
 	StudentDashboard,
 } from '../../ports/queries';
 
@@ -82,6 +83,18 @@ export function selectStudentDashboardByUserId(
 		prisma.studentProfile.findUnique({
 			where: { userId },
 			include: {
+				user: {
+					select: {
+						name: true,
+					},
+				},
+				course: {
+					select: {
+						name: true,
+						code: true,
+						level: true,
+					},
+				},
 				activitySubmissions: {
 					orderBy: [{ submittedAt: 'desc' }, { id: 'desc' }],
 					select: {
@@ -90,6 +103,13 @@ export function selectStudentDashboardByUserId(
 						submittedAt: true,
 						grade: true,
 						feedback: true,
+					},
+				},
+				attendanceRecords: {
+					orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+					select: {
+						id: true,
+						status: true,
 					},
 				},
 				enrollments: {
@@ -133,6 +153,9 @@ export function selectStudentDashboardByUserId(
 			profile
 				? {
 						profile,
+						userName: profile.user.name,
+						courseLevel: profile.course?.level ?? null,
+						attendanceSummary: buildAttendanceSummary(profile.attendanceRecords),
 						submissions: profile.activitySubmissions.map((submission) => ({
 							id: submission.id,
 							activityId: submission.activityId,
@@ -157,6 +180,29 @@ export function selectStudentDashboardByUserId(
 				: null,
 		),
 	);
+}
+
+function buildAttendanceSummary(
+	attendanceRecords: Array<{
+		id: number;
+		status: string;
+	}>,
+): StudentDashboardAttendanceSummary {
+	if (attendanceRecords.length === 0) {
+		return {
+			totalRecords: 0,
+			presentRecords: 0,
+			percentage: 0,
+		};
+	}
+
+	const presentRecords = attendanceRecords.filter((record) => record.status === 'present').length;
+
+	return {
+		totalRecords: attendanceRecords.length,
+		presentRecords,
+		percentage: Math.round((presentRecords / attendanceRecords.length) * 100),
+	};
 }
 
 export function updateStudentProfile(

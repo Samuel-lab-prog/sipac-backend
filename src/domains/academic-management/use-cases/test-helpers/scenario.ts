@@ -16,6 +16,7 @@ function academicScenarioMockFactories() {
 			selectStudentProfileByUserId: () => Promise.resolve(null),
 			selectProfessorProfileByUserId: () => Promise.resolve(null),
 			selectStaffProfileByUserId: () => Promise.resolve(null),
+			selectStudentDashboardByUserId: () => Promise.resolve(null),
 		} satisfies AcademicQueriesRepository,
 	};
 }

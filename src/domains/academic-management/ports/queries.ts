@@ -2,8 +2,17 @@ import type { ProfessorProfile, StaffProfile, StudentProfile } from './models';
 
 export type StudentDashboard = {
 	profile: StudentProfile;
+	userName: string;
+	courseLevel: string | null;
+	attendanceSummary: StudentDashboardAttendanceSummary;
 	enrollments: StudentEnrollment[];
 	submissions: StudentDashboardSubmission[];
+};
+
+export type StudentDashboardAttendanceSummary = {
+	totalRecords: number;
+	presentRecords: number;
+	percentage: number;
 };
 
 export type StudentEnrollment = {

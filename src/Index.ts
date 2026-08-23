@@ -20,6 +20,10 @@ import {
 	academicQueriesRouter,
 } from '@Domains/academic-management/composition';
 import {
+	communicationsCommandsRouter,
+	communicationsQueriesRouter,
+} from '@Domains/communications-management/composition';
+import {
 	attendanceCommandsRouter,
 	attendanceDeleteCommandsRouter,
 	attendanceQueriesRouter,
@@ -101,9 +105,11 @@ function makeServer({
 			.use(scheduleCommandsRouter)
 			.use(scheduleDeleteCommandsRouter)
 			.use(curriculumCommandsRouter)
+			.use(communicationsCommandsRouter)
 			.use(enableRealHash ? authRouter : authRouterWithFakeHash)
 			.use(userQueriesRouter)
 			.use(academicQueriesRouter)
+			.use(communicationsQueriesRouter)
 			.use(activitiesQueriesRouter)
 			.use(attendanceQueriesRouter)
 			.use(scheduleQueriesRouter)

@@ -53,10 +53,11 @@ async function main() {
 
 	const course = await prisma.course.upsert({
 		where: { code: 'INF-INT' },
-		update: { departmentId: department.id },
+		update: { departmentId: department.id, level: 'Ensino Médio Integrado' },
 		create: {
 			name: 'Informática Integrado ao Ensino Médio',
 			code: 'INF-INT',
+			level: 'Ensino Médio Integrado',
 			departmentId: department.id,
 		},
 	});
@@ -140,6 +141,45 @@ async function main() {
 			workload: 40,
 		},
 	});
+
+	const communications = [
+		{
+			title: 'Reunião pedagógica',
+			body: 'A staff realizará uma reunião geral com orientações para a próxima semana.',
+			audience: 'all' as const,
+			isPinned: true,
+			publishedAt: new Date('2026-08-23T09:00:00.000-03:00'),
+			expiresAt: null,
+			createdByUserId: staffUser.id,
+		},
+		{
+			title: 'Calendário de avaliações',
+			body: 'As datas das avaliações parciais foram atualizadas no sistema.',
+			audience: 'student' as const,
+			isPinned: false,
+			publishedAt: new Date('2026-08-22T16:00:00.000-03:00'),
+			expiresAt: new Date('2026-09-30T23:59:59.000-03:00'),
+			createdByUserId: staffUser.id,
+		},
+	];
+
+	for (const communication of communications) {
+		const existing = await prisma.announcement.findFirst({
+			where: { title: communication.title, createdByUserId: staffUser.id },
+			select: { id: true },
+		});
+
+		if (existing) {
+			await prisma.announcement.update({
+				where: { id: existing.id },
+				data: communication,
+			});
+		} else {
+			await prisma.announcement.create({
+				data: communication,
+			});
+		}
+	}
 
 	const studentProfile = await prisma.studentProfile.upsert({
 		where: { userId: studentUser.id },
@@ -240,6 +280,9 @@ async function main() {
 		createdClassOfferings.push(classOffering);
 	}
 
+	const [classOfferingA, classOfferingB, classOfferingC, classOfferingD, classOfferingE] =
+		createdClassOfferings;
+
 	for (const classOffering of createdClassOfferings) {
 		await prisma.enrollment.upsert({
 			where: {
@@ -278,13 +321,13 @@ async function main() {
 		where: {
 			studentProfileId_classOfferingId: {
 				studentProfileId: studentTwoProfile.id,
-				classOfferingId: createdClassOfferings[0].id,
+				classOfferingId: createdClassOfferings[0]!.id,
 			},
 		},
 		update: { status: 'active' },
 		create: {
 			studentProfileId: studentTwoProfile.id,
-			classOfferingId: createdClassOfferings[0].id,
+			classOfferingId: classOfferingA!.id,
 			status: 'active',
 		},
 	});
@@ -293,50 +336,50 @@ async function main() {
 		where: {
 			professorProfileId_classOfferingId: {
 				professorProfileId: (await prisma.professorProfile.findFirstOrThrow({ where: { userId: professorUser.id } })).id,
-				classOfferingId: createdClassOfferings[0].id,
+				classOfferingId: createdClassOfferings[0]!.id,
 			},
 		},
 		update: { role: 'lead' },
 		create: {
 			professorProfileId: (await prisma.professorProfile.findFirstOrThrow({ where: { userId: professorUser.id } })).id,
-			classOfferingId: createdClassOfferings[0].id,
+			classOfferingId: classOfferingA!.id,
 			role: 'lead',
 		},
 	});
 
 	const sessions = [
 		{
-			classOfferingId: createdClassOfferings[0].id,
+			classOfferingId: createdClassOfferings[0]!.id,
 			startsAt: new Date('2026-08-23T13:30:00.000-03:00'),
 			endsAt: new Date('2026-08-23T14:20:00.000-03:00'),
 			topic: 'Introdução ao conteúdo e combinados da disciplina',
 		},
 		{
-			classOfferingId: createdClassOfferings[0].id,
+			classOfferingId: createdClassOfferings[0]!.id,
 			startsAt: new Date('2026-08-24T14:20:00.000-03:00'),
 			endsAt: new Date('2026-08-24T15:10:00.000-03:00'),
 			topic: 'Prática guiada em laboratório',
 		},
 		{
-			classOfferingId: createdClassOfferings[1].id,
+			classOfferingId: classOfferingB!.id,
 			startsAt: new Date('2026-08-23T15:10:00.000-03:00'),
 			endsAt: new Date('2026-08-23T16:00:00.000-03:00'),
 			topic: 'Aula inaugural da turma B',
 		},
 		{
-			classOfferingId: createdClassOfferings[2].id,
+			classOfferingId: classOfferingC!.id,
 			startsAt: new Date('2026-08-23T10:10:00.000-03:00'),
 			endsAt: new Date('2026-08-23T11:00:00.000-03:00'),
 			topic: 'Leitura orientada e introdução ao período literário',
 		},
 		{
-			classOfferingId: createdClassOfferings[3].id,
+			classOfferingId: classOfferingD!.id,
 			startsAt: new Date('2026-08-24T13:30:00.000-03:00'),
 			endsAt: new Date('2026-08-24T14:20:00.000-03:00'),
 			topic: 'Interfaces, cores e composição visual',
 		},
 		{
-			classOfferingId: createdClassOfferings[4].id,
+			classOfferingId: classOfferingE!.id,
 			startsAt: new Date('2026-08-24T16:10:00.000-03:00'),
 			endsAt: new Date('2026-08-24T17:00:00.000-03:00'),
 			topic: 'Modelo de negócio e validação da ideia',
@@ -369,37 +412,37 @@ async function main() {
 
 	const activities = [
 		{
-			classOfferingId: createdClassOfferings[0].id,
+			classOfferingId: createdClassOfferings[0]!.id,
 			title: 'Lista 01',
 			description: 'Introdução aos conceitos básicos.',
 			dueAt: new Date('2026-08-25T23:59:59.000-03:00'),
 		},
 		{
-			classOfferingId: createdClassOfferings[0].id,
+			classOfferingId: createdClassOfferings[0]!.id,
 			title: 'Atividade prática',
 			description: 'Entrega individual no portal.',
 			dueAt: new Date('2026-08-28T23:59:59.000-03:00'),
 		},
 		{
-			classOfferingId: createdClassOfferings[1].id,
+			classOfferingId: createdClassOfferings[1]!.id,
 			title: 'Resumo da aula',
 			description: 'Produzir um resumo do conteúdo visto em sala.',
 			dueAt: new Date('2026-08-29T23:59:59.000-03:00'),
 		},
 		{
-			classOfferingId: createdClassOfferings[2].id,
+			classOfferingId: createdClassOfferings[2]!.id,
 			title: 'Interpretação de texto',
 			description: 'Responder às questões sobre o capítulo lido.',
 			dueAt: new Date('2026-08-27T23:59:59.000-03:00'),
 		},
 		{
-			classOfferingId: createdClassOfferings[3].id,
+			classOfferingId: createdClassOfferings[3]!.id,
 			title: 'Protótipo visual',
 			description: 'Criar a primeira versão da landing page da disciplina.',
 			dueAt: new Date('2026-08-30T23:59:59.000-03:00'),
 		},
 		{
-			classOfferingId: createdClassOfferings[4].id,
+			classOfferingId: createdClassOfferings[4]!.id,
 			title: 'Canvas da ideia',
 			description: 'Descrever problema, solução e público-alvo.',
 			dueAt: new Date('2026-09-01T23:59:59.000-03:00'),
@@ -432,13 +475,13 @@ async function main() {
 
 	const submissions = [
 		{
-			classOfferingCode: createdClassOfferings[0].code,
+			classOfferingCode: classOfferingA!.code,
 			activityTitle: 'Lista 01',
 			grade: '9.50',
 			feedback: 'Muito boa participação e boa organização.',
 		},
 		{
-			classOfferingCode: createdClassOfferings[2].code,
+			classOfferingCode: classOfferingC!.code,
 			activityTitle: 'Interpretação de texto',
 			grade: '8.75',
 			feedback: 'Respostas completas, com margem para aprofundar a análise.',
