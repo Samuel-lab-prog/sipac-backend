@@ -3,6 +3,7 @@ import { withPrismaErrorHandling } from '@PrismaErrorHandler';
 import type { UserRole, UserStatus } from '../ports/models';
 
 export type { UserRole, UserStatus } from '../ports/models';
+export { userRoleSchema, userStatusSchema, userCpfSchema, userPasswordSchema } from '../ports/schemas';
 
 export type UsersPublicContract = {
 	selectAuthUserByEmail(email: string): Promise<{

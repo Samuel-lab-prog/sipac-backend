@@ -12,4 +12,4 @@ export * from './commands/update-user-schema';
 export * from './queries/created-user-schema';
 export * from './queries/paginated-users-schema';
 export * from './queries/search-users-schema';
-export * from './queries/user-schema';
+export * from './queries/user-schema'
