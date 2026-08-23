@@ -41,8 +41,8 @@ function debugLogin(message: string, details?: Record<string, unknown>) {
 	console.debug('[auth.login]', message, details ?? {});
 }
 
-function normalizeKey(email: string) {
-	return email.trim().toLowerCase();
+function normalizeKey(cpf: string) {
+	return cpf.replace(/\D/g, '');
 }
 
 function getLockoutEntry(key: string) {
@@ -90,14 +90,14 @@ export function loginClientFactory(dependencies: LoginClientDependencies) {
 		params: LoginClientParams,
 	): Promise<LoginResponse> {
 		const { tokenService, hashService, usersContract } = dependencies;
-		const lockoutKey = normalizeKey(params.email);
+		const lockoutKey = normalizeKey(params.cpf);
 		debugLogin('attempt started', {
-			email: lockoutKey,
+			cpf: lockoutKey,
 		});
 
-		const client = await usersContract.selectAuthUserByEmail(lockoutKey);
+		const client = await usersContract.selectAuthUserByCpf(lockoutKey);
 		debugLogin('lookup finished', {
-			email: lockoutKey,
+			cpf: lockoutKey,
 			found: !!client,
 			clientId: client?.id ?? null,
 			status: client?.status ?? null,
@@ -105,7 +105,7 @@ export function loginClientFactory(dependencies: LoginClientDependencies) {
 
 		if (client?.status === 'blocked') {
 			debugLogin('blocked because client is banned', {
-				email: lockoutKey,
+				cpf: lockoutKey,
 				clientId: client.id,
 			});
 			registerFailedAttempt(lockoutKey);
@@ -116,7 +116,7 @@ export function loginClientFactory(dependencies: LoginClientDependencies) {
 
 		if (lockoutEntry?.lockedUntil && lockoutEntry.lockedUntil > Date.now()) {
 			debugLogin('blocked because lockout is active', {
-				email: lockoutKey,
+				cpf: lockoutKey,
 				lockedUntil: lockoutEntry.lockedUntil,
 			});
 			throw new UnauthorizedError('Too many login attempts. Try again later.');
@@ -124,7 +124,7 @@ export function loginClientFactory(dependencies: LoginClientDependencies) {
 
 		if (!client) {
 			debugLogin('blocked because client was not found', {
-				email: lockoutKey,
+				cpf: lockoutKey,
 			});
 			registerFailedAttempt(lockoutKey);
 			throw new UnauthorizedError('Invalid credentials');

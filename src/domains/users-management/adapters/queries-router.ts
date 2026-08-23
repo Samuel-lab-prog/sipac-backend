@@ -33,7 +33,6 @@ export function createUsersReadRouter(services: UsersQueriesRouterServices) {
 			},
 			detail: { summary: 'Search Users', tags: ['Users Management'] },
 		})
-		.use(authPlugin)
 		.get(
 			'/:id',
 			({ params, auth }) =>

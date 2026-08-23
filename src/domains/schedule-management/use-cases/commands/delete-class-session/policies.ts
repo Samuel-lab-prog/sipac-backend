@@ -2,7 +2,7 @@ import { ForbiddenError } from '@DomainError';
 
 type ClassSessionPolicyContext = {
 	actorRole: 'student' | 'professor' | 'staff' | 'admin';
-	actorStatus: 'active' | 'blocked' | 'suspended';
+	actorStatus: 'active' | 'pending' | 'blocked' | 'suspended';
 };
 
 export function assertCanDeleteClassSession(ctx: ClassSessionPolicyContext) {

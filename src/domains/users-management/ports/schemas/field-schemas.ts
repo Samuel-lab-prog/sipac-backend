@@ -28,6 +28,7 @@ export const userRoleSchema = t.Union([
 
 export const userStatusSchema = t.Union([
 	t.Literal('active'),
+	t.Literal('pending'),
 	t.Literal('blocked'),
 	t.Literal('suspended'),
 ]);

@@ -3,7 +3,7 @@ import { appErrorSchema } from '../error-handling/app-error/util.ts';
 import { log } from '../logging/logger';
 
 type UserRole = 'student' | 'professor' | 'staff' | 'admin';
-type UserStatus = 'active' | 'blocked' | 'suspended';
+type UserStatus = 'active' | 'pending' | 'blocked' | 'suspended';
 
 type AuthType = {
 	clientId: number;

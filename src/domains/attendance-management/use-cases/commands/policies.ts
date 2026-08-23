@@ -15,7 +15,7 @@ export function assertCanMarkAttendance(ctx: AcademicPolicyContext) {
 
 type AttendanceDeletePolicyContext = {
 	actorRole: 'student' | 'professor' | 'staff' | 'admin';
-	actorStatus: 'active' | 'blocked' | 'suspended';
+	actorStatus: 'active' | 'pending' | 'blocked' | 'suspended';
 };
 
 export function assertCanDeleteAttendance(ctx: AttendanceDeletePolicyContext) {

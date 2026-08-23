@@ -1,7 +1,7 @@
 import type { AuthClient } from './models';
 
 export type LoginClientParams = {
-	email: string;
+	cpf: string;
 	password: string;
 };
 

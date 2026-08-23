@@ -1,7 +1,7 @@
 import { ForbiddenError } from '@DomainError';
 
 export type AcademicRole = 'student' | 'professor' | 'staff' | 'admin';
-export type AcademicStatus = 'active' | 'blocked' | 'suspended';
+export type AcademicStatus = 'active' | 'pending' | 'blocked' | 'suspended';
 
 export type AcademicPolicyContext = {
 	actorId: number;

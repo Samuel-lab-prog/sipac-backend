@@ -41,6 +41,7 @@ export function changePasswordFactory({
 		const newPasswordHash = await hashServices.hash(params.data.newPassword);
 		const result = await commandsRepository.updateCurrentUser(params.clientId, {
 			passwordHash: newPasswordHash,
+			status: params.clientStatus === 'pending' ? 'active' : undefined,
 		});
 
 		if (result.ok) return result.data;

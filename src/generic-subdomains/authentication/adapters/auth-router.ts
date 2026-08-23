@@ -23,7 +23,7 @@ export function createAuthRouter(services: AuthControllerServices) {
 			'/login',
 			async ({ body, cookie, auth }) => {
 				const result = await login({
-					email: body.email,
+					cpf: body.cpf,
 					password: body.password,
 				});
 				cookie.token!.value = result.accessToken;

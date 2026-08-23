@@ -18,7 +18,7 @@ export type DeleteClassSessionParams = {
 	classSessionId: number;
 	actorId: number;
 	actorRole: 'student' | 'professor' | 'staff' | 'admin';
-	actorStatus: 'active' | 'blocked' | 'suspended';
+	actorStatus: 'active' | 'pending' | 'blocked' | 'suspended';
 };
 
 export interface ScheduleCommandsRepository {

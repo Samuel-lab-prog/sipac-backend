@@ -1,9 +1,10 @@
 import { makeValidationError } from '@AppError';
 import { t } from 'elysia';
-export const emailSchema = t.String({
-	format: 'email',
-	example: 'teste@exemplo.com',
-	...makeValidationError('Email must be a valid email address'),
+export const cpfSchema = t.String({
+	minLength: 11,
+	maxLength: 14,
+	example: '123.456.789-00',
+	...makeValidationError('CPF must be a valid identifier'),
 });
 export const passwordSchema = t.String({
 	minLength: 8,
@@ -12,6 +13,6 @@ export const passwordSchema = t.String({
 	...makeValidationError('Password must be between 8 and 30 characters'),
 });
 export const loginSchema = t.Object({
-	email: emailSchema,
+	cpf: cpfSchema,
 	password: passwordSchema,
 });

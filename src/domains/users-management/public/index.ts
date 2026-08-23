@@ -12,6 +12,13 @@ export type UsersPublicContract = {
 		status: UserStatus;
 		passwordHash: string;
 	} | null>;
+	selectAuthUserByCpf(cpf: string): Promise<{
+		id: number;
+		role: UserRole;
+		email: string;
+		status: UserStatus;
+		passwordHash: string;
+	} | null>;
 };
 
 export const usersPublicContract: UsersPublicContract = {
@@ -19,6 +26,19 @@ export const usersPublicContract: UsersPublicContract = {
 		withPrismaErrorHandling(() =>
 			prisma.user.findFirst({
 				where: { email, deletedAt: null },
+				select: {
+					id: true,
+					role: true,
+					email: true,
+					status: true,
+					passwordHash: true,
+				},
+			}),
+		),
+	selectAuthUserByCpf: (cpf: string) =>
+		withPrismaErrorHandling(() =>
+			prisma.user.findFirst({
+				where: { cpf, deletedAt: null },
 				select: {
 					id: true,
 					role: true,

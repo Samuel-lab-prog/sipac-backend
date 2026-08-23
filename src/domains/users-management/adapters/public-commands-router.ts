@@ -1,27 +1,5 @@
-import { appErrorSchema } from '@AppError';
 import { Elysia } from 'elysia';
-import { createUserSchema, userSchema } from '../ports/schemas';
-import type { CreateUserParams } from '../ports/commands';
-import type { User } from '../ports/models';
 
-type UsersPublicCommandsServices = {
-	createUser(params: CreateUserParams): Promise<User>;
-};
-
-export function createUsersPublicCommandsRouter(
-	services: UsersPublicCommandsServices,
-) {
-	return new Elysia({ prefix: '/users' }).post(
-		'/',
-		async ({ body, set }) => {
-			const result = await services.createUser({ data: body });
-			set.status = 201;
-			return result;
-		},
-		{
-			body: createUserSchema,
-			response: { 201: userSchema, 409: appErrorSchema, 422: appErrorSchema },
-			detail: { summary: 'Create User', tags: ['Users Management'] },
-		},
-	);
+export function createUsersPublicCommandsRouter() {
+	return new Elysia({ prefix: '/users' });
 }

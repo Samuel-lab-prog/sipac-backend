@@ -3,6 +3,7 @@ import { mock } from 'bun:test';
 import { makeParams, makeSut } from '@GenericSubdomains/utils/testing/utils';
 import type { HashServices } from '@SharedKernel/ports/hash-services';
 import type { StorageService } from '@SharedKernel/ports/storage';
+import type { AcademicCommandsRepository } from '@Domains/academic-management/ports/commands';
 import type { CommandsRepository } from '../../ports/commands';
 import type { QueriesRepository } from '../../ports/queries';
 import { createUserFactory } from '../commands/create/execute';
@@ -49,6 +50,18 @@ function usersScenarioMockFactories() {
 			deleteUser: mock(),
 			restoreUser: mock(),
 		} satisfies CommandsRepository,
+		academicCommandsRepository: {
+			insertStudentProfile: mock(),
+			createProfessorProfile: mock(),
+			createStaffProfile: mock(),
+			updateStudentProfile: mock(),
+			updateProfessorProfile: mock(),
+			updateStaffProfile: mock(),
+			linkStudentToCourse: mock(),
+			linkProfessorToDepartment: mock(),
+			unlinkStudentFromCourse: mock(),
+			unlinkProfessorFromDepartment: mock(),
+		} satisfies AcademicCommandsRepository,
 		queriesRepository: {
 			selectUsers: mock(),
 			selectUserById: mock(),
@@ -76,6 +89,7 @@ export function makeUsersScenario() {
 		(m) => ({
 			createUser: createUserFactory({
 				commandsRepository: m.commandsRepository,
+				academicCommandsRepository: m.academicCommandsRepository,
 				hashServices: hashServices as HashServices,
 			}),
 			createAvatarUploadUrl: createAvatarUploadUrlFactory({
@@ -184,6 +198,8 @@ export function makeUsersScenario() {
 							rg: DEFAULT_USER_RG,
 							cpf: DEFAULT_USER_CPF,
 							avatarUrl: null,
+							role: DEFAULT_USER_ROLE,
+							status: DEFAULT_USER_STATUS,
 						},
 					},
 					params,

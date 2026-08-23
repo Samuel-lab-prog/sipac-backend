@@ -21,11 +21,18 @@ describe('authentication > loginClient', () => {
 					status: 'active',
 					passwordHash: 'hash',
 				}),
+				selectAuthUserByCpf: async () => ({
+					id: 1,
+					email: 'student@example.com',
+					role: 'student',
+					status: 'active',
+					passwordHash: 'hash',
+				}),
 			},
 		});
 
 		await expect(
-			sut({ email: 'student@example.com', password: '12341234' }),
+			sut({ cpf: '12345678901', password: '12341234' }),
 		).resolves.toMatchObject({
 			accessToken: 'jwt',
 			refreshToken: 'jwt',
@@ -50,11 +57,18 @@ describe('authentication > loginClient', () => {
 					status: 'active',
 					passwordHash: 'hash',
 				}),
+				selectAuthUserByCpf: async () => ({
+					id: 1,
+					email: 'student@example.com',
+					role: 'student',
+					status: 'active',
+					passwordHash: 'hash',
+				}),
 			},
 		});
 
 		await expect(
-			sut({ email: 'student@example.com', password: 'wrong' }),
+			sut({ cpf: '12345678901', password: 'wrong' }),
 		).rejects.toBeInstanceOf(UnauthorizedError);
 	});
 });

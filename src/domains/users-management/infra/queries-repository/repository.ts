@@ -6,7 +6,7 @@ import { userSelect } from '../commands-repository/selects';
 function selectUsers(params: {
 	searchTerm?: string;
 	role?: 'student' | 'professor' | 'staff' | 'admin';
-	status?: 'active' | 'blocked' | 'suspended';
+	status?: 'active' | 'pending' | 'blocked' | 'suspended';
 	deleted?: boolean;
 	limit: number;
 	cursor?: number;

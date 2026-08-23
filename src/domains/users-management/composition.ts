@@ -6,6 +6,7 @@ import { storageService } from '@SharedKernel/infra/storage/storage-service';
 import { Elysia } from 'elysia';
 import { commandsRepository } from './infra/commands-repository/repository';
 import { queriesRepository } from './infra/queries-repository/repository';
+import { commandsRepository as academicCommandsRepository } from '@Domains/academic-management/infra/commands-repository/repository';
 import {
 	createUsersAuthenticatedCommandsRouter,
 	createUsersPublicCommandsRouter,
@@ -29,11 +30,13 @@ import {
 
 const createUser = createUserFactory({
 	commandsRepository,
+	academicCommandsRepository,
 	hashServices: BcryptHashService,
 });
 
 const createUserWithFakeHash = createUserFactory({
 	commandsRepository,
+	academicCommandsRepository,
 	hashServices: FakeHashService,
 });
 
@@ -78,12 +81,11 @@ const restoreUser = restoreUserFactory({
 	commandsRepository,
 });
 
-const usersPublicCommandsRouter = createUsersPublicCommandsRouter({
-	createUser,
-});
+const usersPublicCommandsRouter = createUsersPublicCommandsRouter();
 
 const usersAuthenticatedCommandsRouter = createUsersAuthenticatedCommandsRouter(
 	{
+		createUser,
 		updateUser,
 		updateCurrentUser,
 		createAvatarUploadUrl,
@@ -99,12 +101,19 @@ export const userCommandsRouter = new Elysia()
 	.use(usersAuthenticatedCommandsRouter);
 
 export const userCommandsRouterWithFakeHash = new Elysia()
+	.use(createUsersPublicCommandsRouter())
 	.use(
-		createUsersPublicCommandsRouter({
+		createUsersAuthenticatedCommandsRouter({
 			createUser: createUserWithFakeHash,
+			updateUser,
+			updateCurrentUser,
+			createAvatarUploadUrl,
+			setAvatar,
+			changePassword,
+			deleteUser,
+			restoreUser,
 		}),
-	)
-	.use(usersAuthenticatedCommandsRouter);
+	);
 
 export const userQueriesRouter = createUsersReadRouter({
 	searchUsers,

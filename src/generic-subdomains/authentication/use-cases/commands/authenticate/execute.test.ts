@@ -22,6 +22,13 @@ describe('authentication > authenticateClient', () => {
 					status: 'active',
 					passwordHash: 'hash',
 				}),
+				selectAuthUserByCpf: async () => ({
+					id: 1,
+					role: 'student',
+					email: 'student@example.com',
+					status: 'active',
+					passwordHash: 'hash',
+				}),
 			},
 		});
 
@@ -40,6 +47,7 @@ describe('authentication > authenticateClient', () => {
 			},
 			usersContract: {
 				selectAuthUserByEmail: async () => null,
+				selectAuthUserByCpf: async () => null,
 			},
 		});
 
@@ -59,6 +67,7 @@ describe('authentication > authenticateClient', () => {
 			},
 			usersContract: {
 				selectAuthUserByEmail: async () => null,
+				selectAuthUserByCpf: async () => null,
 			},
 		});
 

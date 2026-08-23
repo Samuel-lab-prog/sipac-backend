@@ -22,6 +22,13 @@ describe('authentication > refreshSession', () => {
 					status: 'active',
 					passwordHash: 'hash',
 				}),
+				selectAuthUserByCpf: async () => ({
+					id: 1,
+					email: 'student@example.com',
+					role: 'student',
+					status: 'active',
+					passwordHash: 'hash',
+				}),
 			},
 		});
 
@@ -39,6 +46,7 @@ describe('authentication > refreshSession', () => {
 			},
 			usersContract: {
 				selectAuthUserByEmail: async () => null,
+				selectAuthUserByCpf: async () => null,
 			},
 		});
 

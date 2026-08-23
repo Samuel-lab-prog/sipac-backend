@@ -20,6 +20,9 @@ export function authenticateClientFactory(
 		const client = await usersContract.selectAuthUserByEmail(payload.email);
 		if (!client) throw new UnauthorizedError('Client not found');
 
+		if (client.status === 'pending')
+			throw new UnauthorizedError('Account is pending approval');
+
 		if (client.status === 'blocked')
 			throw new UnauthorizedError('Client is banned');
 

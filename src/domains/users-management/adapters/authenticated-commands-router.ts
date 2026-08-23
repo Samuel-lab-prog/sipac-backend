@@ -1,10 +1,12 @@
 import { appErrorSchema } from '@AppError';
+import { ForbiddenError } from '@DomainError';
 import { authPlugin } from '@GenericSubdomains/authentication/composition';
 import { Elysia } from 'elysia';
 import {
 	avatarUploadRequestSchema,
 	avatarUploadResponseSchema,
 	changePasswordSchema,
+	createUserSchema,
 	setAvatarSchema,
 	updateUserParamsSchema,
 	updateUserSchema,
@@ -20,10 +22,12 @@ import type {
 	SetAvatarParams,
 	UpdateCurrentUserParams,
 	UpdateUserParams,
+	CreateUserParams,
 } from '../ports/commands';
 import type { User } from '../ports/models';
 
 type UsersAuthenticatedCommandsServices = {
+	createUser(params: CreateUserParams): Promise<User>;
 	updateUser(params: UpdateUserParams): Promise<User>;
 	updateCurrentUser(params: UpdateCurrentUserParams): Promise<User>;
 	createAvatarUploadUrl(
@@ -40,6 +44,33 @@ export function createUsersAuthenticatedCommandsRouter(
 ) {
 	return new Elysia({ prefix: '/users' })
 		.use(authPlugin)
+		.post(
+			'/',
+			async ({ body, auth, set }) => {
+				if (auth.clientRole !== 'admin' && auth.clientRole !== 'staff')
+					throw new ForbiddenError(
+						'You are not allowed to perform this action',
+					);
+
+				const result = await services.createUser({ data: body });
+				set.status = 201;
+				return result;
+			},
+			{
+				body: createUserSchema,
+				response: {
+					201: userSchema,
+					401: appErrorSchema,
+					403: appErrorSchema,
+					409: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Create User',
+					tags: ['Users Management'],
+				},
+			},
+		)
 		.put(
 			'/me',
 			({ body, auth }) =>

@@ -8,7 +8,7 @@ type DeleteAttendanceParams = {
 	studentProfileId: number;
 	actorId: number;
 	actorRole: 'student' | 'professor' | 'staff' | 'admin';
-	actorStatus: 'active' | 'blocked' | 'suspended';
+	actorStatus: 'active' | 'pending' | 'blocked' | 'suspended';
 };
 
 type Dependencies = {

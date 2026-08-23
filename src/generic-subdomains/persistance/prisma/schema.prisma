@@ -28,7 +28,20 @@ model User {
   studentProfile  StudentProfile?
   professorProfile ProfessorProfile?
   staffProfile     StaffProfile?
+  claimedStudentRegistrationCode StudentRegistrationCode?
 
+}
+
+model StudentRegistrationCode {
+  id             Int      @id @default(autoincrement())
+  code           String   @unique
+  cpf            String   @unique
+  claimedAt      DateTime?
+  claimedByUserId Int?     @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  claimedByUser User? @relation(fields: [claimedByUserId], references: [id], onDelete: SetNull)
 }
 
 model Department {
@@ -258,6 +271,7 @@ enum UserRole {
 
 enum UserStatus {
   active
+  pending
   blocked
   suspended
 }
