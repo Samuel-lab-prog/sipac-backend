@@ -1,8 +1,6 @@
 node_modules
 dist
 src/generic-subdomains/persistance/prisma/generated
-.env.test
-.env.development
 .env.production
 cloc.json
 depcruise.json
