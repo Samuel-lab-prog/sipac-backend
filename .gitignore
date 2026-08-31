@@ -1,13 +1,11 @@
 node_modules
 dist
 src/generic-subdomains/persistance/prisma/generated
-.env.test
-.env.development
+.env
 .env.production
 cloc.json
 depcruise.json
 /.vscode
-.env
 bun.xml
 architecture-analysis/bun-test-report.xml
 ai-contexts
