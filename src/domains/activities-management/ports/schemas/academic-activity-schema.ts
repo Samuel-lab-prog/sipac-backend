@@ -7,5 +7,6 @@ export const academicActivitySchema = t.Object({
 	title: t.String({ example: 'Lista 1 - Funções' }),
 	description: t.Nullable(t.String({ example: 'Responder até sexta-feira' })),
 	dueAt: t.Nullable(dateSchema),
+	allowLateSubmissions: t.Boolean(),
 	createdByProfessorProfileId: t.Nullable(idSchema),
 });

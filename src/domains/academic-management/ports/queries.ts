@@ -38,6 +38,7 @@ export type StudentDashboardActivity = {
 	title: string;
 	description: string | null;
 	dueAt: Date | null;
+	allowLateSubmissions: boolean;
 };
 
 export type StudentDashboardSession = {

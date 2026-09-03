@@ -247,6 +247,22 @@ bun run db:drop:test
 
 The curated local seed uses `password123` for all seeded users.
 
+The seed is deterministic and safe to run repeatedly in development. It creates
+an end-to-end academic scenario with multiple roles, courses, class offerings,
+enrollments, teaching assignments, sessions, attendance records, announcements,
+activities in different deadline states, late-submission policies, activity
+attachments, and student submissions with mixed file types. Existing records are
+updated by their natural keys instead of being deleted, so relationships remain
+intact across runs.
+
+Seeded scenarios include:
+
+- pending, overdue, submitted, and graded activities;
+- activities that accept late submissions and activities that reject them;
+- image, PDF, DOCX, and audio attachment metadata;
+- present and absent attendance records for two students;
+- student, professor, staff, and administrator accounts.
+
 Admin and data helpers:
 
 ```bash

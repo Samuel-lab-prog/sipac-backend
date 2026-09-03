@@ -1,4 +1,4 @@
-import { ConflictError, UnknownError } from '@DomainError';
+import { ConflictError, ForbiddenError, UnknownError } from '@DomainError';
 import type { CreateAcademicActivitySubmissionParams } from '../../../ports/commands';
 import type { AcademicActivitySubmission } from '../../../ports/models';
 import { assertCanSubmitAcademicActivity } from '@Domains/academic-management/public';
@@ -29,6 +29,10 @@ export function createAcademicActivitySubmissionFactory({
 		const result =
 			await commandsRepository.createAcademicActivitySubmission(params);
 		if (result.ok) return result.data;
+		if (result.code === 'FORBIDDEN')
+			throw new ForbiddenError(
+				result.message ?? 'This activity does not accept late submissions',
+			);
 		if (result.code === 'CONFLICT')
 			throw new ConflictError(
 				result.message ?? 'Academic activity submission already exists',

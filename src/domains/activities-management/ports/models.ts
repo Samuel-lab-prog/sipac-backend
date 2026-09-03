@@ -4,6 +4,7 @@ export type AcademicActivity = {
 	title: string;
 	description: string | null;
 	dueAt: Date | null;
+	allowLateSubmissions: boolean;
 	createdByProfessorProfileId: number | null;
 };
 

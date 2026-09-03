@@ -17,21 +17,17 @@ async function upsertUserByEmail(params: {
 	role: 'student' | 'professor' | 'staff' | 'admin';
 	status?: 'active' | 'pending' | 'blocked' | 'suspended';
 }) {
-	await prisma.user.deleteMany({
-		where: {
-			OR: [
-				{ email: params.email },
-				{ cpf: params.cpf },
-				{ nickname: params.nickname },
-				{ rg: params.rg },
-			],
-		},
-	});
-
-	return prisma.user.create({
-		data: {
+	const passwordHash = await BcryptHashService.hash(PASSWORD);
+	return prisma.user.upsert({
+		where: { email: params.email },
+		update: {
 			...params,
-			passwordHash: await BcryptHashService.hash(PASSWORD),
+			passwordHash,
+			status: params.status ?? 'active',
+		},
+		create: {
+			...params,
+			passwordHash,
 			status: params.status ?? 'active',
 		},
 	});
@@ -105,6 +101,24 @@ async function main() {
 		role: 'professor',
 	});
 
+	const professorTwoUser = await upsertUserByEmail({
+		email: 'ana.costa@prof.example',
+		name: 'Ana Costa',
+		nickname: 'ana.costa',
+		rg: '90000005',
+		cpf: '12345678003',
+		role: 'professor',
+	});
+
+	const adminUser = await upsertUserByEmail({
+		email: 'admin@agias.example',
+		name: 'Administrador AGIAS',
+		nickname: 'admin.agias',
+		rg: '90000006',
+		cpf: '12345678004',
+		role: 'admin',
+	});
+
 	const studentUser = await upsertUserByEmail({
 		email: 'samuel.monni@aluno.example',
 		name: 'Samuel Gomes Monni',
@@ -149,6 +163,23 @@ async function main() {
 		},
 	});
 
+	await prisma.professorProfile.upsert({
+		where: { userId: professorTwoUser.id },
+		update: {
+			registryCode: 'PROF-2026-002',
+			departmentId: languageDept.id,
+			title: 'Mestra',
+			workload: 20,
+		},
+		create: {
+			userId: professorTwoUser.id,
+			registryCode: 'PROF-2026-002',
+			departmentId: languageDept.id,
+			title: 'Mestra',
+			workload: 20,
+		},
+	});
+
 	const communications = [
 		{
 			title: 'Reunião pedagógica',
@@ -167,6 +198,15 @@ async function main() {
 			publishedAt: new Date('2026-08-22T16:00:00.000-03:00'),
 			expiresAt: new Date('2026-09-30T23:59:59.000-03:00'),
 			createdByUserId: staffUser.id,
+		},
+		{
+			title: 'Manutenção programada do portal',
+			body: 'O portal ficará indisponível no sábado, das 02h às 04h, para manutenção.',
+			audience: 'all' as const,
+			isPinned: false,
+			publishedAt: new Date('2026-08-28T12:00:00.000-03:00'),
+			expiresAt: new Date('2026-09-06T23:59:59.000-03:00'),
+			createdByUserId: adminUser.id,
 		},
 	];
 
@@ -367,6 +407,30 @@ async function main() {
 		},
 	});
 
+	const professorProfile = await prisma.professorProfile.findUniqueOrThrow({
+		where: { userId: professorUser.id },
+	});
+	const professorTwoProfile = await prisma.professorProfile.findUniqueOrThrow({
+		where: { userId: professorTwoUser.id },
+	});
+	for (const [index, classOffering] of createdClassOfferings.entries()) {
+		const professor = index % 2 === 0 ? professorProfile : professorTwoProfile;
+		await prisma.teachingAssignment.upsert({
+			where: {
+				professorProfileId_classOfferingId: {
+					professorProfileId: professor.id,
+					classOfferingId: classOffering.id,
+				},
+			},
+			update: { role: index === 0 ? 'lead' : 'assistant' },
+			create: {
+				professorProfileId: professor.id,
+				classOfferingId: classOffering.id,
+				role: index === 0 ? 'lead' : 'assistant',
+			},
+		});
+	}
+
 	const sessions = [
 		{
 			classOfferingId: createdClassOfferings[0]!.id,
@@ -430,42 +494,81 @@ async function main() {
 		}
 	}
 
+	const persistedSessions = await prisma.classSession.findMany({
+		where: {
+			classOfferingId: { in: createdClassOfferings.map((item) => item.id) },
+		},
+		orderBy: { startsAt: 'asc' },
+	});
+	for (const [index, session] of persistedSessions.entries()) {
+		for (const [studentIndex, student] of [
+			studentProfile,
+			studentTwoProfile,
+		].entries()) {
+			if (studentIndex === 1 && index % 3 === 0) continue;
+			await prisma.attendanceRecord.upsert({
+				where: {
+					classSessionId_studentProfileId: {
+						classSessionId: session.id,
+						studentProfileId: student.id,
+					},
+				},
+				update: {
+					status: index % 5 === 4 ? 'absent' : 'present',
+					markedByProfessorProfileId: professorProfile.id,
+				},
+				create: {
+					classSessionId: session.id,
+					studentProfileId: student.id,
+					status: index % 5 === 4 ? 'absent' : 'present',
+					markedByProfessorProfileId: professorProfile.id,
+				},
+			});
+		}
+	}
+
 	const activities = [
 		{
 			classOfferingId: createdClassOfferings[0]!.id,
 			title: 'Lista 01',
 			description: 'Introdução aos conceitos básicos.',
 			dueAt: new Date('2026-08-25T23:59:59.000-03:00'),
+			allowLateSubmissions: true,
 		},
 		{
 			classOfferingId: createdClassOfferings[0]!.id,
 			title: 'Atividade prática',
 			description: 'Entrega individual no portal.',
 			dueAt: new Date('2026-08-28T23:59:59.000-03:00'),
+			allowLateSubmissions: false,
 		},
 		{
 			classOfferingId: createdClassOfferings[1]!.id,
 			title: 'Resumo da aula',
 			description: 'Produzir um resumo do conteúdo visto em sala.',
 			dueAt: new Date('2026-08-29T23:59:59.000-03:00'),
+			allowLateSubmissions: true,
 		},
 		{
 			classOfferingId: createdClassOfferings[2]!.id,
 			title: 'Interpretação de texto',
 			description: 'Responder às questões sobre o capítulo lido.',
 			dueAt: new Date('2026-08-27T23:59:59.000-03:00'),
+			allowLateSubmissions: true,
 		},
 		{
 			classOfferingId: createdClassOfferings[3]!.id,
 			title: 'Protótipo visual',
 			description: 'Criar a primeira versão da landing page da disciplina.',
 			dueAt: new Date('2026-08-30T23:59:59.000-03:00'),
+			allowLateSubmissions: false,
 		},
 		{
 			classOfferingId: createdClassOfferings[4]!.id,
 			title: 'Canvas da ideia',
 			description: 'Descrever problema, solução e público-alvo.',
 			dueAt: new Date('2026-09-01T23:59:59.000-03:00'),
+			allowLateSubmissions: true,
 		},
 	];
 
@@ -484,6 +587,7 @@ async function main() {
 				data: {
 					description: activity.description,
 					dueAt: activity.dueAt,
+					allowLateSubmissions: activity.allowLateSubmissions,
 				},
 			});
 		} else {
@@ -499,12 +603,61 @@ async function main() {
 			activityTitle: 'Lista 01',
 			grade: '9.50',
 			feedback: 'Muito boa participação e boa organização.',
+			submittedAt: new Date('2026-08-25T20:15:00.000-03:00'),
+			studentProfileId: studentProfile.id,
+			attachments: [
+				{
+					fileName: 'lista-01-respostas.pdf',
+					fileUrl:
+						'https://files.example.test/submissions/lista-01-respostas.pdf',
+					fileKey: 'seed/submissions/lista-01-respostas.pdf',
+					contentType: 'application/pdf',
+					fileSize: 184_320,
+				},
+			],
 		},
 		{
 			classOfferingCode: classOfferingC!.code,
 			activityTitle: 'Interpretação de texto',
 			grade: '8.75',
 			feedback: 'Respostas completas, com margem para aprofundar a análise.',
+			submittedAt: new Date('2026-08-29T18:40:00.000-03:00'),
+			studentProfileId: studentProfile.id,
+			attachments: [
+				{
+					fileName: 'analise-literaria.docx',
+					fileUrl:
+						'https://files.example.test/submissions/analise-literaria.docx',
+					fileKey: 'seed/submissions/analise-literaria.docx',
+					contentType:
+						'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+					fileSize: 76_800,
+				},
+				{
+					fileName: 'referencias.mp3',
+					fileUrl: 'https://files.example.test/submissions/referencias.mp3',
+					fileKey: 'seed/submissions/referencias.mp3',
+					contentType: 'audio/mpeg',
+					fileSize: 2_457_600,
+				},
+			],
+		},
+		{
+			classOfferingCode: classOfferingD!.code,
+			activityTitle: 'Protótipo visual',
+			grade: null,
+			feedback: null,
+			submittedAt: new Date('2026-09-02T10:30:00.000-03:00'),
+			studentProfileId: studentTwoProfile.id,
+			attachments: [
+				{
+					fileName: 'prototipo-home.png',
+					fileUrl: 'https://files.example.test/submissions/prototipo-home.png',
+					fileKey: 'seed/submissions/prototipo-home.png',
+					contentType: 'image/png',
+					fileSize: 512_000,
+				},
+			],
 		},
 	];
 
@@ -526,7 +679,7 @@ async function main() {
 			await prisma.academicActivitySubmission.findFirst({
 				where: {
 					activityId: activity.id,
-					studentProfileId: studentProfile.id,
+					studentProfileId: submission.studentProfileId,
 				},
 				select: { id: true },
 			});
@@ -535,20 +688,80 @@ async function main() {
 			await prisma.academicActivitySubmission.update({
 				where: { id: existingSubmission.id },
 				data: {
-					submittedAt: new Date(),
+					submittedAt: submission.submittedAt,
 					grade: submission.grade,
 					feedback: submission.feedback,
 				},
 			});
 		} else {
-			await prisma.academicActivitySubmission.create({
+			const createdSubmission = await prisma.academicActivitySubmission.create({
 				data: {
 					activityId: activity.id,
-					studentProfileId: studentProfile.id,
-					submittedAt: new Date(),
+					studentProfileId: submission.studentProfileId,
+					submittedAt: submission.submittedAt,
 					grade: submission.grade,
 					feedback: submission.feedback,
 				},
+			});
+			await prisma.academicActivitySubmissionAttachment.createMany({
+				data: submission.attachments.map((attachment) => ({
+					...attachment,
+					submissionId: createdSubmission.id,
+				})),
+			});
+		}
+
+		if (existingSubmission) {
+			await prisma.academicActivitySubmissionAttachment.deleteMany({
+				where: { submissionId: existingSubmission.id },
+			});
+			await prisma.academicActivitySubmissionAttachment.createMany({
+				data: submission.attachments.map((attachment) => ({
+					...attachment,
+					submissionId: existingSubmission.id,
+				})),
+			});
+		}
+	}
+
+	const activityAttachments = [
+		{
+			activityTitle: 'Lista 01',
+			fileName: 'roteiro-lista-01.pdf',
+			fileUrl: 'https://files.example.test/activities/roteiro-lista-01.pdf',
+			fileKey: 'seed/activities/roteiro-lista-01.pdf',
+			contentType: 'application/pdf',
+			fileSize: 245_760,
+		},
+		{
+			activityTitle: 'Protótipo visual',
+			fileName: 'referencia-layout.jpg',
+			fileUrl: 'https://files.example.test/activities/referencia-layout.jpg',
+			fileKey: 'seed/activities/referencia-layout.jpg',
+			contentType: 'image/jpeg',
+			fileSize: 98_304,
+		},
+	];
+	for (const attachment of activityAttachments) {
+		const { activityTitle, ...fileData } = attachment;
+		const activity = await prisma.academicActivity.findFirst({
+			where: { title: activityTitle },
+			select: { id: true },
+		});
+		if (!activity) continue;
+		const existingAttachment =
+			await prisma.academicActivityAttachment.findFirst({
+				where: { activityId: activity.id, fileKey: fileData.fileKey },
+				select: { id: true },
+			});
+		if (existingAttachment) {
+			await prisma.academicActivityAttachment.update({
+				where: { id: existingAttachment.id },
+				data: fileData,
+			});
+		} else {
+			await prisma.academicActivityAttachment.create({
+				data: { ...fileData, activityId: activity.id },
 			});
 		}
 	}
@@ -561,7 +774,13 @@ async function main() {
 					{ role: 'student', email: studentUser.email, cpf: '12345678100' },
 					{ role: 'student', email: studentTwoUser.email, cpf: '12345678101' },
 					{ role: 'professor', email: professorUser.email, cpf: '12345678002' },
+					{
+						role: 'professor',
+						email: professorTwoUser.email,
+						cpf: '12345678003',
+					},
 					{ role: 'staff', email: staffUser.email, cpf: '12345678001' },
+					{ role: 'admin', email: adminUser.email, cpf: '12345678004' },
 				],
 				loginPassword: PASSWORD,
 			},

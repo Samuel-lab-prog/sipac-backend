@@ -14,6 +14,7 @@ describe('activities-management > createAcademicActivity', () => {
 						title: 'Lista 1',
 						description: null,
 						dueAt: null,
+						allowLateSubmissions: true,
 						createdByProfessorProfileId: 1,
 					},
 				}),
@@ -30,6 +31,7 @@ describe('activities-management > createAcademicActivity', () => {
 				title: 'Lista 1',
 				description: null,
 				dueAt: null,
+				allowLateSubmissions: true,
 				createdByProfessorProfileId: 1,
 			}),
 		).resolves.toMatchObject({ id: 1, title: 'Lista 1' });
@@ -57,6 +59,7 @@ describe('activities-management > createAcademicActivity', () => {
 				title: 'Lista 1',
 				description: null,
 				dueAt: null,
+				allowLateSubmissions: true,
 				createdByProfessorProfileId: 1,
 			}),
 		).rejects.toBeInstanceOf(ConflictError);
@@ -84,6 +87,7 @@ describe('activities-management > createAcademicActivity', () => {
 				title: 'Lista 1',
 				description: null,
 				dueAt: null,
+				allowLateSubmissions: true,
 				createdByProfessorProfileId: 1,
 			}),
 		).rejects.toBeInstanceOf(UnknownError);

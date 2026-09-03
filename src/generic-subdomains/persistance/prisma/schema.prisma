@@ -237,6 +237,7 @@ model AcademicActivity {
   title           String
   description     String?
   dueAt           DateTime?
+  allowLateSubmissions Boolean @default(true)
   createdByProfessorProfileId Int?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
