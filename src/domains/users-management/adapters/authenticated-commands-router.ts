@@ -10,6 +10,7 @@ import {
 	setAvatarSchema,
 	updateUserParamsSchema,
 	updateUserSchema,
+	updateCurrentUserSchema,
 	userIdParamsSchema,
 	createdUserSchema,
 	userSchema,
@@ -80,7 +81,7 @@ export function createUsersAuthenticatedCommandsRouter(
 					data: body,
 				}),
 			{
-				body: updateUserSchema,
+				body: updateCurrentUserSchema,
 				response: {
 					200: userSchema,
 					409: appErrorSchema,
