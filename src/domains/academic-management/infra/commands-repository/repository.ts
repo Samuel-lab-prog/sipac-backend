@@ -1,4 +1,5 @@
 import { prisma } from '@Prisma';
+/* eslint-disable max-lines -- dashboard persistence and mapping are intentionally colocated. */
 import { withPrismaErrorHandling, withPrismaResult } from '@PrismaErrorHandler';
 import type { CommandResult } from '@SharedKernel/types';
 import type {
@@ -76,109 +77,119 @@ export function selectStaffProfileByUserId(userId: number) {
 	);
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function selectStudentDashboardByUserId(
 	userId: number,
 ): Promise<StudentDashboard | null> {
+	/* eslint-disable max-lines-per-function, max-nested-callbacks -- dashboard mapping is kept together with its query contract. */
 	return withPrismaErrorHandling(() =>
-		prisma.studentProfile.findUnique({
-			where: { userId },
-			include: {
-				user: {
-					select: {
-						name: true,
+		prisma.studentProfile
+			.findUnique({
+				where: { userId },
+				include: {
+					user: {
+						select: {
+							name: true,
+						},
 					},
-				},
-				course: {
-					select: {
-						name: true,
-						code: true,
-						level: true,
+					course: {
+						select: {
+							name: true,
+							code: true,
+							level: true,
+						},
 					},
-				},
-				activitySubmissions: {
-					orderBy: [{ submittedAt: 'desc' }, { id: 'desc' }],
-					select: {
-						id: true,
-						activityId: true,
-						submittedAt: true,
-						grade: true,
-						feedback: true,
+					activitySubmissions: {
+						orderBy: [{ submittedAt: 'desc' }, { id: 'desc' }],
+						select: {
+							id: true,
+							activityId: true,
+							submittedAt: true,
+							grade: true,
+							feedback: true,
+							attachments: true,
+						},
 					},
-				},
-				attendanceRecords: {
-					orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
-					select: {
-						id: true,
-						status: true,
+					attendanceRecords: {
+						orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+						select: {
+							id: true,
+							status: true,
+						},
 					},
-				},
-				enrollments: {
-					where: { status: 'active' },
-					orderBy: [{ createdAt: 'asc' }],
-					include: {
-						classOffering: {
-							select: {
-								id: true,
-								title: true,
-								code: true,
-								year: true,
-								term: true,
-								shift: true,
-								courseId: true,
-								activities: {
-									orderBy: [{ dueAt: 'asc' }, { id: 'asc' }],
-									select: {
-										id: true,
-										title: true,
-										description: true,
-										dueAt: true,
-										createdAt: true,
+					enrollments: {
+						where: { status: 'active' },
+						orderBy: [{ createdAt: 'asc' }],
+						include: {
+							classOffering: {
+								select: {
+									id: true,
+									title: true,
+									code: true,
+									year: true,
+									term: true,
+									shift: true,
+									courseId: true,
+									activities: {
+										orderBy: [{ dueAt: 'asc' }, { id: 'asc' }],
+										select: {
+											id: true,
+											title: true,
+											description: true,
+											dueAt: true,
+											createdAt: true,
+										},
 									},
-								},
-								sessions: {
-									orderBy: [{ startsAt: 'asc' }],
-									select: {
-										id: true,
-										startsAt: true,
-										endsAt: true,
-										topic: true,
+									sessions: {
+										orderBy: [{ startsAt: 'asc' }],
+										select: {
+											id: true,
+											startsAt: true,
+											endsAt: true,
+											topic: true,
+										},
 									},
 								},
 							},
 						},
 					},
 				},
-			},
-			}).then((profile) =>
-			profile
-				? {
-						profile,
-						userName: profile.user.name,
-						courseLevel: profile.course?.level ?? null,
-						attendanceSummary: buildAttendanceSummary(profile.attendanceRecords),
-						submissions: profile.activitySubmissions.map((submission) => ({
-							id: submission.id,
-							activityId: submission.activityId,
-							submittedAt: submission.submittedAt,
-							grade: submission.grade?.toString() ?? null,
-							feedback: submission.feedback,
-						})),
-						enrollments: profile.enrollments.map((enrollment) => ({
-							id: enrollment.id,
-							status: enrollment.status,
-							classOffering: enrollment.classOffering,
-							activities: enrollment.classOffering.activities.map((activity) => ({
-								id: activity.id,
-								title: activity.title,
-								description: activity.description,
-								dueAt: activity.dueAt,
-								createdAt: activity.createdAt,
+			})
+			.then((profile) =>
+				profile
+					? {
+							profile,
+							userName: profile.user.name,
+							courseLevel: profile.course?.level ?? null,
+							attendanceSummary: buildAttendanceSummary(
+								profile.attendanceRecords,
+							),
+							submissions: profile.activitySubmissions.map((submission) => ({
+								id: submission.id,
+								activityId: submission.activityId,
+								submittedAt: submission.submittedAt,
+								grade: submission.grade?.toString() ?? null,
+								feedback: submission.feedback,
+								attachments: submission.attachments,
 							})),
-							sessions: enrollment.classOffering.sessions,
-						})),
-				  }
-				: null,
-		),
+							enrollments: profile.enrollments.map((enrollment) => ({
+								id: enrollment.id,
+								status: enrollment.status,
+								classOffering: enrollment.classOffering,
+								activities: enrollment.classOffering.activities.map(
+									(activity) => ({
+										id: activity.id,
+										title: activity.title,
+										description: activity.description,
+										dueAt: activity.dueAt,
+										createdAt: activity.createdAt,
+									}),
+								),
+								sessions: enrollment.classOffering.sessions,
+							})),
+						}
+					: null,
+			),
 	);
 }
 
@@ -196,7 +207,9 @@ function buildAttendanceSummary(
 		};
 	}
 
-	const presentRecords = attendanceRecords.filter((record) => record.status === 'present').length;
+	const presentRecords = attendanceRecords.filter(
+		(record) => record.status === 'present',
+	).length;
 
 	return {
 		totalRecords: attendanceRecords.length,

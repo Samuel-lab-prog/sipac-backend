@@ -16,7 +16,10 @@ export type CreateAnnouncementParams = {
 };
 
 export interface CommunicationsQueriesRepository {
-	listAnnouncementsForUser(userId: number, role: string): Promise<AnnouncementListItem[]>;
+	listAnnouncementsForUser(
+		userId: number,
+		role: string,
+	): Promise<AnnouncementListItem[]>;
 }
 
 export interface CommunicationsQueriesServices {

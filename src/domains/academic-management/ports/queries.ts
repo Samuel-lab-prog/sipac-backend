@@ -61,7 +61,9 @@ export interface AcademicQueriesRepository {
 		userId: number,
 	): Promise<ProfessorProfile | null>;
 	selectStaffProfileByUserId(userId: number): Promise<StaffProfile | null>;
-	selectStudentDashboardByUserId(userId: number): Promise<StudentDashboard | null>;
+	selectStudentDashboardByUserId(
+		userId: number,
+	): Promise<StudentDashboard | null>;
 }
 
 export interface AcademicQueriesServices {

@@ -4,6 +4,8 @@ import { prisma } from './prisma/prisma-client';
 import { BcryptHashService } from '../../shared-kernel/infra/encrypting/bcrypt';
 import { validateServerEnv } from '../../server-config/utils/validateEnv';
 
+/* eslint-disable max-lines, max-lines-per-function -- deterministic integration fixture. */
+
 const PASSWORD = 'password123';
 
 async function upsertUserByEmail(params: {
@@ -17,7 +19,12 @@ async function upsertUserByEmail(params: {
 }) {
 	await prisma.user.deleteMany({
 		where: {
-			OR: [{ email: params.email }, { cpf: params.cpf }, { nickname: params.nickname }, { rg: params.rg }],
+			OR: [
+				{ email: params.email },
+				{ cpf: params.cpf },
+				{ nickname: params.nickname },
+				{ rg: params.rg },
+			],
 		},
 	});
 
@@ -280,8 +287,13 @@ async function main() {
 		createdClassOfferings.push(classOffering);
 	}
 
-	const [classOfferingA, classOfferingB, classOfferingC, classOfferingD, classOfferingE] =
-		createdClassOfferings;
+	const [
+		classOfferingA,
+		classOfferingB,
+		classOfferingC,
+		classOfferingD,
+		classOfferingE,
+	] = createdClassOfferings;
 
 	for (const classOffering of createdClassOfferings) {
 		await prisma.enrollment.upsert({
@@ -335,13 +347,21 @@ async function main() {
 	await prisma.teachingAssignment.upsert({
 		where: {
 			professorProfileId_classOfferingId: {
-				professorProfileId: (await prisma.professorProfile.findFirstOrThrow({ where: { userId: professorUser.id } })).id,
+				professorProfileId: (
+					await prisma.professorProfile.findFirstOrThrow({
+						where: { userId: professorUser.id },
+					})
+				).id,
 				classOfferingId: createdClassOfferings[0]!.id,
 			},
 		},
 		update: { role: 'lead' },
 		create: {
-			professorProfileId: (await prisma.professorProfile.findFirstOrThrow({ where: { userId: professorUser.id } })).id,
+			professorProfileId: (
+				await prisma.professorProfile.findFirstOrThrow({
+					where: { userId: professorUser.id },
+				})
+			).id,
 			classOfferingId: classOfferingA!.id,
 			role: 'lead',
 		},
@@ -489,7 +509,9 @@ async function main() {
 	];
 
 	for (const submission of submissions) {
-		const classOffering = createdClassOfferings.find((item) => item.code === submission.classOfferingCode);
+		const classOffering = createdClassOfferings.find(
+			(item) => item.code === submission.classOfferingCode,
+		);
 		if (!classOffering) continue;
 
 		const activity = await prisma.academicActivity.findFirstOrThrow({
@@ -500,13 +522,14 @@ async function main() {
 			select: { id: true },
 		});
 
-		const existingSubmission = await prisma.academicActivitySubmission.findFirst({
-			where: {
-				activityId: activity.id,
-				studentProfileId: studentProfile.id,
-			},
-			select: { id: true },
-		});
+		const existingSubmission =
+			await prisma.academicActivitySubmission.findFirst({
+				where: {
+					activityId: activity.id,
+					studentProfileId: studentProfile.id,
+				},
+				select: { id: true },
+			});
 
 		if (existingSubmission) {
 			await prisma.academicActivitySubmission.update({

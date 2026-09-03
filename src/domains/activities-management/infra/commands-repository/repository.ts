@@ -32,12 +32,26 @@ export function createAcademicActivitySubmission(
 	params: import('../../ports/commands').CreateAcademicActivitySubmissionParams,
 ): Promise<CommandResult<AcademicActivitySubmission>> {
 	return withPrismaResult(async () => {
-		const submission = await prisma.academicActivitySubmission.create({
-			data: {
-				activityId: params.activityId,
-				studentProfileId: params.studentProfileId,
-				submittedAt: params.submittedAt ?? new Date(),
-			},
+		const submission = await prisma.$transaction(async (tx) => {
+			const created = await tx.academicActivitySubmission.create({
+				data: {
+					activityId: params.activityId,
+					studentProfileId: params.studentProfileId,
+					submittedAt: params.submittedAt ?? new Date(),
+					attachments: params.attachments?.length
+						? {
+								create: params.attachments.map((attachment) => ({
+									...attachment,
+									fileKey:
+										attachment.fileKey ??
+										new URL(attachment.fileUrl).pathname.replace(/^\/+/, ''),
+								})),
+							}
+						: undefined,
+				},
+				include: { attachments: true },
+			});
+			return created;
 		});
 
 		return {
@@ -70,11 +84,13 @@ export function selectAcademicActivitySubmissionsByStudentProfileId(
 		.findMany({
 			where: { studentProfileId },
 			orderBy: [{ submittedAt: 'desc' }, { id: 'desc' }],
+			include: { attachments: true },
 		})
 		.then((submissions) =>
 			submissions.map((submission) => ({
 				...submission,
 				grade: submission.grade?.toString() ?? null,
+				attachments: submission.attachments,
 			})),
 		);
 }

@@ -1,5 +1,12 @@
-import type { AcademicActivity, AcademicActivitySubmission } from './models';
+import type {
+	AcademicActivity,
+	AcademicActivitySubmission,
+	AcademicActivitySubmissionAttachment,
+} from './models';
 import type { AcademicPolicyContext } from '@Domains/academic-management/public';
+import type { FileUploadUrlResult } from '@SharedKernel/ports/storage';
+import type { Static } from 'elysia';
+import { createAcademicActivitySubmissionUploadSchema } from './schemas';
 
 export type CreateAcademicActivityParams = Omit<AcademicActivity, 'id'> &
 	AcademicPolicyContext;
@@ -8,7 +15,17 @@ export type CreateAcademicActivitySubmissionParams = AcademicPolicyContext & {
 	activityId: number;
 	studentProfileId: number;
 	submittedAt?: Date | null;
+	attachments?: Omit<
+		AcademicActivitySubmissionAttachment,
+		'id' | 'submissionId'
+	>[];
 };
+
+export type CreateAcademicActivitySubmissionUploadParams =
+	AcademicPolicyContext & {
+		activityId: number;
+		data: Static<typeof createAcademicActivitySubmissionUploadSchema>;
+	};
 
 export interface ActivitiesCommandsRepository {
 	createAcademicActivity(
@@ -34,4 +51,7 @@ export interface ActivitiesCommandsServices {
 	createAcademicActivitySubmission(
 		params: CreateAcademicActivitySubmissionParams,
 	): Promise<AcademicActivitySubmission>;
+	createAcademicActivitySubmissionUploadUrl(
+		params: CreateAcademicActivitySubmissionUploadParams,
+	): Promise<FileUploadUrlResult>;
 }

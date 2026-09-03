@@ -14,6 +14,17 @@ export type AcademicActivitySubmission = {
 	submittedAt: Date | null;
 	grade: string | null;
 	feedback: string | null;
+	attachments?: AcademicActivitySubmissionAttachment[];
+};
+
+export type AcademicActivitySubmissionAttachment = {
+	id: number;
+	submissionId: number;
+	fileName: string;
+	fileUrl: string;
+	fileKey?: string;
+	contentType: string | null;
+	fileSize: number | null;
 };
 
 export type AcademicActivityAttachment = {

@@ -18,7 +18,9 @@ export function createAnnouncement(
 				body: params.body,
 				audience: params.audience,
 				isPinned: params.isPinned ?? false,
-				publishedAt: params.publishedAt ? new Date(params.publishedAt) : new Date(),
+				publishedAt: params.publishedAt
+					? new Date(params.publishedAt)
+					: new Date(),
 				expiresAt: params.expiresAt ? new Date(params.expiresAt) : null,
 				createdByUserId: params.actorId,
 			},
@@ -27,8 +29,8 @@ export function createAnnouncement(
 }
 
 export function listAnnouncementsForUser(
-	userId: number,
-	role: string,
+	_userId: number,
+	_role: string,
 ): Promise<AnnouncementListItem[]> {
 	return withPrismaErrorHandling(() =>
 		prisma.announcement
@@ -46,7 +48,11 @@ export function listAnnouncementsForUser(
 						},
 					},
 				},
-				orderBy: [{ isPinned: 'desc' }, { publishedAt: 'desc' }, { createdAt: 'desc' }],
+				orderBy: [
+					{ isPinned: 'desc' },
+					{ publishedAt: 'desc' },
+					{ createdAt: 'desc' },
+				],
 			})
 			.then((announcements) =>
 				announcements.map((announcement) => {
