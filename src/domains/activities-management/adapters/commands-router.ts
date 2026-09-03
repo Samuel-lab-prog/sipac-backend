@@ -1,11 +1,13 @@
 import { appErrorSchema } from '@AppError';
 import { authPlugin } from '@GenericSubdomains/authentication/composition';
 import { Elysia, t } from 'elysia';
+import { dateSchema, idSchema } from '@SharedKernel/schemas/schemas';
 import {
 	academicActivitySchema,
 	academicActivitySubmissionSchema,
 	createAcademicActivitySchema,
 	createAcademicActivitySubmissionSchema,
+	createAcademicActivitySubmissionCommentSchema,
 	createAcademicActivitySubmissionUploadResponseSchema,
 	createAcademicActivitySubmissionUploadSchema,
 } from '../ports/schemas';
@@ -13,6 +15,7 @@ import type {
 	ActivitiesCommandsServices,
 	CreateAcademicActivityParams,
 	CreateAcademicActivitySubmissionParams,
+	CreateAcademicActivitySubmissionCommentParams,
 } from '../ports/commands';
 
 export function createActivitiesCommandsRouter(
@@ -69,6 +72,41 @@ export function createActivitiesCommandsRouter(
 				},
 				detail: {
 					summary: 'Create Academic Activity',
+					tags: ['Activities Management'],
+				},
+			},
+		)
+		.post(
+			'/submissions/:submissionId/comments/me',
+			({ params, body, auth, set }) => {
+				set.status = 201;
+				return services.createAcademicActivitySubmissionComment({
+					submissionId: Number(params.submissionId),
+					body: body.body,
+					actorId: auth.clientId,
+					actorRole: auth.clientRole,
+					actorStatus: auth.clientStatus,
+					targetUserId: auth.clientId,
+				} as CreateAcademicActivitySubmissionCommentParams);
+			},
+			{
+				params: t.Object({ submissionId: t.Numeric() }),
+				body: createAcademicActivitySubmissionCommentSchema,
+				response: {
+					201: t.Object({
+						id: idSchema,
+						submissionId: idSchema,
+						authorUserId: idSchema,
+						body: t.String(),
+						createdAt: dateSchema,
+						updatedAt: dateSchema,
+					}),
+					401: appErrorSchema,
+					403: appErrorSchema,
+					422: appErrorSchema,
+				},
+				detail: {
+					summary: 'Create Student Activity Submission Comment',
 					tags: ['Activities Management'],
 				},
 			},

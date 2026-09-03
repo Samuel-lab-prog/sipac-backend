@@ -1,4 +1,5 @@
 import type { ProfessorProfile, StaffProfile, StudentProfile } from './models';
+import type { AcademicActivitySubmissionComment } from '@Domains/activities-management/ports/models';
 
 export type StudentDashboard = {
 	profile: StudentProfile;
@@ -54,6 +55,7 @@ export type StudentDashboardSubmission = {
 	submittedAt: Date | null;
 	grade: string | null;
 	feedback: string | null;
+	comments: AcademicActivitySubmissionComment[];
 };
 
 export interface AcademicQueriesRepository {

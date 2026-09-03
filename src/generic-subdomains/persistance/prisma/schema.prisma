@@ -30,6 +30,7 @@ model User {
 	staffProfile     StaffProfile?
 	studentRegistration StudentRegistration?
 	announcementsCreated Announcement[]
+	activitySubmissionComments AcademicActivitySubmissionComment[]
 
 }
 
@@ -279,6 +280,7 @@ model AcademicActivitySubmission {
   activity       AcademicActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   studentProfile  StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
   attachments     AcademicActivitySubmissionAttachment[]
+	comments        AcademicActivitySubmissionComment[]
 
   @@unique([activityId, studentProfileId])
   @@index([studentProfileId, submittedAt])
@@ -298,6 +300,21 @@ model AcademicActivitySubmissionAttachment {
   submission AcademicActivitySubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
 
   @@index([submissionId])
+}
+
+model AcademicActivitySubmissionComment {
+  id           Int      @id @default(autoincrement())
+  submissionId Int
+  authorUserId Int
+  body         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  submission AcademicActivitySubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  author     User @relation(fields: [authorUserId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId, createdAt])
+  @@index([authorUserId, createdAt])
 }
 
 enum UserRole {

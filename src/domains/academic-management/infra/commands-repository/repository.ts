@@ -108,6 +108,18 @@ export function selectStudentDashboardByUserId(
 							grade: true,
 							feedback: true,
 							attachments: true,
+							comments: {
+								orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+								select: {
+									id: true,
+									submissionId: true,
+									authorUserId: true,
+									author: { select: { name: true } },
+									body: true,
+									createdAt: true,
+									updatedAt: true,
+								},
+							},
 						},
 					},
 					attendanceRecords: {
@@ -172,6 +184,15 @@ export function selectStudentDashboardByUserId(
 								grade: submission.grade?.toString() ?? null,
 								feedback: submission.feedback,
 								attachments: submission.attachments,
+								comments: submission.comments.map((comment) => ({
+									id: comment.id,
+									submissionId: comment.submissionId,
+									authorUserId: comment.authorUserId,
+									authorName: comment.author.name,
+									body: comment.body,
+									createdAt: comment.createdAt,
+									updatedAt: comment.updatedAt,
+								})),
 							})),
 							enrollments: profile.enrollments.map((enrollment) => ({
 								id: enrollment.id,

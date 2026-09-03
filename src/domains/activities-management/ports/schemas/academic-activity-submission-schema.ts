@@ -21,4 +21,17 @@ export const academicActivitySubmissionSchema = t.Object({
 			}),
 		),
 	),
+	comments: t.Optional(
+		t.Array(
+			t.Object({
+				id: idSchema,
+				submissionId: idSchema,
+				authorUserId: idSchema,
+				authorName: t.String(),
+				body: t.String(),
+				createdAt: dateSchema,
+				updatedAt: dateSchema,
+			}),
+		),
+	),
 });

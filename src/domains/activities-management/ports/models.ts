@@ -16,6 +16,17 @@ export type AcademicActivitySubmission = {
 	grade: string | null;
 	feedback: string | null;
 	attachments?: AcademicActivitySubmissionAttachment[];
+	comments?: AcademicActivitySubmissionComment[];
+};
+
+export type AcademicActivitySubmissionComment = {
+	id: number;
+	submissionId: number;
+	authorUserId: number;
+	authorName: string;
+	body: string;
+	createdAt: Date;
+	updatedAt: Date;
 };
 
 export type AcademicActivitySubmissionAttachment = {

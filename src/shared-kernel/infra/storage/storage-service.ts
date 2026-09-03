@@ -3,6 +3,7 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { InternalServerError } from '@DomainError';
 import { log } from '../../../generic-subdomains/utils/logging/logger';
 import type { StorageService } from '@SharedKernel/ports/storage';
+import { createLocalStorageService } from './local-storage';
 
 const allowedImageTypes = new Set([
 	'image/jpeg',
@@ -108,7 +109,7 @@ const s3Client =
 			})
 		: new S3Client({ region });
 
-export const storageService: StorageService = {
+const s3StorageService: StorageService = {
 	validateImageContentType(contentType: string): boolean {
 		return allowedImageTypes.has(contentType.toLowerCase());
 	},
@@ -290,3 +291,9 @@ export const storageService: StorageService = {
 		};
 	},
 };
+
+export const storageService: StorageService =
+	process.env.STORAGE_DRIVER === 'local' ||
+		(process.env.NODE_ENV !== 'production' && (!accessKeyId || !secretAccessKey))
+		? createLocalStorageService()
+		: s3StorageService;

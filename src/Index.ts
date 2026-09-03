@@ -55,6 +55,7 @@ import {
 	RATE_LIMIT_SETTINGS,
 } from 'server-config/rate-limiter/config';
 import { createRateLimitPlugin } from 'server-config/rate-limiter/plugin';
+import { localStorageRouter } from '@SharedKernel/infra/storage/local-storage-router';
 
 type MakeServerOptions = {
 	enableRealHash: boolean;
@@ -96,6 +97,9 @@ function makeServer({
 			.use(SecurityHeadersPlugin)
 			.use(CsrfPlugin)
 			.use(ErrorPlugin)
+			.use(
+				process.env.STORAGE_DRIVER === 'local' ? localStorageRouter : undefined,
+			)
 
 			.use(enableRealHash ? userCommandsRouter : userCommandsRouterWithFakeHash)
 			.use(academicCommandsRouter)

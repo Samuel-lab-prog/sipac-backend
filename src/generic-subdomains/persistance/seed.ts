@@ -724,6 +724,69 @@ async function main() {
 		}
 	}
 
+	const submissionComments = [
+		{
+			classOfferingCode: classOfferingA!.code,
+			activityTitle: 'Lista 01',
+			studentProfileId: studentProfile.id,
+			body: 'Professor, fiquei com dúvida na questão 4. Poderia indicar uma referência?',
+		},
+		{
+			classOfferingCode: classOfferingD!.code,
+			activityTitle: 'Protótipo visual',
+			studentProfileId: studentTwoProfile.id,
+			body: 'Enviei a primeira versão do protótipo e aguardo suas orientações.',
+		},
+	];
+	for (const comment of submissionComments) {
+		const classOffering = createdClassOfferings.find(
+			(item) => item.code === comment.classOfferingCode,
+		);
+		if (!classOffering) continue;
+		const activity = await prisma.academicActivity.findFirst({
+			where: {
+				classOfferingId: classOffering.id,
+				title: comment.activityTitle,
+			},
+			select: { id: true },
+		});
+		if (!activity) continue;
+		const submission = await prisma.academicActivitySubmission.findUnique({
+			where: {
+				activityId_studentProfileId: {
+					activityId: activity.id,
+					studentProfileId: comment.studentProfileId,
+				},
+			},
+			select: { id: true },
+		});
+		if (!submission) continue;
+		const existingComment =
+			await prisma.academicActivitySubmissionComment.findFirst({
+				where: {
+					submissionId: submission.id,
+					authorUserId:
+						comment.studentProfileId === studentProfile.id
+							? studentUser.id
+							: studentTwoUser.id,
+					body: comment.body,
+				},
+				select: { id: true },
+			});
+		if (!existingComment) {
+			await prisma.academicActivitySubmissionComment.create({
+				data: {
+					submissionId: submission.id,
+					authorUserId:
+						comment.studentProfileId === studentProfile.id
+							? studentUser.id
+							: studentTwoUser.id,
+					body: comment.body,
+				},
+			});
+		}
+	}
+
 	const activityAttachments = [
 		{
 			activityTitle: 'Lista 01',

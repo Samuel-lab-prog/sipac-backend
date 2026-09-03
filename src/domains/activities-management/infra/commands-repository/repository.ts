@@ -4,6 +4,7 @@ import type { CommandResult } from '@SharedKernel/types';
 import type {
 	AcademicActivity,
 	AcademicActivitySubmission,
+	AcademicActivitySubmissionComment,
 } from '../../ports/models';
 import type { ActivitiesCommandsRepository } from '../../ports/commands';
 
@@ -29,6 +30,7 @@ export function createAcademicActivity(
 	);
 }
 
+/* eslint-disable max-nested-callbacks -- submission creation maps nested attachment writes. */
 export function createAcademicActivitySubmission(
 	params: import('../../ports/commands').CreateAcademicActivitySubmissionParams,
 ): Promise<CommandResult<AcademicActivitySubmission>> {
@@ -80,12 +82,51 @@ export function createAcademicActivitySubmission(
 		});
 }
 
+/* eslint-enable max-nested-callbacks */
+
+export function createAcademicActivitySubmissionComment(
+	params: import('../../ports/commands').CreateAcademicActivitySubmissionCommentParams,
+): Promise<CommandResult<AcademicActivitySubmissionComment>> {
+	return prisma.academicActivitySubmission
+		.findUnique({
+			where: { id: params.submissionId },
+			select: { studentProfile: { select: { userId: true } } },
+		})
+		.then((submission) => {
+			if (!submission || submission.studentProfile.userId !== params.actorId) {
+				return {
+					ok: false as const,
+					data: null,
+					code: 'FORBIDDEN' as const,
+					message: 'You can only comment on your own submission',
+				};
+			}
+			return withPrismaResult(async () => {
+				const created = await prisma.academicActivitySubmissionComment.create({
+					data: {
+						submissionId: params.submissionId,
+						authorUserId: params.actorId,
+						body: params.body.trim(),
+					},
+					include: { author: { select: { name: true } } },
+				});
+				return { ...created, authorName: created.author.name };
+			});
+		});
+}
+
 export const commandsRepository: ActivitiesCommandsRepository = {
 	createAcademicActivity,
 	createAcademicActivitySubmission,
+	createAcademicActivitySubmissionComment,
 	selectAcademicActivitiesByClassOfferingId,
+	selectAcademicActivityById,
 	selectAcademicActivitySubmissionsByStudentProfileId,
 };
+
+export function selectAcademicActivityById(activityId: number) {
+	return prisma.academicActivity.findUnique({ where: { id: activityId } });
+}
 
 export function selectAcademicActivitiesByClassOfferingId(
 	classOfferingId: number,

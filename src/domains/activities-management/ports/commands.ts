@@ -2,6 +2,7 @@ import type {
 	AcademicActivity,
 	AcademicActivitySubmission,
 	AcademicActivitySubmissionAttachment,
+	AcademicActivitySubmissionComment,
 } from './models';
 import type { AcademicPolicyContext } from '@Domains/academic-management/public';
 import type { FileUploadUrlResult } from '@SharedKernel/ports/storage';
@@ -21,6 +22,12 @@ export type CreateAcademicActivitySubmissionParams = AcademicPolicyContext & {
 	>[];
 };
 
+export type CreateAcademicActivitySubmissionCommentParams =
+	AcademicPolicyContext & {
+		submissionId: number;
+		body: string;
+	};
+
 export type CreateAcademicActivitySubmissionUploadParams =
 	AcademicPolicyContext & {
 		activityId: number;
@@ -36,9 +43,17 @@ export interface ActivitiesCommandsRepository {
 	): Promise<
 		import('@SharedKernel/types').CommandResult<AcademicActivitySubmission>
 	>;
+	createAcademicActivitySubmissionComment(
+		params: CreateAcademicActivitySubmissionCommentParams,
+	): Promise<
+		import('@SharedKernel/types').CommandResult<AcademicActivitySubmissionComment>
+	>;
 	selectAcademicActivitiesByClassOfferingId(
 		classOfferingId: number,
 	): Promise<AcademicActivity[]>;
+	selectAcademicActivityById(
+		activityId: number,
+	): Promise<AcademicActivity | null>;
 	selectAcademicActivitySubmissionsByStudentProfileId(
 		studentProfileId: number,
 	): Promise<AcademicActivitySubmission[]>;
@@ -51,6 +66,9 @@ export interface ActivitiesCommandsServices {
 	createAcademicActivitySubmission(
 		params: CreateAcademicActivitySubmissionParams,
 	): Promise<AcademicActivitySubmission>;
+	createAcademicActivitySubmissionComment(
+		params: CreateAcademicActivitySubmissionCommentParams,
+	): Promise<AcademicActivitySubmissionComment>;
 	createAcademicActivitySubmissionUploadUrl(
 		params: CreateAcademicActivitySubmissionUploadParams,
 	): Promise<FileUploadUrlResult>;
