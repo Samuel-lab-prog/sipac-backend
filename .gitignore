@@ -1,7 +1,10 @@
 node_modules
 dist
 src/generic-subdomains/persistance/prisma/generated
+<<<<<<< HEAD
+=======
 .env
+>>>>>>> 87b377dab8ca719983611790ad501655dd3bc3a8
 .env.production
 cloc.json
 depcruise.json
