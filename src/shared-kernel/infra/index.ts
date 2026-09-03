@@ -3,4 +3,6 @@
  */
 
 export * from './encrypting/bcrypt';
+export * from './storage/local-storage-router';
+export * from './storage/local-storage';
 export * from './storage/storage-service';
