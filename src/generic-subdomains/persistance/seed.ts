@@ -83,6 +83,79 @@ async function main() {
 		},
 	});
 
+	const calendarEvents = [
+		{
+			type: 'holiday' as const,
+			title: 'Independência do Brasil',
+			description: 'Feriado nacional.',
+			startsAt: '2026-09-07T00:00:00.000Z',
+			endsAt: '2026-09-07T23:59:59.000Z',
+			allDay: true,
+			isInstructionalDay: false,
+		},
+		{
+			type: 'academic_event' as const,
+			title: 'Reunião pedagógica',
+			description: 'Encontro de planejamento com a comunidade acadêmica.',
+			startsAt: '2026-09-18T13:00:00.000Z',
+			endsAt: '2026-09-18T17:00:00.000Z',
+			allDay: false,
+			isInstructionalDay: false,
+		},
+		{
+			type: 'instructional_saturday' as const,
+			title: 'Sábado letivo',
+			description: 'Reposição de atividades do período.',
+			startsAt: '2026-09-26T08:00:00.000Z',
+			endsAt: '2026-09-26T12:00:00.000Z',
+			allDay: false,
+			isInstructionalDay: true,
+		},
+		{
+			type: 'exam' as const,
+			title: 'Avaliações parciais',
+			description: 'Período reservado para avaliações parciais.',
+			startsAt: '2026-10-19T00:00:00.000Z',
+			endsAt: '2026-10-23T23:59:59.000Z',
+			allDay: true,
+			isInstructionalDay: true,
+		},
+		{
+			type: 'break' as const,
+			title: 'Recesso acadêmico',
+			description: 'Recesso previsto no calendário letivo.',
+			startsAt: '2026-11-02T00:00:00.000Z',
+			endsAt: '2026-11-02T23:59:59.000Z',
+			allDay: true,
+			isInstructionalDay: false,
+		},
+	];
+	for (const event of calendarEvents) {
+		const startsAt = new Date(event.startsAt);
+		const existing = await prisma.academicCalendarEvent.findFirst({
+			where: {
+				academicPeriodId: academicPeriod.id,
+				title: event.title,
+				startsAt,
+			},
+		});
+		if (existing) {
+			await prisma.academicCalendarEvent.update({
+				where: { id: existing.id },
+				data: event,
+			});
+		} else {
+			await prisma.academicCalendarEvent.create({
+				data: {
+					...event,
+					academicPeriodId: academicPeriod.id,
+					startsAt,
+					endsAt: new Date(event.endsAt),
+				},
+			});
+		}
+	}
+
 	const staffUser = await upsertUserByEmail({
 		email: 'marina.silva@staff.example',
 		name: 'Marina Silva',

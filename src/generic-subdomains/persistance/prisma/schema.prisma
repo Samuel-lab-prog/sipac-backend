@@ -31,6 +31,7 @@ model User {
 	studentRegistration StudentRegistration?
 	announcementsCreated Announcement[]
 	activitySubmissionComments AcademicActivitySubmissionComment[]
+	createdAcademicCalendarEvents AcademicCalendarEvent[] @relation("CreatedAcademicCalendarEvents")
 
 }
 
@@ -69,6 +70,7 @@ model AcademicPeriod {
   updatedAt DateTime @updatedAt
 
   classes   ClassOffering[]
+  calendarEvents AcademicCalendarEvent[]
 
   @@unique([year, term])
 }
@@ -286,6 +288,27 @@ model AcademicActivitySubmission {
   @@index([studentProfileId, submittedAt])
 }
 
+model AcademicCalendarEvent {
+  id              Int      @id @default(autoincrement())
+  academicPeriodId Int
+  type            AcademicCalendarEventType
+  title           String
+  description     String?
+  startsAt        DateTime
+  endsAt          DateTime?
+  allDay          Boolean  @default(true)
+  isInstructionalDay Boolean @default(false)
+  createdByUserId Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  academicPeriod AcademicPeriod @relation(fields: [academicPeriodId], references: [id], onDelete: Cascade)
+  createdBy User? @relation("CreatedAcademicCalendarEvents", fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  @@index([academicPeriodId, startsAt])
+  @@index([type, startsAt])
+}
+
 model AcademicActivitySubmissionAttachment {
   id           Int      @id @default(autoincrement())
   submissionId Int
@@ -336,4 +359,12 @@ enum Shift {
   afternoon
   evening
   integral
+}
+
+enum AcademicCalendarEventType {
+  holiday
+  academic_event
+  instructional_saturday
+  exam
+  break
 }
