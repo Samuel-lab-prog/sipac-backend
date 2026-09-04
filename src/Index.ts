@@ -41,7 +41,10 @@ import {
 	curriculumCommandsRouter,
 	curriculumQueriesRouter,
 } from '@Domains/curriculum-management/composition';
-import { academicCalendarQueriesRouter } from '@Domains/academic-calendar-management/composition';
+import {
+	academicCalendarCommandsRouter,
+	academicCalendarQueriesRouter,
+} from '@Domains/academic-calendar-management/composition';
 import {
 	authRouter,
 	authRouterWithFakeHash,
@@ -110,6 +113,7 @@ function makeServer({
 			.use(scheduleCommandsRouter)
 			.use(scheduleDeleteCommandsRouter)
 			.use(curriculumCommandsRouter)
+			.use(academicCalendarCommandsRouter)
 			.use(communicationsCommandsRouter)
 			.use(enableRealHash ? authRouter : authRouterWithFakeHash)
 			.use(userQueriesRouter)

@@ -1,8 +1,43 @@
 import { prisma } from '@Prisma';
 import type {
 	AcademicCalendarQueriesRepository,
+	AcademicCalendarListParams,
 	StudentAcademicCalendarParams,
 } from '../../ports/queries';
+
+const eventSelect = {
+	id: true,
+	academicPeriodId: true,
+	type: true,
+	title: true,
+	description: true,
+	startsAt: true,
+	endsAt: true,
+	allDay: true,
+	isInstructionalDay: true,
+} as const;
+
+export function listEvents({
+	academicPeriodId,
+	from,
+	to,
+}: AcademicCalendarListParams) {
+	return prisma.academicCalendarEvent.findMany({
+		where: {
+			...(academicPeriodId ? { academicPeriodId } : {}),
+			...(from || to
+				? {
+						startsAt: {
+							...(from ? { gte: from } : {}),
+							...(to ? { lt: to } : {}),
+						},
+					}
+				: {}),
+		},
+		orderBy: [{ startsAt: 'asc' }, { id: 'asc' }],
+		select: eventSelect,
+	});
+}
 
 export function listEventsForStudent({
 	userId,
@@ -58,4 +93,5 @@ export function listEventsForStudent({
 
 export const queriesRepository: AcademicCalendarQueriesRepository = {
 	listEventsForStudent,
+	listEvents,
 };

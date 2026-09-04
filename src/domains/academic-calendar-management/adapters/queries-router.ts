@@ -24,28 +24,56 @@ const eventSchema = t.Object({
 export function createAcademicCalendarQueriesRouter(
 	services: AcademicCalendarQueriesServices,
 ) {
-	return new Elysia({ prefix: '/academic-calendar' }).use(authPlugin).get(
-		'/students/me/events',
-		({ auth, query }) =>
-			services.listEventsForStudent({
-				userId: auth.clientId,
-				from: query.from ? new Date(query.from) : undefined,
-				to: query.to ? new Date(query.to) : undefined,
-			}),
-		{
-			query: t.Object({
-				from: t.Optional(t.String()),
-				to: t.Optional(t.String()),
-			}),
-			response: {
-				200: t.Array(eventSchema),
-				400: appErrorSchema,
-				401: appErrorSchema,
+	return new Elysia({ prefix: '/academic-calendar' })
+		.use(authPlugin)
+		.get(
+			'/events',
+			({ auth, query }) => {
+				if (auth.clientRole !== 'staff' && auth.clientRole !== 'admin')
+					return [];
+				return services.listEvents({
+					academicPeriodId: query.academicPeriodId
+						? Number(query.academicPeriodId)
+						: undefined,
+					from: query.from ? new Date(query.from) : undefined,
+					to: query.to ? new Date(query.to) : undefined,
+				});
 			},
-			detail: {
-				summary: 'List My Academic Calendar Events',
-				tags: ['Academic Calendar'],
+			{
+				query: t.Object({
+					academicPeriodId: t.Optional(t.String()),
+					from: t.Optional(t.String()),
+					to: t.Optional(t.String()),
+				}),
+				response: { 200: t.Array(eventSchema), 401: appErrorSchema },
+				detail: {
+					summary: 'List Academic Calendar Events',
+					tags: ['Academic Calendar'],
+				},
 			},
-		},
-	);
+		)
+		.get(
+			'/students/me/events',
+			({ auth, query }) =>
+				services.listEventsForStudent({
+					userId: auth.clientId,
+					from: query.from ? new Date(query.from) : undefined,
+					to: query.to ? new Date(query.to) : undefined,
+				}),
+			{
+				query: t.Object({
+					from: t.Optional(t.String()),
+					to: t.Optional(t.String()),
+				}),
+				response: {
+					200: t.Array(eventSchema),
+					400: appErrorSchema,
+					401: appErrorSchema,
+				},
+				detail: {
+					summary: 'List My Academic Calendar Events',
+					tags: ['Academic Calendar'],
+				},
+			},
+		);
 }
