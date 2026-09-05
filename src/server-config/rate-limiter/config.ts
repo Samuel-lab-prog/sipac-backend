@@ -71,7 +71,7 @@ function buildRateLimitErrorResponse(): Response | string {
 
 /** Returns true when a request should skip rate limiting. */
 function skipRateLimit(request: Request): boolean {
-	if (NODE_ENV === 'test') return true;
+	if (NODE_ENV === 'test' || NODE_ENV === 'development' || NODE_ENV === 'dev') return true;
 	if (request.method === 'OPTIONS') return true;
 
 	const pathname = new URL(request.url).pathname;

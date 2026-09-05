@@ -130,7 +130,7 @@ function makeServer({
 export const server = makeServer({
 	enableRealHash: true,
 	enableDocs: true,
-	enableRateLimit: true,
+	enableRateLimit: process.env.NODE_ENV === 'production',
 	enableLogger: true,
 });
 
