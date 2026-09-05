@@ -1,18 +1,15 @@
-import { ConflictError, NotFoundError, UnknownError } from '@DomainError';
+import { ConflictError, ForbiddenError, NotFoundError, UnknownError } from '@DomainError';
 import type { UpdateStudentProfileParams } from '../../../ports/commands';
 import type { StudentProfile } from '../../../ports/models';
 import { assertCanUpdateStudentProfile } from '../policies';
+import { prisma } from '@Prisma';
+import { BcryptHashService } from '@SharedKernel/infra/encrypting/bcrypt';
 
 interface Dependencies {
 	commandsRepository: {
 		updateStudentProfile(
 			userId: number,
-			params: Partial<{
-				academicId: string;
-				courseId: number | null;
-				admissionYear: number | null;
-				status: string;
-			}>,
+			params: Partial<import('../../../ports/models').StudentProfile>,
 		): Promise<import('@SharedKernel/types').CommandResult<StudentProfile>>;
 	};
 }
@@ -29,14 +26,23 @@ export function updateStudentProfileFactory({
 			actorStatus: params.actorStatus,
 			targetUserId: params.targetUserId,
 		});
+		const user = params.currentPassword ? await prisma.user.findUnique({ where: { id: params.actorId }, select: { passwordHash: true } }) : null;
+		if (params.currentPassword && (!user || !(await BcryptHashService.compare(params.currentPassword, user.passwordHash)))) {
+			throw new ForbiddenError('Current password does not match');
+		}
+		const {
+			currentPassword: _currentPassword,
+			academicId: _academicId, courseId: _courseId, admissionYear: _admissionYear, status: _status,
+			birthDate: _birthDate, gender: _gender, race: _race, nationality: _nationality,
+			birthplace: _birthplace, birthCountry: _birthCountry, maritalStatus: _maritalStatus,
+			bloodType: _bloodType, disability: _disability, fatherName: _fatherName, motherName: _motherName,
+			rgIssueDate: _rgIssueDate, rgIssuer: _rgIssuer, rgState: _rgState, electoralTitle: _electoralTitle,
+			electoralZone: _electoralZone, electoralSection: _electoralSection, militaryCertificate: _militaryCertificate,
+			documentSeries: _documentSeries, ...editableData
+		} = params;
 		const result = await commandsRepository.updateStudentProfile(
 			params.targetUserId,
-			{
-				academicId: params.academicId,
-				courseId: params.courseId,
-				admissionYear: params.admissionYear,
-				status: params.status,
-			},
+			Object.fromEntries(Object.entries(editableData).filter(([, value]) => value !== undefined)),
 		);
 		if (result.ok) return result.data;
 		if (result.code === 'NOT_FOUND')

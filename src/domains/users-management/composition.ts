@@ -55,6 +55,7 @@ const updateUser = updateUserFactory({
 
 const updateCurrentUser = updateCurrentUserFactory({
 	commandsRepository,
+	hashServices: BcryptHashService,
 });
 
 const createAvatarUploadUrl = createAvatarUploadUrlFactory({

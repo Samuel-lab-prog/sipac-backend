@@ -114,6 +114,38 @@ model StudentProfile {
   courseId      Int?
   admissionYear Int?
   status        String   @default("active")
+  birthDate     DateTime?
+  gender        String?
+  genderIdentity String?
+  sexualOrientation String?
+  race          String?
+  nationality   String?
+  birthplace    String?
+  birthCountry  String?
+  maritalStatus String?
+  bloodType     String?
+  disability    String?
+  fatherName    String?
+  motherName    String?
+  rgIssueDate   DateTime?
+  rgIssuer      String?
+  rgState       String?
+  electoralTitle String?
+  electoralZone String?
+  electoralSection String?
+  militaryCertificate String?
+  documentSeries String?
+  postalCode    String?
+  street       String?
+  addressNumber String?
+  addressComplement String?
+  neighborhood String?
+  state        String?
+  city         String?
+  phone        String?
+  mobilePhone  String?
+  familyIncome Float?
+  socioeconomicStatus String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

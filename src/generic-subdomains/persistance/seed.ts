@@ -285,7 +285,7 @@ async function main() {
 
 	for (const communication of communications) {
 		const existing = await prisma.announcement.findFirst({
-			where: { title: communication.title, createdByUserId: staffUser.id },
+			where: { title: communication.title, createdByUserId: communication.createdByUserId },
 			select: { id: true },
 		});
 
@@ -308,6 +308,13 @@ async function main() {
 			courseId: course.id,
 			admissionYear: 2023,
 			status: 'active',
+			birthDate: new Date('2007-12-17T00:00:00.000-03:00'),
+			gender: 'Masculino', genderIdentity: 'Prefiro não informar', sexualOrientation: 'Prefiro não informar', race: 'Preta', nationality: 'Brasileira', birthplace: 'Tramandaí/RS',
+			birthCountry: 'Brasil', maritalStatus: 'Solteiro', bloodType: null, disability: null,
+			fatherName: 'Mozarino Eduardo da Silva Monni', motherName: 'Maiara Gomes',
+			postalCode: '95590-000', street: 'Rua', addressNumber: '571', addressComplement: null,
+			neighborhood: 'Emboaba', state: 'RS', city: 'Tramandaí', phone: null, mobilePhone: '51991669896',
+			familyIncome: null, socioeconomicStatus: 'Não declarada',
 		},
 		create: {
 			userId: studentUser.id,
@@ -315,6 +322,13 @@ async function main() {
 			courseId: course.id,
 			admissionYear: 2023,
 			status: 'active',
+			birthDate: new Date('2007-12-17T00:00:00.000-03:00'),
+			gender: 'Masculino', genderIdentity: 'Prefiro não informar', sexualOrientation: 'Prefiro não informar', race: 'Preta', nationality: 'Brasileira', birthplace: 'Tramandaí/RS',
+			birthCountry: 'Brasil', maritalStatus: 'Solteiro', bloodType: null, disability: null,
+			fatherName: 'Mozarino Eduardo da Silva Monni', motherName: 'Maiara Gomes',
+			postalCode: '95590-000', street: 'Rua', addressNumber: '571', addressComplement: null,
+			neighborhood: 'Emboaba', state: 'RS', city: 'Tramandaí', phone: null, mobilePhone: '51991669896',
+			familyIncome: null, socioeconomicStatus: 'Não declarada',
 		},
 	});
 
@@ -325,6 +339,11 @@ async function main() {
 			courseId: course.id,
 			admissionYear: 2023,
 			status: 'active',
+			birthDate: new Date('2007-12-17T00:00:00.000-03:00'),
+			gender: 'Masculino', genderIdentity: 'Prefiro não informar', sexualOrientation: 'Prefiro não informar', race: 'Preta', nationality: 'Brasileira', birthplace: 'Tramandaí/RS',
+			birthCountry: 'Brasil', maritalStatus: 'Solteiro', fatherName: 'Mozarino Eduardo da Silva Monni', motherName: 'Maiara Gomes',
+			postalCode: '95590-000', street: 'Rua', addressNumber: '571', neighborhood: 'Emboaba', state: 'RS', city: 'Tramandaí',
+			mobilePhone: '51991669896', socioeconomicStatus: 'Não declarada',
 		},
 		create: {
 			userId: studentTwoUser.id,
@@ -332,6 +351,11 @@ async function main() {
 			courseId: course.id,
 			admissionYear: 2023,
 			status: 'active',
+			birthDate: new Date('2007-12-17T00:00:00.000-03:00'),
+			gender: 'Masculino', genderIdentity: 'Prefiro não informar', sexualOrientation: 'Prefiro não informar', race: 'Preta', nationality: 'Brasileira', birthplace: 'Tramandaí/RS',
+			birthCountry: 'Brasil', maritalStatus: 'Solteiro', fatherName: 'Mozarino Eduardo da Silva Monni', motherName: 'Maiara Gomes',
+			postalCode: '95590-000', street: 'Rua', addressNumber: '571', neighborhood: 'Emboaba', state: 'RS', city: 'Tramandaí',
+			mobilePhone: '51991669896', socioeconomicStatus: 'Não declarada',
 		},
 	});
 

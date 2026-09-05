@@ -1,6 +1,5 @@
-import { Elysia } from 'elysia';
+import { Elysia, t } from 'elysia';
 import { prisma } from '@Prisma';
-import { t } from 'elysia';
 
 const academicPeriodSchema = t.Object({
 	id: t.Number(),

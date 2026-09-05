@@ -30,7 +30,7 @@ export type UpdateUserParams = {
 };
 
 export type UpdateCurrentUserParams = {
-	data: Static<typeof updateUserSchema>;
+	data: Static<typeof updateUserSchema> & { currentPassword?: string };
 	clientId: number;
 	clientRole: UserRole;
 	clientStatus: UserStatus;
