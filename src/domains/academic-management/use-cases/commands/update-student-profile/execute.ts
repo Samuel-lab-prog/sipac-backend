@@ -33,9 +33,6 @@ export function updateStudentProfileFactory({
 		const {
 			currentPassword: _currentPassword,
 			academicId: _academicId, courseId: _courseId, admissionYear: _admissionYear, status: _status,
-			birthDate: _birthDate, gender: _gender, race: _race, nationality: _nationality,
-			birthplace: _birthplace, birthCountry: _birthCountry, maritalStatus: _maritalStatus,
-			bloodType: _bloodType, disability: _disability, fatherName: _fatherName, motherName: _motherName,
 			rgIssueDate: _rgIssueDate, rgIssuer: _rgIssuer, rgState: _rgState, electoralTitle: _electoralTitle,
 			electoralZone: _electoralZone, electoralSection: _electoralSection, militaryCertificate: _militaryCertificate,
 			documentSeries: _documentSeries, ...editableData
