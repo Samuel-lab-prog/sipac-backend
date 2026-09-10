@@ -30,9 +30,17 @@ export function updateStudentProfileFactory({
 		if (params.currentPassword && (!user || !(await BcryptHashService.compare(params.currentPassword, user.passwordHash)))) {
 			throw new ForbiddenError('Current password does not match');
 		}
+		if (params.birthDate && params.birthDate > new Date()) {
+			throw new ForbiddenError('Birth date cannot be in the future');
+		}
 		const {
 			currentPassword: _currentPassword,
+			actorId: _actorId, actorRole: _actorRole, actorStatus: _actorStatus,
+			targetUserId: _targetUserId, userId: _userId,
 			academicId: _academicId, courseId: _courseId, admissionYear: _admissionYear, status: _status,
+			birthDate: _birthDate, gender: _gender, birthCountry: _birthCountry,
+			fatherName: _fatherName, motherName: _motherName,
+			nationality: _nationality, birthplace: _birthplace,
 			rgIssueDate: _rgIssueDate, rgIssuer: _rgIssuer, rgState: _rgState, electoralTitle: _electoralTitle,
 			electoralZone: _electoralZone, electoralSection: _electoralSection, militaryCertificate: _militaryCertificate,
 			documentSeries: _documentSeries, ...editableData

@@ -167,7 +167,7 @@ export async function withPrismaResult<T>(
 			data: null,
 			code: 'UNKNOWN',
 			error: error instanceof Error ? error : undefined,
-			message: 'Unknown error',
+			message: error instanceof Error ? error.message : 'Unknown error',
 		};
 	}
 }
