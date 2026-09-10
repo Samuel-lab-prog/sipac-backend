@@ -1,4 +1,9 @@
-import { ConflictError, ForbiddenError, NotFoundError, UnknownError } from '@DomainError';
+import {
+	ConflictError,
+	ForbiddenError,
+	NotFoundError,
+	UnknownError,
+} from '@DomainError';
 import type { UpdateStudentProfileParams } from '../../../ports/commands';
 import type { StudentProfile } from '../../../ports/models';
 import { assertCanUpdateStudentProfile } from '../policies';
@@ -26,8 +31,20 @@ export function updateStudentProfileFactory({
 			actorStatus: params.actorStatus,
 			targetUserId: params.targetUserId,
 		});
-		const user = params.currentPassword ? await prisma.user.findUnique({ where: { id: params.actorId }, select: { passwordHash: true } }) : null;
-		if (params.currentPassword && (!user || !(await BcryptHashService.compare(params.currentPassword, user.passwordHash)))) {
+		const user = params.currentPassword
+			? await prisma.user.findUnique({
+					where: { id: params.actorId },
+					select: { passwordHash: true },
+				})
+			: null;
+		if (
+			params.currentPassword &&
+			(!user ||
+				!(await BcryptHashService.compare(
+					params.currentPassword,
+					user.passwordHash,
+				)))
+		) {
 			throw new ForbiddenError('Current password does not match');
 		}
 		if (params.birthDate && params.birthDate > new Date()) {
@@ -35,19 +52,37 @@ export function updateStudentProfileFactory({
 		}
 		const {
 			currentPassword: _currentPassword,
-			actorId: _actorId, actorRole: _actorRole, actorStatus: _actorStatus,
-			targetUserId: _targetUserId, userId: _userId,
-			academicId: _academicId, courseId: _courseId, admissionYear: _admissionYear, status: _status,
-			birthDate: _birthDate, gender: _gender, birthCountry: _birthCountry,
-			fatherName: _fatherName, motherName: _motherName,
-			nationality: _nationality, birthplace: _birthplace,
-			rgIssueDate: _rgIssueDate, rgIssuer: _rgIssuer, rgState: _rgState, electoralTitle: _electoralTitle,
-			electoralZone: _electoralZone, electoralSection: _electoralSection, militaryCertificate: _militaryCertificate,
-			documentSeries: _documentSeries, ...editableData
+			actorId: _actorId,
+			actorRole: _actorRole,
+			actorStatus: _actorStatus,
+			targetUserId: _targetUserId,
+			userId: _userId,
+			academicId: _academicId,
+			courseId: _courseId,
+			admissionYear: _admissionYear,
+			status: _status,
+			birthDate: _birthDate,
+			gender: _gender,
+			birthCountry: _birthCountry,
+			fatherName: _fatherName,
+			motherName: _motherName,
+			nationality: _nationality,
+			birthplace: _birthplace,
+			rgIssueDate: _rgIssueDate,
+			rgIssuer: _rgIssuer,
+			rgState: _rgState,
+			electoralTitle: _electoralTitle,
+			electoralZone: _electoralZone,
+			electoralSection: _electoralSection,
+			militaryCertificate: _militaryCertificate,
+			documentSeries: _documentSeries,
+			...editableData
 		} = params;
 		const result = await commandsRepository.updateStudentProfile(
 			params.targetUserId,
-			Object.fromEntries(Object.entries(editableData).filter(([, value]) => value !== undefined)),
+			Object.fromEntries(
+				Object.entries(editableData).filter(([, value]) => value !== undefined),
+			),
 		);
 		if (result.ok) return result.data;
 		if (result.code === 'NOT_FOUND')

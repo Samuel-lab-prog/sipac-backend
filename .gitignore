@@ -12,6 +12,6 @@ a.
 .eslintcache
 features.md
 .e2e-storage.json
-storage/
+/storage/
 playwright-report
 test-results

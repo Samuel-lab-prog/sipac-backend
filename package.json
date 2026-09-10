@@ -59,7 +59,7 @@
 		"metrics:depcruise": "depcruise src --exclude \"node_modules|dist|coverage|src/generic-subdomains/persistance/prisma/generated\" --output-type json --output-to depcruise.json",
 		"metrics:analysis": "bun architecture-analysis/src/main.ts",
 		"metrics": "bun run metrics:cloc && bun run metrics:depcruise && bun run metrics:analysis",
-		"check:static": "bunx prisma generate && bun run barrels && bun run lint:fix && bun run format:fix && bun run metrics && bun run depcruise && bun run typecheck",
+		"check:static": "bunx prisma generate && bun run barrels && bun run lint:fix && bun run format:fix && bun run metrics:depcruise && bun run depcruise && bun run typecheck",
 		"check": "bun run check:env && bun run check:static && bun run test:unit && bun run build && echo 'All checks passed!'",
 		"check:test": "bun run check:env:test && bun run check:static && bun run test:unit && bun run build && echo 'All checks passed (test)!'",
 		"check:prod": "bun run check:env:prod && bun run check:static && bun run test:unit && bun run build && echo 'All checks passed (prod)!'",

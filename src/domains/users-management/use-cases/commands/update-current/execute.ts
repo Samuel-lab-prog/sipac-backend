@@ -12,7 +12,10 @@ interface Dependencies {
 	hashServices?: HashServices;
 }
 
-export function updateCurrentUserFactory({ commandsRepository, hashServices }: Dependencies) {
+export function updateCurrentUserFactory({
+	commandsRepository,
+	hashServices,
+}: Dependencies) {
 	return async function updateCurrentUser(
 		params: UpdateCurrentUserParams,
 	): Promise<User> {
@@ -22,8 +25,15 @@ export function updateCurrentUserFactory({ commandsRepository, hashServices }: D
 			actorRole: params.clientRole,
 			actorStatus: params.clientStatus,
 		});
-		const hash = params.data.currentPassword ? await commandsRepository.getUserPasswordHashById(params.clientId) : null;
-		if (params.data.currentPassword && (!hash || !hashServices || !(await hashServices.compare(params.data.currentPassword, hash)))) {
+		const hash = params.data.currentPassword
+			? await commandsRepository.getUserPasswordHashById(params.clientId)
+			: null;
+		if (
+			params.data.currentPassword &&
+			(!hash ||
+				!hashServices ||
+				!(await hashServices.compare(params.data.currentPassword, hash)))
+		) {
 			throw new ForbiddenError('Current password does not match');
 		}
 		const { currentPassword: _currentPassword, ...editableData } = params.data;

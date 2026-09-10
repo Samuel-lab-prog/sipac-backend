@@ -11,9 +11,9 @@ export type CreateProfessorProfileUseCaseParams = Omit<ProfessorProfile, 'id'> &
 	AcademicPolicyContext;
 export type CreateStaffProfileUseCaseParams = Omit<StaffProfile, 'id'> &
 	AcademicPolicyContext;
-export type UpdateStudentProfileParams = Partial<CreateStudentProfileParams> &
-	{ currentPassword?: string } &
-	AcademicPolicyContext;
+export type UpdateStudentProfileParams = Partial<CreateStudentProfileParams> & {
+	currentPassword?: string;
+} & AcademicPolicyContext;
 export type UpdateProfessorProfileParams = Partial<
 	Omit<ProfessorProfile, 'id' | 'userId'>
 > &

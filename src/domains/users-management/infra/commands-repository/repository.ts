@@ -125,6 +125,9 @@ function updateUser(id: number, user: Partial<CreateUserDB>) {
 		prisma.user.update({
 			where: { id },
 			data: {
+				...(user.passwordHash !== undefined && {
+					passwordHash: user.passwordHash,
+				}),
 				...(user.nickname !== undefined && { nickname: user.nickname }),
 				...(user.name !== undefined && { name: user.name }),
 				...(user.email !== undefined && { email: user.email }),
@@ -144,6 +147,9 @@ function updateCurrentUser(clientId: number, user: Partial<CreateUserDB>) {
 		prisma.user.update({
 			where: { id: clientId },
 			data: {
+				...(user.passwordHash !== undefined && {
+					passwordHash: user.passwordHash,
+				}),
 				...(user.nickname !== undefined && { nickname: user.nickname }),
 				...(user.name !== undefined && { name: user.name }),
 				...(user.email !== undefined && { email: user.email }),

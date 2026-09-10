@@ -294,6 +294,6 @@ const s3StorageService: StorageService = {
 
 export const storageService: StorageService =
 	process.env.STORAGE_DRIVER === 'local' ||
-		(process.env.NODE_ENV !== 'production' && (!accessKeyId || !secretAccessKey))
+	(process.env.NODE_ENV !== 'production' && (!accessKeyId || !secretAccessKey))
 		? createLocalStorageService()
 		: s3StorageService;
