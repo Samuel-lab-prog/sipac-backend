@@ -144,8 +144,7 @@ model StudentProfile {
   city         String?
   phone        String?
   mobilePhone  String?
-  familyIncome Float?
-  socioeconomicStatus String?
+  familyIncomeRange FamilyIncomeRange?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -202,6 +201,7 @@ model ClassOffering {
   teachingAssignments TeachingAssignment[]
   sessions ClassSession[]
   activities AcademicActivity[]
+  coursePlan CoursePlan?
 
   @@index([academicPeriodId, shift])
 }
@@ -237,16 +237,79 @@ model TeachingAssignment {
 model ClassSession {
   id              Int      @id @default(autoincrement())
   classOfferingId Int
+  coursePlanTopicId Int?
   startsAt        DateTime
   endsAt          DateTime?
   topic           String?
+  status          LessonStatus @default(scheduled)
+  deliveredContent String?
+  room            String?
+  publicNotes     String?
+  replacesSessionId Int? @unique
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   classOffering ClassOffering @relation(fields: [classOfferingId], references: [id], onDelete: Cascade)
   attendanceRecords AttendanceRecord[]
+  coursePlanTopic CoursePlanTopic? @relation(fields: [coursePlanTopicId], references: [id], onDelete: SetNull)
+  replacesSession ClassSession? @relation("LessonReplacement", fields: [replacesSessionId], references: [id], onDelete: SetNull)
+  replacementSession ClassSession? @relation("LessonReplacement")
+  materials ClassSessionMaterial[]
+  activities AcademicActivity[]
 
   @@index([classOfferingId, startsAt])
+  @@index([coursePlanTopicId])
+}
+
+model CoursePlan {
+  id              Int      @id @default(autoincrement())
+  classOfferingId  Int      @unique
+  syllabus        String?
+  generalObjectives String?
+  methodology     String?
+  assessmentCriteria String?
+  workloadMinutes Int?
+  status          CoursePlanStatus @default(draft)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  classOffering ClassOffering @relation(fields: [classOfferingId], references: [id], onDelete: Cascade)
+  units CoursePlanUnit[]
+}
+
+model CoursePlanUnit {
+  id          Int      @id @default(autoincrement())
+  coursePlanId Int
+  title       String
+  description String?
+  position    Int
+  startsAt    DateTime?
+  endsAt      DateTime?
+  workloadMinutes Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  coursePlan CoursePlan @relation(fields: [coursePlanId], references: [id], onDelete: Cascade)
+  topics CoursePlanTopic[]
+  activities AcademicActivity[]
+  @@unique([coursePlanId, position])
+}
+
+model CoursePlanTopic {
+  id          Int      @id @default(autoincrement())
+  unitId      Int
+  title       String
+  description String?
+  position    Int
+  type        CoursePlanTopicType @default(content)
+  estimatedMinutes Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  unit CoursePlanUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  sessions ClassSession[]
+  activities AcademicActivity[]
+  @@unique([unitId, position])
 }
 
 model AttendanceRecord {
@@ -274,6 +337,14 @@ model AcademicActivity {
   dueAt           DateTime?
   allowLateSubmissions Boolean @default(true)
   createdByProfessorProfileId Int?
+  kind            AcademicActivityKind @default(activity)
+  assessmentType  String?
+  appliesAt       DateTime?
+  maxGrade        Float?
+  weight          Float?
+  coursePlanUnitId Int?
+  coursePlanTopicId Int?
+  classSessionId  Int?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -281,8 +352,33 @@ model AcademicActivity {
   createdByProfessor ProfessorProfile? @relation(fields: [createdByProfessorProfileId], references: [id])
   attachments AcademicActivityAttachment[]
   submissions AcademicActivitySubmission[]
+  coursePlanUnit CoursePlanUnit? @relation(fields: [coursePlanUnitId], references: [id], onDelete: SetNull)
+  coursePlanTopic CoursePlanTopic? @relation(fields: [coursePlanTopicId], references: [id], onDelete: SetNull)
+  classSession ClassSession? @relation(fields: [classSessionId], references: [id], onDelete: SetNull)
 
   @@index([classOfferingId, dueAt])
+}
+
+enum LessonStatus {
+  scheduled
+  completed
+  cancelled
+  rescheduled
+  missed
+}
+
+enum AcademicActivityKind {
+  activity
+  assessment
+}
+
+model ClassSessionMaterial {
+  id Int @id @default(autoincrement())
+  classSessionId Int
+  title String
+  url String
+  classSession ClassSession @relation(fields: [classSessionId], references: [id], onDelete: Cascade)
+  @@unique([classSessionId, url])
 }
 
 model AcademicActivityAttachment {
@@ -318,6 +414,31 @@ model AcademicActivitySubmission {
 
   @@unique([activityId, studentProfileId])
   @@index([studentProfileId, submittedAt])
+}
+
+enum FamilyIncomeRange {
+  ATE_0_5_SM
+  DE_0_5_A_1_SM
+  DE_1_A_2_SM
+  DE_2_A_3_SM
+  DE_3_A_5_SM
+  ACIMA_DE_5_SM
+  NAO_DECLARADA
+  PREFIRO_NAO_INFORMAR
+}
+
+enum CoursePlanStatus {
+  draft
+  published
+  archived
+}
+
+enum CoursePlanTopicType {
+  content
+  review
+  activity
+  assessment
+  project
 }
 
 model AcademicCalendarEvent {

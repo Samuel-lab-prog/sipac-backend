@@ -69,6 +69,8 @@
 		"db:migrate:test": "cross-env NODE_ENV=test npx prisma migrate deploy --schema src/generic-subdomains/persistance/prisma/schema.prisma",
 		"db:migrate:prod": "cross-env NODE_ENV=production npx prisma migrate deploy",
 		"db:seed": "cross-env NODE_ENV=development npx prisma db seed",
+		"db:seed:students": "cross-env NODE_ENV=development bun src/generic-subdomains/persistance/seed/cli.ts",
+		"test:student-planning": "cross-env NODE_ENV=test bun test src/generic-subdomains/persistance/seed/student-planning.integration.test.ts",
 		"db:reset:dev": "cross-env NODE_ENV=development npx prisma migrate reset --force",
 		"db:reset:test": "cross-env NODE_ENV=test npx prisma migrate reset --force --skip-seed --schema src/generic-subdomains/persistance/prisma/schema.prisma",
 		"db:reset:prod": "cross-env NODE_ENV=production npx prisma migrate reset --force",

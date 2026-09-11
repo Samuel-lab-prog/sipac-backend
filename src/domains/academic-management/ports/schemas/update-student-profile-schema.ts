@@ -31,6 +31,5 @@ export const updateStudentProfileSchema = t.Object({
 	city: t.Optional(t.Nullable(t.String())),
 	phone: t.Optional(t.Nullable(t.String())),
 	mobilePhone: t.Optional(t.Nullable(t.String())),
-	familyIncome: t.Optional(t.Nullable(t.Number({ minimum: 0 }))),
-	socioeconomicStatus: t.Optional(t.Nullable(t.String())),
+	familyIncomeRange: t.Optional(t.Nullable(t.String())),
 });

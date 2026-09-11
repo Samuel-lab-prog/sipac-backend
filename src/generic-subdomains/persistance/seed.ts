@@ -3,6 +3,9 @@ import '../../../scripts/load-local-env';
 import { prisma } from './prisma/prisma-client';
 import { BcryptHashService } from '../../shared-kernel/infra/encrypting/bcrypt';
 import { validateServerEnv } from '../../server-config/utils/validateEnv';
+import { seedCoursePlans } from './seed/planning';
+import { runStudentSeeds } from './seed/index';
+import { assertSeedEnvironment } from './seed/config';
 
 /* eslint-disable max-lines, max-lines-per-function -- deterministic integration fixture. */
 
@@ -34,6 +37,7 @@ async function upsertUserByEmail(params: {
 }
 
 async function main() {
+	assertSeedEnvironment();
 	validateServerEnv({ silent: true });
 
 	const department = await prisma.department.upsert({
@@ -62,6 +66,22 @@ async function main() {
 			code: 'INF-INT',
 			level: 'Ensino Médio Integrado',
 			departmentId: department.id,
+		},
+	});
+
+	await prisma.academicPeriod.upsert({
+		where: { year_term: { year: 2026, term: 1 } },
+		update: {
+			code: '2026.1',
+			startsAt: new Date('2026-02-02T00:00:00.000Z'),
+			endsAt: new Date('2026-07-17T23:59:59.000Z'),
+		},
+		create: {
+			code: '2026.1',
+			year: 2026,
+			term: 1,
+			startsAt: new Date('2026-02-02T00:00:00.000Z'),
+			endsAt: new Date('2026-07-17T23:59:59.000Z'),
 		},
 	});
 
@@ -333,8 +353,7 @@ async function main() {
 			city: 'Tramandaí',
 			phone: null,
 			mobilePhone: '51991669896',
-			familyIncome: null,
-			socioeconomicStatus: 'Não declarada',
+			familyIncomeRange: 'NAO_DECLARADA',
 		},
 		create: {
 			userId: studentUser.id,
@@ -364,8 +383,7 @@ async function main() {
 			city: 'Tramandaí',
 			phone: null,
 			mobilePhone: '51991669896',
-			familyIncome: null,
-			socioeconomicStatus: 'Não declarada',
+			familyIncomeRange: 'NAO_DECLARADA',
 		},
 	});
 
@@ -394,7 +412,7 @@ async function main() {
 			state: 'RS',
 			city: 'Tramandaí',
 			mobilePhone: '51991669896',
-			socioeconomicStatus: 'Não declarada',
+			familyIncomeRange: 'NAO_DECLARADA',
 		},
 		create: {
 			userId: studentTwoUser.id,
@@ -420,7 +438,7 @@ async function main() {
 			state: 'RS',
 			city: 'Tramandaí',
 			mobilePhone: '51991669896',
-			socioeconomicStatus: 'Não declarada',
+			familyIncomeRange: 'NAO_DECLARADA',
 		},
 	});
 
@@ -655,6 +673,7 @@ async function main() {
 			});
 		}
 	}
+	await seedCoursePlans(prisma, createdClassOfferings);
 
 	const persistedSessions = await prisma.classSession.findMany({
 		where: {
@@ -1015,7 +1034,16 @@ async function main() {
 	);
 }
 
-main().catch((error) => {
-	console.error(error instanceof Error ? error.message : error);
-	process.exit(1);
-});
+const seedArgs = process.argv.slice(2);
+const seedRun = seedArgs.some(
+	(arg) => arg.startsWith('--scenario=') || arg === '--clean',
+)
+	? runStudentSeeds(prisma, seedArgs)
+	: main().then(() => runStudentSeeds(prisma, seedArgs));
+seedRun
+	.then((result) => console.log(JSON.stringify(result, null, 2)))
+	.catch((error: unknown) => {
+		console.error(error instanceof Error ? error.message : 'Seed failed');
+		process.exitCode = 1;
+	})
+	.finally(() => prisma.$disconnect());

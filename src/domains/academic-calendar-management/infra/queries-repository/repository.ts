@@ -49,7 +49,7 @@ export function listEventsForStudent({
 			where: { userId },
 			select: {
 				enrollments: {
-					where: { status: 'active' },
+					where: { status: { in: ['active', 'completed'] } },
 					select: { classOffering: { select: { academicPeriodId: true } } },
 				},
 			},
@@ -68,10 +68,19 @@ export function listEventsForStudent({
 					academicPeriodId: { in: periodIds },
 					...(from || to
 						? {
-								startsAt: {
-									...(from ? { gte: from } : {}),
-									...(to ? { lt: to } : {}),
-								},
+								AND: [
+									...(to ? [{ startsAt: { lt: to } }] : []),
+									...(from
+										? [
+												{
+													OR: [
+														{ endsAt: { gte: from } },
+														{ endsAt: null, startsAt: { gte: from } },
+													],
+												},
+											]
+										: []),
+								],
 							}
 						: {}),
 				},

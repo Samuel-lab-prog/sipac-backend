@@ -35,8 +35,7 @@ export type StudentProfile = {
 	city?: string | null;
 	phone?: string | null;
 	mobilePhone?: string | null;
-	familyIncome?: number | null;
-	socioeconomicStatus?: string | null;
+	familyIncomeRange?: string | null;
 };
 
 export type ProfessorProfile = {
@@ -73,3 +72,4 @@ export type ClassOffering = {
 	code: string;
 	title: string;
 };
+import type { FamilyIncomeRange } from '../../../generic-subdomains/persistance/prisma/generated/client';

@@ -48,8 +48,7 @@ export const studentProfileSchema = t.Intersect([
 			city: t.Nullable(t.String()),
 			phone: t.Nullable(t.String()),
 			mobilePhone: t.Nullable(t.String()),
-			familyIncome: t.Nullable(t.Number()),
-			socioeconomicStatus: t.Nullable(t.String()),
+			familyIncomeRange: t.Nullable(t.String()),
 		}),
 	),
 ]);

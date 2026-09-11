@@ -1,4 +1,8 @@
 import { prisma } from '@Prisma';
+import type {
+	StudentProfileCreateInput,
+	StudentProfileUpdateInput,
+} from '../../../../generic-subdomains/persistance/prisma/generated/models/StudentProfile';
 /* eslint-disable max-lines -- dashboard persistence and mapping are intentionally colocated. */
 import { withPrismaErrorHandling, withPrismaResult } from '@PrismaErrorHandler';
 import type { CommandResult } from '@SharedKernel/types';
@@ -19,7 +23,7 @@ export function insertStudentProfile(
 ): Promise<CommandResult<StudentProfile>> {
 	return withPrismaResult(() =>
 		prisma.studentProfile.create({
-			data: profile,
+			data: profile as unknown as StudentProfileCreateInput,
 		}),
 	);
 }
@@ -130,7 +134,7 @@ export function selectStudentDashboardByUserId(
 						},
 					},
 					enrollments: {
-						where: { status: 'active' },
+						where: { status: { in: ['active', 'completed'] } },
 						orderBy: [{ createdAt: 'asc' }],
 						include: {
 							classOffering: {
@@ -142,6 +146,32 @@ export function selectStudentDashboardByUserId(
 									term: true,
 									shift: true,
 									courseId: true,
+									academicPeriod: {
+										select: {
+											id: true,
+											code: true,
+											year: true,
+											term: true,
+											startsAt: true,
+											endsAt: true,
+										},
+									},
+									teachingAssignments: {
+										select: {
+											professorProfile: {
+												select: { id: true, user: { select: { name: true } } },
+											},
+										},
+									},
+									coursePlan: {
+										where: { status: 'published' },
+										include: {
+											units: {
+												orderBy: { position: 'asc' },
+												include: { topics: { orderBy: { position: 'asc' } } },
+											},
+										},
+									},
 									activities: {
 										orderBy: [{ dueAt: 'asc' }, { id: 'asc' }],
 										select: {
@@ -150,6 +180,17 @@ export function selectStudentDashboardByUserId(
 											description: true,
 											dueAt: true,
 											allowLateSubmissions: true,
+											kind: true,
+											assessmentType: true,
+											appliesAt: true,
+											maxGrade: true,
+											weight: true,
+											coursePlanUnitId: true,
+											coursePlanTopicId: true,
+											classSessionId: true,
+											attachments: {
+												select: { id: true, fileName: true, fileUrl: true },
+											},
 											createdAt: true,
 										},
 									},
@@ -157,7 +198,16 @@ export function selectStudentDashboardByUserId(
 										orderBy: [{ startsAt: 'asc' }],
 										select: {
 											id: true,
+											coursePlanTopicId: true,
 											startsAt: true,
+											status: true,
+											deliveredContent: true,
+											room: true,
+											publicNotes: true,
+											replacesSessionId: true,
+											materials: {
+												select: { id: true, title: true, url: true },
+											},
 											endsAt: true,
 											topic: true,
 										},
@@ -197,9 +247,25 @@ export function selectStudentDashboardByUserId(
 							enrollments: profile.enrollments.map((enrollment) => ({
 								id: enrollment.id,
 								status: enrollment.status,
-								classOffering: enrollment.classOffering,
+								classOffering: {
+									id: enrollment.classOffering.id,
+									title: enrollment.classOffering.title,
+									code: enrollment.classOffering.code,
+									year: enrollment.classOffering.year,
+									term: enrollment.classOffering.term,
+									shift: enrollment.classOffering.shift,
+									courseId: enrollment.classOffering.courseId,
+									academicPeriod: enrollment.classOffering.academicPeriod,
+									professors: enrollment.classOffering.teachingAssignments.map(
+										({ professorProfile }) => ({
+											id: professorProfile.id,
+											name: professorProfile.user.name,
+										}),
+									),
+								},
 								activities: enrollment.classOffering.activities.map(
 									(activity) => ({
+										...activity,
 										id: activity.id,
 										title: activity.title,
 										description: activity.description,
@@ -209,6 +275,7 @@ export function selectStudentDashboardByUserId(
 									}),
 								),
 								sessions: enrollment.classOffering.sessions,
+								plan: enrollment.classOffering.coursePlan,
 							})),
 						}
 					: null,
@@ -248,7 +315,7 @@ export function updateStudentProfile(
 	return withPrismaResult(() =>
 		prisma.studentProfile.update({
 			where: { userId },
-			data: params,
+			data: params as unknown as StudentProfileUpdateInput,
 		}),
 	);
 }
