@@ -1,0 +1,27 @@
+import { t } from 'elysia';
+
+export const id = t.Numeric({ minimum: 1, multipleOf: 1 });
+const text = (maxLength = 5000) => t.String({ maxLength });
+const title = t.String({ minLength: 3, maxLength: 200, pattern: '\\S' });
+const nullableText = t.Nullable(text());
+const date = t.String({ format: 'date-time' });
+export const pageFields = { page: t.Optional(t.Numeric({ minimum: 1, maximum: 100000, multipleOf: 1 })), q: t.Optional(text(100)), classId: t.Optional(id) };
+export const listQuery = t.Object(pageFields);
+export const sessionQuery = t.Object({ ...pageFields, from: t.Optional(date), to: t.Optional(date) });
+export const classParams = t.Object({ classId: id });
+export const itemParams = t.Object({ id });
+export const success = t.Object({ success: t.Boolean() });
+export const pageOf = <T extends ReturnType<typeof t.Object>>(item: T) => t.Object({ items: t.Array(item), total: t.Number(), page: t.Number(), pageSize: t.Number() });
+export const classSchema = t.Object({ id: t.Number(), title: text(), code: text(), year: t.Number(), shift: text(), course: t.Object({ name: text() }), academicPeriod: t.Object({ code: text() }), _count: t.Object({ enrollments: t.Number(), sessions: t.Number(), activities: t.Number() }) });
+export const planBody = t.Object({ syllabus: nullableText, generalObjectives: nullableText, methodology: nullableText, assessmentCriteria: nullableText, workloadMinutes: t.Nullable(t.Integer({ minimum: 0, maximum: 100000 })), status: t.UnionEnum(['draft', 'published', 'archived']) });
+export const unitBody = t.Object({ title, topics: t.Array(title, { minItems: 1, maxItems: 30 }) });
+export const planSchema = t.Object({ id: t.Number(), ...planBody.properties, units: t.Array(t.Object({ id: t.Number(), title: text(), description: nullableText, position: t.Number(), topics: t.Array(t.Object({ id: t.Number(), title: text(), description: nullableText, position: t.Number(), type: text() })) })) });
+export const lessonBody = t.Object({ topic: title, startsAt: date, endsAt: t.Nullable(date), room: t.Nullable(text(200)), deliveredContent: nullableText, publicNotes: nullableText, status: t.UnionEnum(['scheduled', 'completed', 'cancelled', 'missed']), coursePlanTopicId: t.Nullable(id) });
+export const materialBody = t.Object({ title, url: t.String({ maxLength: 2000, format: 'uri', pattern: '^https?://' }) });
+export const materialSchema = t.Object({ id: t.Number(), title: text(), url: text() });
+export const lessonSchema = t.Object({ id: t.Number(), classOfferingId: t.Number(), topic: nullableText, startsAt: t.Date(), endsAt: t.Nullable(t.Date()), room: nullableText, deliveredContent: nullableText, publicNotes: nullableText, status: text(), coursePlanTopicId: t.Nullable(t.Number()), classOffering: t.Object({ title: text() }), materials: t.Array(materialSchema) });
+export const activityBody = t.Object({ title, description: nullableText, kind: t.UnionEnum(['activity', 'assessment']), dueAt: t.Nullable(date), appliesAt: t.Nullable(date), maxGrade: t.Nullable(t.Number({ exclusiveMinimum: 0, maximum: 999.99 })), weight: t.Nullable(t.Number({ exclusiveMinimum: 0, maximum: 100 })), assessmentType: t.Nullable(text(100)), allowLateSubmissions: t.Boolean() });
+export const activitySchema = t.Object({ id: t.Number(), classOfferingId: t.Number(), title: text(), description: nullableText, kind: text(), dueAt: t.Nullable(t.Date()), appliesAt: t.Nullable(t.Date()), maxGrade: t.Nullable(t.Number()), weight: t.Nullable(t.Number()), assessmentType: nullableText, allowLateSubmissions: t.Boolean(), classOffering: t.Object({ title: text() }), _count: t.Object({ submissions: t.Number() }) });
+export const attendanceBody = t.Object({ records: t.Array(t.Object({ studentProfileId: id, status: t.UnionEnum(['present', 'absent', 'justified', 'late']) }), { minItems: 1, maxItems: 25 }) });
+export const gradeBody = t.Object({ studentProfileId: id, grade: t.Nullable(t.Number({ minimum: 0, maximum: 999.99, multipleOf: 0.01 })), feedback: nullableText });
+export const rosterSchema = t.Object({ id: t.Number(), name: text(), academicId: text(), attendance: t.Nullable(text()), submission: t.Nullable(t.Object({ id: t.Number(), submittedAt: t.Nullable(t.Date()), grade: t.Nullable(t.Number()), feedback: nullableText, attachments: t.Array(t.Object({ id: t.Number(), fileName: text(), fileUrl: text() })) })) });

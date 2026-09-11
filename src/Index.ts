@@ -1,4 +1,5 @@
 import { Elysia } from 'elysia';
+import { teachingRouter } from './domains/teaching-management/router';
 // Plugins
 import cors from '@elysiajs/cors';
 import { openapi } from '@elysiajs/openapi';
@@ -115,6 +116,7 @@ function makeServer({
 			.use(scheduleDeleteCommandsRouter)
 			.use(curriculumCommandsRouter)
 			.use(curriculumStaffRouter)
+			.use(teachingRouter)
 			.use(academicCalendarCommandsRouter)
 			.use(communicationsCommandsRouter)
 			.use(enableRealHash ? authRouter : authRouterWithFakeHash)
