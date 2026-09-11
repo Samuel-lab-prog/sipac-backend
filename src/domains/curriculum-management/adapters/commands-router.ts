@@ -1,5 +1,7 @@
 import { appErrorSchema } from '@AppError';
 import { Elysia } from 'elysia';
+import { authPlugin } from '@GenericSubdomains/authentication/composition';
+import { assertCanManageCurriculum } from '../use-cases/commands/policies';
 import {
 	academicPeriodSchema,
 	classOfferingSchema,
@@ -16,6 +18,8 @@ export function createCurriculumCommandsRouter(
 	services: CurriculumCommandsServices,
 ) {
 	return new Elysia({ prefix: '/curriculum' })
+		.use(authPlugin)
+		.onBeforeHandle(({ auth }) => assertCanManageCurriculum(auth))
 		.post(
 			'/academic-periods',
 			({ body, set }) => {
@@ -28,6 +32,7 @@ export function createCurriculumCommandsRouter(
 				body: createAcademicPeriodSchema,
 				response: {
 					201: academicPeriodSchema,
+					403: appErrorSchema,
 					409: appErrorSchema,
 					422: appErrorSchema,
 				},
@@ -47,6 +52,7 @@ export function createCurriculumCommandsRouter(
 				body: createClassOfferingSchema,
 				response: {
 					201: classOfferingSchema,
+					403: appErrorSchema,
 					409: appErrorSchema,
 					422: appErrorSchema,
 				},

@@ -4,37 +4,37 @@ import {
 	assertSeedEnvironment,
 	parseSeedArgs,
 	SEED_PASSWORD,
-	SEED_PREFIX,
+	SCENARIOS,
 } from './config';
 import { seedCourse } from './factories/course.factory';
 import { seedProfessor } from './factories/user.factory';
 import { seedPeriod, seedEvents } from './factories/academic-period.factory';
 import { seedScenario } from './scenarios/student.scenarios';
+import { seedReferenceScenario } from './scenarios/reference.scenario';
+import {
+	referencePreview,
+	validateReferenceCatalog,
+} from './utils/reference-blueprint';
+import { cleanSeedScenarios } from './cleanup';
+import { seedReport } from './report';
 
 export async function runStudentSeeds(prisma: PrismaClient, args: string[]) {
 	assertSeedEnvironment();
 	const options = parseSeedArgs(args);
+	if (options.list) return { scenarios: SCENARIOS, default: 'all' };
+	if (options.scenarios.includes('reference')) validateReferenceCatalog();
+	if (options.dryRun)
+		return {
+			dryRun: true,
+			scenarios: options.scenarios,
+			reference: options.scenarios.includes('reference')
+				? referencePreview()
+				: undefined,
+		};
 	const passwordHash = await BcryptHashService.hash(SEED_PASSWORD);
 	return prisma.$transaction(
 		async (db) => {
-			if (options.clean) {
-				for (const scenario of options.scenarios) {
-					await db.classOffering.deleteMany({
-						where: {
-							code: { startsWith: `${SEED_PREFIX}${scenario.toUpperCase()}-` },
-							course: { code: `${SEED_PREFIX}CURSO` },
-						},
-					});
-					await db.user.deleteMany({
-						where: {
-							email: `student.${scenario}@dev.agias.example`,
-							nickname: `dev.agias.${scenario}`,
-							studentProfile: { academicId: { startsWith: 'DEVAGIAS' } },
-						},
-					});
-				}
-				return { cleaned: options.scenarios };
-			}
+			if (options.clean) return cleanSeedScenarios(db, options.scenarios);
 			const { department, course } = await seedCourse(db);
 			const professor = await seedProfessor(db, department.id, passwordHash);
 			if (
@@ -46,7 +46,13 @@ export async function runStudentSeeds(prisma: PrismaClient, args: string[]) {
 				await seedEvents(db, period.id, professor.userId);
 			}
 			const accounts = [];
-			for (const scenario of options.scenarios)
+			for (const scenario of options.scenarios) {
+				if (scenario === 'reference') {
+					accounts.push(
+						await seedReferenceScenario(db, course.id, passwordHash),
+					);
+					continue;
+				}
 				accounts.push(
 					await seedScenario(
 						db,
@@ -56,8 +62,14 @@ export async function runStudentSeeds(prisma: PrismaClient, args: string[]) {
 						passwordHash,
 					),
 				);
-			return { accounts, password: SEED_PASSWORD, referenceDate: '2026-09-10' };
+			}
+			return {
+				accounts,
+				password: SEED_PASSWORD,
+				referenceDate: '2026-09-10',
+				counts: await seedReport(db, options.scenarios),
+			};
 		},
-		{ timeout: 60_000 },
+		{ timeout: 120_000 },
 	);
 }

@@ -33,7 +33,10 @@ export const LoggerPlugin = new Elysia()
 					response: {
 						statusCode: set.status ?? 200,
 						sizeBytes: getResponseSize(responseValue),
-						contentType: set.headers['content-type'] ?? 'unknown',
+						contentType: getResponseContentType(
+							responseValue,
+							set.headers['content-type'],
+						),
 					},
 					auth: {
 						isAuthenticated: auth.clientId > 0,
@@ -55,17 +58,33 @@ function extractNumericSegment(segments: string[]): number | undefined {
 	return Number.isInteger(parsed) ? parsed : undefined;
 }
 
-function getResponseSize(response: unknown): number {
+function getResponseContentType(
+	response: unknown,
+	header: unknown,
+): string | null {
+	if (response instanceof Response) return response.headers.get('content-type');
+	if (typeof header === 'string') return header;
+	// Elysia adds its default content type while mapping the handler value to HTTP.
+	if (response === null || response === undefined) return null;
+	if (response instanceof Blob) return response.type || null;
+	if (response instanceof ArrayBuffer || ArrayBuffer.isView(response))
+		return null;
+	if (typeof response === 'object') return 'application/json';
+	if (typeof response === 'string') return 'text/plain';
+	return null;
+}
+
+function getResponseSize(response: unknown): number | null {
 	if (response === null || response === undefined) return 0;
 	if (typeof response === 'string') return Buffer.byteLength(response);
 	if (response instanceof Uint8Array) return response.byteLength;
 	if (response instanceof Response) {
 		const len = response.headers.get('content-length');
-		return len ? Number(len) : 0;
+		return len ? Number(len) : null;
 	}
 	try {
 		return Buffer.byteLength(JSON.stringify(response));
 	} catch {
-		return 0;
+		return null;
 	}
 }

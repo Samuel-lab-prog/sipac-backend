@@ -1,4 +1,5 @@
 import { SCENARIOS, type ScenarioName, type SeedDb } from '../config';
+import { seedRg } from '../utils/documents';
 
 export async function seedStudent(
 	db: SeedDb,
@@ -12,12 +13,14 @@ export async function seedStudent(
 		empty: 'Aluno sem aulas',
 		semester: 'Aluno em dois períodos',
 		exceptions: 'Aluno com dados incompletos',
+		reference: 'Ana Luiza Costa',
 	};
+	const cpf = scenario === 'reference' ? '99010000001' : `9900000000${index}`;
 	const data = {
 		name: labels[scenario],
 		nickname: `dev.agias.${scenario}`,
-		rg: `DEVAGIAS${index}`,
-		cpf: `9900000000${index}`,
+		rg: seedRg(cpf),
+		cpf,
 		role: 'student' as const,
 		status: 'active' as const,
 		passwordHash,
@@ -49,7 +52,7 @@ export async function seedProfessor(
 	const data = {
 		name: 'Helena Duarte (demonstração)',
 		nickname: 'dev.agias.professor',
-		rg: 'DEVAGIASPROF',
+		rg: seedRg('99000000009'),
 		cpf: '99000000009',
 		role: 'professor' as const,
 		passwordHash,

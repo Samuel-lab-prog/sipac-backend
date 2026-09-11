@@ -19,9 +19,7 @@ export function createClassOfferingFactory({
 		const result = await commandsRepository.createClassOffering(params);
 		if (result.ok) return result.data;
 		if (result.code === 'CONFLICT')
-			throw new ConflictError(
-				result.message ?? 'Class offering already exists',
-			);
+			throw new ConflictError('Já existe uma turma com este código.');
 		throw new UnknownError(result.message ?? 'Failed to create class offering');
 	};
 }

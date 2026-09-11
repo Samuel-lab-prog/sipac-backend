@@ -3,6 +3,8 @@ import { prisma } from '../prisma/prisma-client';
 import { runStudentSeeds } from './index';
 import { selectStudentDashboardByUserId } from '../../../domains/academic-management/infra/commands-repository/repository';
 import { listEventsForStudent } from '../../../domains/academic-calendar-management/infra/queries-repository/repository';
+import { userQueriesRouter } from '../../../domains/users-management/composition';
+import { JwtTokenService } from '../../authentication/infra/jwt-token-service/jwt-token-service';
 
 describe.skipIf(process.env.NODE_ENV !== 'test')(
 	'INTEGRATION student planning',
@@ -18,6 +20,55 @@ describe.skipIf(process.env.NODE_ENV !== 'test')(
 			prisma.user.findUniqueOrThrow({
 				where: { email: `student.${scenario}@dev.agias.example` },
 			});
+		it('returns each dashboard collection once and only the student plan fields', async () => {
+			const user = await userFor('reference');
+			const data = await selectStudentDashboardByUserId(user.id);
+			const profile = await prisma.studentProfile.findUniqueOrThrow({
+				where: { userId: user.id },
+			});
+			expect(data!.profile).toEqual(profile);
+			expect(data!.enrollments).toHaveLength(13);
+			expect(data!.submissions.length).toBeGreaterThan(0);
+			const plan = data!.enrollments[0]!.plan!;
+			expect(plan).not.toHaveProperty('createdAt');
+			expect(plan).not.toHaveProperty('classOfferingId');
+			expect(plan.units[0]).not.toHaveProperty('coursePlanId');
+			expect(plan.units[0]!.topics[0]).not.toHaveProperty('coursePlanUnitId');
+			// Regression budget for the full reference semester, including lessons and submissions.
+			expect(Buffer.byteLength(JSON.stringify(data))).toBeLessThan(256 * 1024);
+		});
+		it('serves valid authenticated profiles for every seeded role and scenario', async () => {
+			const users = await prisma.user.findMany({
+				where: {
+					email: { endsWith: '@dev.agias.example' },
+					nickname: { startsWith: 'dev.agias.' },
+				},
+				select: { id: true, role: true, email: true, rg: true },
+			});
+			expect(users.length).toBeGreaterThanOrEqual(44);
+			expect(new Set(users.map((user) => user.rg)).size).toBe(users.length);
+			for (const user of users) {
+				const token = JwtTokenService.generateToken(
+					{
+						clientId: user.id,
+						role: user.role,
+						email: user.email,
+						tokenType: 'access',
+					},
+					60,
+				);
+				const response = await userQueriesRouter.handle(
+					new Request('http://localhost/users/me', {
+						headers: { cookie: `token=${token}` },
+					}),
+				);
+				expect(response.status).toBe(200);
+				const profile = (await response.json()) as { id: number; rg: string };
+				expect(profile.id).toBe(user.id);
+				expect(profile.rg).toMatch(/^\d{5,20}$/);
+				expect(profile).not.toHaveProperty('passwordHash');
+			}
+		});
 		it('executes the real dashboard select and supplies lesson, material and assessment contracts', async () => {
 			const user = await userFor('complete');
 			const data = await selectStudentDashboardByUserId(user.id);
@@ -51,6 +102,37 @@ describe.skipIf(process.env.NODE_ENV !== 'test')(
 			expect(
 				(await selectStudentDashboardByUserId(empty.id))!.enrollments,
 			).toHaveLength(0);
+		});
+		it('creates the 2026 reference cohort with every catalog subject', async () => {
+			const referenceStudent = await userFor('reference');
+			const data = await selectStudentDashboardByUserId(referenceStudent.id);
+			expect(referenceStudent.cpf).toBe('99010000001');
+			expect(data!.enrollments).toHaveLength(13);
+			expect(data!.enrollments.map((item) => item.classOffering.title)).toEqual(
+				[
+					'Arte Educação',
+					'Design para Web',
+					'Empreendedorismo em Informática',
+					'Filosofia IV',
+					'Geografia II',
+					'Inglês IV',
+					'Legislação Aplicada à Informática',
+					'Língua Estrangeira - Espanhol II',
+					'Língua Portuguesa e Literatura IV',
+					'Matemática IV',
+					'Programação Web II',
+					'Redes de Computadores',
+					'Sociologia IV',
+				],
+			);
+			expect(
+				data!.enrollments.every((item) => item.plan?.status === 'published'),
+			).toBe(true);
+			expect(
+				data!.enrollments.every((item) =>
+					item.sessions.some((session) => session.materials?.length),
+				),
+			).toBe(true);
 		});
 		it('does not leak a draft plan through the dashboard payload', async () => {
 			const user = await userFor('exceptions');

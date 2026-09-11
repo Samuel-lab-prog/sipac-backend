@@ -1,4 +1,5 @@
 import { prisma } from '@Prisma';
+import { studentDashboardPlanSelect } from './student-dashboard-selects';
 import type {
 	StudentProfileCreateInput,
 	StudentProfileUpdateInput,
@@ -165,12 +166,7 @@ export function selectStudentDashboardByUserId(
 									},
 									coursePlan: {
 										where: { status: 'published' },
-										include: {
-											units: {
-												orderBy: { position: 'asc' },
-												include: { topics: { orderBy: { position: 'asc' } } },
-											},
-										},
+										select: studentDashboardPlanSelect,
 									},
 									activities: {
 										orderBy: [{ dueAt: 'asc' }, { id: 'asc' }],
@@ -218,68 +214,71 @@ export function selectStudentDashboardByUserId(
 					},
 				},
 			})
-			.then((profile) =>
-				profile
-					? {
-							profile,
-							userName: profile.user.name,
-							courseLevel: profile.course?.level ?? null,
-							attendanceSummary: buildAttendanceSummary(
-								profile.attendanceRecords,
+			.then((record) => {
+				if (!record) return null;
+				const {
+					user,
+					course,
+					activitySubmissions,
+					attendanceRecords,
+					enrollments,
+					...profile
+				} = record;
+				return {
+					profile,
+					userName: user.name,
+					courseLevel: course?.level ?? null,
+					attendanceSummary: buildAttendanceSummary(attendanceRecords),
+					submissions: activitySubmissions.map((submission) => ({
+						id: submission.id,
+						activityId: submission.activityId,
+						submittedAt: submission.submittedAt,
+						grade: submission.grade?.toString() ?? null,
+						feedback: submission.feedback,
+						attachments: submission.attachments,
+						comments: submission.comments.map((comment) => ({
+							id: comment.id,
+							submissionId: comment.submissionId,
+							authorUserId: comment.authorUserId,
+							authorName: comment.author.name,
+							body: comment.body,
+							createdAt: comment.createdAt,
+							updatedAt: comment.updatedAt,
+						})),
+					})),
+					enrollments: enrollments.map((enrollment) => ({
+						id: enrollment.id,
+						status: enrollment.status,
+						classOffering: {
+							id: enrollment.classOffering.id,
+							title: enrollment.classOffering.title,
+							code: enrollment.classOffering.code,
+							year: enrollment.classOffering.year,
+							term: enrollment.classOffering.term,
+							shift: enrollment.classOffering.shift,
+							courseId: enrollment.classOffering.courseId,
+							academicPeriod: enrollment.classOffering.academicPeriod,
+							professors: enrollment.classOffering.teachingAssignments.map(
+								({ professorProfile }) => ({
+									id: professorProfile.id,
+									name: professorProfile.user.name,
+								}),
 							),
-							submissions: profile.activitySubmissions.map((submission) => ({
-								id: submission.id,
-								activityId: submission.activityId,
-								submittedAt: submission.submittedAt,
-								grade: submission.grade?.toString() ?? null,
-								feedback: submission.feedback,
-								attachments: submission.attachments,
-								comments: submission.comments.map((comment) => ({
-									id: comment.id,
-									submissionId: comment.submissionId,
-									authorUserId: comment.authorUserId,
-									authorName: comment.author.name,
-									body: comment.body,
-									createdAt: comment.createdAt,
-									updatedAt: comment.updatedAt,
-								})),
-							})),
-							enrollments: profile.enrollments.map((enrollment) => ({
-								id: enrollment.id,
-								status: enrollment.status,
-								classOffering: {
-									id: enrollment.classOffering.id,
-									title: enrollment.classOffering.title,
-									code: enrollment.classOffering.code,
-									year: enrollment.classOffering.year,
-									term: enrollment.classOffering.term,
-									shift: enrollment.classOffering.shift,
-									courseId: enrollment.classOffering.courseId,
-									academicPeriod: enrollment.classOffering.academicPeriod,
-									professors: enrollment.classOffering.teachingAssignments.map(
-										({ professorProfile }) => ({
-											id: professorProfile.id,
-											name: professorProfile.user.name,
-										}),
-									),
-								},
-								activities: enrollment.classOffering.activities.map(
-									(activity) => ({
-										...activity,
-										id: activity.id,
-										title: activity.title,
-										description: activity.description,
-										dueAt: activity.dueAt,
-										allowLateSubmissions: activity.allowLateSubmissions,
-										createdAt: activity.createdAt,
-									}),
-								),
-								sessions: enrollment.classOffering.sessions,
-								plan: enrollment.classOffering.coursePlan,
-							})),
-						}
-					: null,
-			),
+						},
+						activities: enrollment.classOffering.activities.map((activity) => ({
+							...activity,
+							id: activity.id,
+							title: activity.title,
+							description: activity.description,
+							dueAt: activity.dueAt,
+							allowLateSubmissions: activity.allowLateSubmissions,
+							createdAt: activity.createdAt,
+						})),
+						sessions: enrollment.classOffering.sessions,
+						plan: enrollment.classOffering.coursePlan,
+					})),
+				};
+			}),
 	);
 }
 

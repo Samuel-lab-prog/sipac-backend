@@ -7,14 +7,18 @@ import { cookieTokenSchema } from '../ports/schemas';
 export function createAuthPlugin({ authenticate }: authPluginServices) {
 	return new Elysia().use(SetupPlugin).guard({
 		as: 'scoped',
-		beforeHandle: async ({ cookie, store, auth }) => {
+		beforeHandle: async (context) => {
+			const { cookie, store } = context;
 			const authInitiatedAt = performance.now();
 			try {
 				const token = cookie.token.value;
 				const client = await authenticate(token);
-				auth.clientRole = client.role as typeof auth.clientRole;
-				auth.clientId = client.id;
-				auth.clientStatus = client.status as typeof auth.clientStatus;
+				// Each request owns its identity; never mutate the shared Elysia decorator.
+				context.auth = {
+					clientRole: client.role as typeof context.auth.clientRole,
+					clientId: client.id,
+					clientStatus: client.status as typeof context.auth.clientStatus,
+				};
 			} finally {
 				store.authTiming = Math.round(performance.now() - authInitiatedAt);
 			}

@@ -40,6 +40,7 @@ import {
 import {
 	curriculumCommandsRouter,
 	curriculumQueriesRouter,
+	curriculumStaffRouter,
 } from '@Domains/curriculum-management/composition';
 import {
 	academicCalendarCommandsRouter,
@@ -113,6 +114,7 @@ function makeServer({
 			.use(scheduleCommandsRouter)
 			.use(scheduleDeleteCommandsRouter)
 			.use(curriculumCommandsRouter)
+			.use(curriculumStaffRouter)
 			.use(academicCalendarCommandsRouter)
 			.use(communicationsCommandsRouter)
 			.use(enableRealHash ? authRouter : authRouterWithFakeHash)

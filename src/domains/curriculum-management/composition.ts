@@ -1,5 +1,6 @@
 import { createCurriculumCommandsRouter } from './adapters/commands-router';
 import { createCurriculumQueriesRouter } from './adapters/queries-router';
+import { createCurriculumStaffRouter } from './adapters/staff-router';
 import { commandsRepository } from './infra/commands-repository/repository';
 import { createAcademicPeriodFactory } from './use-cases/commands/create-academic-period/execute';
 import { createClassOfferingFactory } from './use-cases/commands/create-class-offering/execute';
@@ -17,3 +18,4 @@ export const curriculumCommandsRouter = createCurriculumCommandsRouter({
 });
 
 export const curriculumQueriesRouter = createCurriculumQueriesRouter();
+export const curriculumStaffRouter = createCurriculumStaffRouter();

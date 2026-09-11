@@ -55,6 +55,7 @@ O comando db:seed existente também passa a executar os novos cenários após se
 | Sem aulas | 99000000002 | student.empty@dev.agias.example |
 | Dois períodos | 99000000003 | student.semester@dev.agias.example |
 | Dados incompletos | 99000000004 | student.exceptions@dev.agias.example |
+| Referência 2026 | 99010000001 | student.reference@dev.agias.example |
 
 Senha de demonstração: **student-demo-2026**. A tela de login usa CPF, não e-mail. Datas de referência dos cenários: **10/09/2026**, com períodos 2026.1 e 2026.2; as datas não mudam a cada execução.
 
@@ -66,11 +67,15 @@ bun run db:seed:students --scenario=empty
 bun run db:seed:students --scenario=semester
 bun run db:seed:students --scenario=exceptions
 bun run db:seed:students --scenario=complete --clean
+bun run db:seed:reference
+bun run db:seed:students --scenario=reference --clean
 ```
 
---clean remove apenas turmas, relações e aluno do cenário selecionado com identificadores DEV-AGIAS. Sem --scenario, limpa os quatro cenários. Períodos institucionais e as bases compartilhadas de demonstração (curso, departamento, professor e eventos) são preservados. Os seeds recusam ambientes diferentes de development/test e verificam a identidade do banco. Não use db:reset para trocar cenários.
+--clean remove apenas turmas, relações e aluno do cenário selecionado com identificadores DEV-AGIAS. Sem --scenario, limpa os cinco cenários. Períodos institucionais e as bases compartilhadas de demonstração são preservados. O cenário `reference` cria a turma `Informática — Turma A/2026` com as 13 matérias da referência visual: Arte Educação, Design para Web, Empreendedorismo em Informática, Filosofia IV, Geografia II, Inglês IV, Legislação Aplicada à Informática, Língua Estrangeira - Espanhol II, Língua Portuguesa e Literatura IV, Matemática IV, Programação Web II, Redes de Computadores e Sociologia IV. Ele inclui 24 alunos, um professor por matéria, horários fixos sem sobreposição, planejamento publicado, materiais, eventos, frequência e atividades com estados variados. Os seeds recusam ambientes diferentes de development/test e verificam a identidade do banco. Não use db:reset para trocar cenários.
 
-Estrutura: config.ts define cenários, credenciais e ambiente; catalogs contém disciplinas e eventos; factories cria cada dependência; scenarios/student.scenarios.ts compõe os quatro casos; utils/dates.ts gera datas semanais fixas; index.ts executa a transação e controla limpeza; cli.ts é o ponto de entrada. A rotina anterior de demonstração e planning.ts foram preservados.
+O aluno principal da turma de referência usa CPF `99010000001`; todos os alunos compartilham a senha de demonstração. Para consultar sem escrever no banco, use `bun run db:seed:students --scenario=reference --dry-run`. `--list` mostra os cenários disponíveis. O `--clean` do cenário de referência remove somente suas turmas, matrículas, alunos, avisos e eventos de propriedade do seed; professores, departamentos, curso e períodos são preservados.
+
+Estrutura: config.ts define cenários, credenciais e ambiente; `catalogs/reference-*` é o catálogo declarativo da turma; `factories/reference-*` cria pessoas, turma, planejamento, aulas, atividades, comunicações e submissões; `utils/reference-blueprint.ts` valida horários e gera a prévia; `scenarios/reference.scenario.ts` compõe o caso. Os cenários simples continuam em `student.scenarios.ts`; `index.ts` executa a transação, relatório e limpeza; `cli.ts` é o ponto de entrada. A rotina anterior de demonstração e planning.ts foram preservados.
 
 Execuções são idempotentes por chaves naturais. Novas execuções atualizam os dados do cenário, preservam aulas adicionais e não recriam registros. Os cenários são executados em transação. Eventos institucionais já existentes no mesmo dia são reaproveitados. Os seeds não oferecem execução concorrente.
 
