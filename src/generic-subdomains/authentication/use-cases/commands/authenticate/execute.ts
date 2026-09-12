@@ -25,6 +25,8 @@ export function authenticateClientFactory(
 
 		if (client.status === 'blocked')
 			throw new UnauthorizedError('Client is banned');
+		if (client.status === 'suspended')
+			throw new UnauthorizedError('Account is suspended');
 
 		return {
 			id: client.id,

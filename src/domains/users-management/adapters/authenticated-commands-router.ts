@@ -1,5 +1,6 @@
 import { appErrorSchema } from '@AppError';
 import { ForbiddenError } from '@DomainError';
+import { assertCreateRole, legacyRemoval } from '../../admin-management/access';
 import { authPlugin } from '@GenericSubdomains/authentication/composition';
 import { Elysia } from 'elysia';
 import {
@@ -49,6 +50,7 @@ export function createUsersAuthenticatedCommandsRouter(
 		.post(
 			'/',
 			async ({ body, auth, set }) => {
+				assertCreateRole(auth, body.role);
 				if (auth.clientRole !== 'admin' && auth.clientRole !== 'staff')
 					throw new ForbiddenError(
 						'You are not allowed to perform this action',
@@ -149,12 +151,17 @@ export function createUsersAuthenticatedCommandsRouter(
 		)
 		.put(
 			'/:id',
-			({ params, body, auth }) =>
-				services.updateUser({
+			({ params, body, auth }) => {
+				if (body.role !== undefined || body.status !== undefined)
+					throw new ForbiddenError(
+						'Use a área administrativa para alterar papel ou situação de acesso.',
+					);
+				return services.updateUser({
 					params,
 					data: body,
 					...auth,
-				}),
+				});
+			},
 			{
 				params: updateUserParamsSchema,
 				body: updateUserSchema,
@@ -171,10 +178,12 @@ export function createUsersAuthenticatedCommandsRouter(
 		.delete(
 			'/:id',
 			({ params, auth }) =>
-				services.deleteUser({
-					id: params.id,
-					...auth,
-				}),
+				legacyRemoval(auth, params.id, () =>
+					services.deleteUser({
+						id: params.id,
+						...auth,
+					}),
+				),
 			{
 				params: userIdParamsSchema,
 				response: {
@@ -189,10 +198,12 @@ export function createUsersAuthenticatedCommandsRouter(
 		.post(
 			'/:id/restore',
 			({ params, auth }) =>
-				services.restoreUser({
-					id: params.id,
-					...auth,
-				}),
+				legacyRemoval(auth, params.id, () =>
+					services.restoreUser({
+						id: params.id,
+						...auth,
+					}),
+				),
 			{
 				params: userIdParamsSchema,
 				response: {

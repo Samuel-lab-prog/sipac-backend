@@ -103,7 +103,7 @@ export function loginClientFactory(dependencies: LoginClientDependencies) {
 			status: client?.status ?? null,
 		});
 
-		if (client?.status === 'blocked') {
+		if (client?.status === 'blocked' || client?.status === 'suspended') {
 			debugLogin('blocked because client is banned', {
 				cpf: lockoutKey,
 				clientId: client.id,
