@@ -57,7 +57,6 @@ module.exports = {
 					'^node-inspect/lib/_inspect$',
 					'^node-inspect/lib/internal/inspect_client$',
 					'^node-inspect/lib/internal/inspect_repl$',
-					'^async_hooks$',
 					'^punycode$',
 					'^domain$',
 					'^constants$',

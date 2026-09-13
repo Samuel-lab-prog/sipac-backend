@@ -1,3 +1,52 @@
-export const classSelect = { id: true, title: true, code: true, year: true, shift: true, course: { select: { name: true } }, academicPeriod: { select: { code: true } }, _count: { select: { enrollments: { where: { status: 'active' } }, sessions: true, activities: true } } } as const;
-export const lessonSelect = { id: true, classOfferingId: true, topic: true, startsAt: true, endsAt: true, room: true, deliveredContent: true, publicNotes: true, status: true, coursePlanTopicId: true, classOffering: { select: { title: true } }, materials: { select: { id: true, title: true, url: true }, orderBy: { id: 'asc' } } } as const;
-export const activitySelect = { id: true, classOfferingId: true, title: true, description: true, kind: true, dueAt: true, appliesAt: true, maxGrade: true, weight: true, assessmentType: true, allowLateSubmissions: true, classOffering: { select: { title: true } }, _count: { select: { submissions: { where: { submittedAt: { not: null }, grade: null } } } } } as const;
+export const classSelect = {
+	id: true,
+	title: true,
+	code: true,
+	year: true,
+	shift: true,
+	course: { select: { name: true } },
+	academicPeriod: { select: { code: true } },
+	_count: {
+		select: {
+			enrollments: { where: { status: 'active' } },
+			sessions: true,
+			activities: true,
+		},
+	},
+} as const;
+export const lessonSelect = {
+	id: true,
+	classOfferingId: true,
+	topic: true,
+	startsAt: true,
+	endsAt: true,
+	room: true,
+	deliveredContent: true,
+	publicNotes: true,
+	status: true,
+	coursePlanTopicId: true,
+	classOffering: { select: { title: true } },
+	materials: {
+		select: { id: true, title: true, url: true },
+		orderBy: { id: 'asc' },
+	},
+} as const;
+export const activitySelect = {
+	id: true,
+	classOfferingId: true,
+	title: true,
+	description: true,
+	kind: true,
+	dueAt: true,
+	appliesAt: true,
+	maxGrade: true,
+	weight: true,
+	assessmentType: true,
+	allowLateSubmissions: true,
+	classOffering: { select: { title: true } },
+	_count: {
+		select: {
+			submissions: { where: { submittedAt: { not: null }, grade: null } },
+		},
+	},
+} as const;

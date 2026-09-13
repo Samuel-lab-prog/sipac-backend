@@ -72,4 +72,3 @@ export type ClassOffering = {
 	code: string;
 	title: string;
 };
-import type { FamilyIncomeRange } from '../../../generic-subdomains/persistance/prisma/generated/client';

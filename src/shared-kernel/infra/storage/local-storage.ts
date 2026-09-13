@@ -41,7 +41,7 @@ export function createLocalStorageService(): StorageService {
 	const baseUrl = (
 		process.env.LOCAL_STORAGE_PUBLIC_URL || 'http://localhost:5000/api/v1'
 	).replace(/\/$/, '');
-	async function createUpload(
+	function createUpload(
 		contentType: string,
 		maxBytes: number,
 		contentLength?: number,
@@ -72,33 +72,39 @@ export function createLocalStorageService(): StorageService {
 		validateImageContentType: (type) => imageTypes.has(type),
 		validateAudioContentType: (type) => audioTypes.has(type),
 		validateFileContentType: (type) => fileTypes.has(type),
-		generateAvatarUploadUrl: async (_id, type = 'image/jpeg', length) => {
+		generateAvatarUploadUrl: (_id, type = 'image/jpeg', length) => {
 			if (!imageTypes.has(type)) throw new Error('Invalid image type');
-			return createUpload(
-				type,
-				Number(process.env.MAX_AVATAR_UPLOAD_BYTES || 5_000_000),
-				length,
+			return Promise.resolve(
+				createUpload(
+					type,
+					Number(process.env.MAX_AVATAR_UPLOAD_BYTES || 5_000_000),
+					length,
+				),
 			);
 		},
-		generatePoemAudioUploadUrl: async (_id, type = 'audio/mpeg', length) => {
+		generatePoemAudioUploadUrl: (_id, type = 'audio/mpeg', length) => {
 			if (!audioTypes.has(type)) throw new Error('Invalid audio type');
-			return createUpload(
-				type,
-				Number(process.env.MAX_POEM_AUDIO_UPLOAD_BYTES || 20_000_000),
-				length,
+			return Promise.resolve(
+				createUpload(
+					type,
+					Number(process.env.MAX_POEM_AUDIO_UPLOAD_BYTES || 20_000_000),
+					length,
+				),
 			);
 		},
-		generateFileUploadUrl: async (
+		generateFileUploadUrl: (
 			_prefix,
 			_name,
 			type = 'application/pdf',
 			length,
 		) => {
 			if (!fileTypes.has(type)) throw new Error('Invalid file type');
-			return createUpload(
-				type,
-				Number(process.env.MAX_ACADEMIC_FILE_UPLOAD_BYTES || 25_000_000),
-				length,
+			return Promise.resolve(
+				createUpload(
+					type,
+					Number(process.env.MAX_ACADEMIC_FILE_UPLOAD_BYTES || 25_000_000),
+					length,
+				),
 			);
 		},
 	};

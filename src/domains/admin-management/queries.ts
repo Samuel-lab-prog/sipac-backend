@@ -21,7 +21,11 @@ export function userWhere(filters: UserFilters): Prisma.UserWhereInput {
 		deletedAt: null,
 		AND: [
 			...(filters.team
-				? [{ role: { in: ['professor', 'staff', 'admin'] } } satisfies Prisma.UserWhereInput]
+				? [
+						{
+							role: { in: ['professor', 'staff', 'admin'] },
+						} satisfies Prisma.UserWhereInput,
+					]
 				: []),
 			...(filters.role ? [{ role: filters.role }] : []),
 			...(filters.status ? [{ status: filters.status }] : []),
