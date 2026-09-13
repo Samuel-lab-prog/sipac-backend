@@ -1,13 +1,13 @@
 import { t, type Static } from 'elysia';
 import { createUserSchema } from '../users-management/ports/schemas/commands/create-user-schema';
 
-export const role = t.UnionEnum(['student', 'professor', 'staff', 'admin']);
+export const role = t.UnionEnum(['student', 'professor', 'staff', 'admin'], { default: undefined });
 export const status = t.UnionEnum([
 	'active',
 	'pending',
 	'blocked',
 	'suspended',
-]);
+], { default: undefined });
 export const id = t.Numeric({ minimum: 1, multipleOf: 1 });
 export const params = t.Object({ id });
 export const filters = t.Object({
@@ -15,8 +15,8 @@ export const filters = t.Object({
 	q: t.Optional(t.String({ maxLength: 100 })),
 	role: t.Optional(role),
 	status: t.Optional(status),
-	team: t.Optional(t.UnionEnum(['true'])),
-	issue: t.Optional(t.UnionEnum(['missing-profile', 'unassigned-professor'])),
+	team: t.Optional(t.UnionEnum(['true'], { default: undefined })),
+	issue: t.Optional(t.UnionEnum(['missing-profile', 'unassigned-professor'], { default: undefined })),
 });
 export const professionalFields = {
 	departmentId: t.Nullable(id),

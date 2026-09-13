@@ -17,6 +17,8 @@ import {
 } from './utils/reference-blueprint';
 import { cleanSeedScenarios } from './cleanup';
 import { seedReport } from './report';
+import { seedInstitution } from './factories/institution.factory';
+import { seedReferenceServices } from './factories/reference-services.factory';
 
 export async function runStudentSeeds(prisma: PrismaClient, args: string[]) {
 	assertSeedEnvironment();
@@ -35,6 +37,7 @@ export async function runStudentSeeds(prisma: PrismaClient, args: string[]) {
 	return prisma.$transaction(
 		async (db) => {
 			if (options.clean) return cleanSeedScenarios(db, options.scenarios);
+			await seedInstitution(db);
 			const { department, course } = await seedCourse(db);
 			const professor = await seedProfessor(db, department.id, passwordHash);
 			if (
@@ -48,9 +51,13 @@ export async function runStudentSeeds(prisma: PrismaClient, args: string[]) {
 			const accounts = [];
 			for (const scenario of options.scenarios) {
 				if (scenario === 'reference') {
-					accounts.push(
-						await seedReferenceScenario(db, course.id, passwordHash),
+					const reference = await seedReferenceScenario(
+						db,
+						course.id,
+						passwordHash,
 					);
+					await seedReferenceServices(db, reference, passwordHash);
+					accounts.push(reference);
 					continue;
 				}
 				accounts.push(

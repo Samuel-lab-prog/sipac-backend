@@ -9,6 +9,10 @@ datasource db {
 
 model User {
 	id           Int    @id @default(autoincrement())
+	campusId     Int    @default(1)
+	campus       Campus @relation(fields: [campusId], references: [id])
+	coordinatedProjects InstitutionalProject[]
+	projectParticipations ProjectParticipant[]
 	email        String @unique
 	passwordHash String
 	name         String
@@ -49,18 +53,23 @@ model StudentRegistration {
 
 model Department {
   id        Int       @id @default(autoincrement())
+  campusId  Int       @default(1)
+  campus    Campus    @relation(fields: [campusId], references: [id])
   name      String    @unique
   code      String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
   courses   Course[]
+  projects InstitutionalProject[]
   professors ProfessorProfile[] @relation("ProfessorDepartment")
   staff     StaffProfile[]
 }
 
 model AcademicPeriod {
   id        Int      @id @default(autoincrement())
+  campusId  Int      @default(1)
+  campus    Campus   @relation(fields: [campusId], references: [id])
   code      String   @unique
   year      Int
   term      Int
@@ -520,4 +529,147 @@ enum AcademicCalendarEventType {
   instructional_saturday
   exam
   break
+}
+
+model Institution {
+  id Int @id @default(autoincrement())
+  name String
+  acronym String
+  configured Boolean @default(false)
+  updatedAt DateTime @updatedAt
+  campuses Campus[]
+}
+
+model Campus {
+  id Int @id @default(autoincrement())
+  institutionId Int
+  name String
+  city String
+  state String
+  address String
+  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Restrict)
+  users User[]
+  departments Department[]
+  periods AcademicPeriod[]
+  projects InstitutionalProject[]
+  documents IssuedDocument[]
+}
+
+enum InstitutionalProjectKind {
+  teaching
+  research
+  extension
+}
+
+enum InstitutionalProjectStatus {
+  draft
+  submitted
+  active
+  completed
+  cancelled
+}
+
+enum ProjectOrigin {
+  internal
+  external
+}
+
+enum ProjectFinalReportStatus {
+  not_submitted
+  submitted
+  approved
+}
+
+model InstitutionalProject {
+  id Int @id @default(autoincrement())
+  campusId Int
+  coordinatorId Int
+  departmentId Int?
+  code String @unique
+  year Int
+  origin ProjectOrigin @default(internal)
+  title String
+  kind InstitutionalProjectKind
+  objectives String
+  researchLine String?
+  knowledgeArea String?
+  researchGroup String?
+  fundingAgency String?
+  callName String?
+  nature String?
+  researchType String?
+  startsAt DateTime
+  endsAt DateTime
+  status InstitutionalProjectStatus @default(draft)
+  finalReportStatus ProjectFinalReportStatus @default(not_submitted)
+  version Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  campus Campus @relation(fields: [campusId], references: [id], onDelete: Restrict)
+  coordinator User @relation(fields: [coordinatorId], references: [id], onDelete: Restrict)
+  department Department? @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  participants ProjectParticipant[]
+  reports ProjectReport[]
+  events ProjectEvent[]
+  @@index([campusId, status, year, createdAt])
+  @@index([campusId, kind, origin, year])
+}
+
+model ProjectParticipant {
+  id Int @id @default(autoincrement())
+  projectId Int
+  userId Int
+  role String
+  workPlan String
+  startsAt DateTime
+  endsAt DateTime
+  approvedHours Int?
+  hoursApprovedBy Int?
+  hoursApprovedAt DateTime?
+  project InstitutionalProject @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  @@unique([projectId, userId])
+}
+
+model ProjectReport {
+  id Int @id @default(autoincrement())
+  projectId Int
+  authorId Int
+  title String
+  body String
+  approved Boolean @default(false)
+  reviewedBy Int?
+  reviewedAt DateTime?
+  createdAt DateTime @default(now())
+  project InstitutionalProject @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  @@index([projectId, createdAt])
+}
+
+model ProjectEvent {
+  id Int @id @default(autoincrement())
+  projectId Int
+  actorId Int
+  action String
+  note String
+  createdAt DateTime @default(now())
+  project InstitutionalProject @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  @@index([projectId, createdAt])
+}
+
+model IssuedDocument {
+  id String @id @default(uuid())
+  verificationCode String @unique
+  campusId Int
+  subjectUserId Int
+  issuedByUserId Int
+  kind String
+  templateVersion Int @default(1)
+  snapshot Json
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+  revokedByUserId Int?
+  revocationReason String?
+  campus Campus @relation(fields: [campusId], references: [id], onDelete: Restrict)
+  @@index([subjectUserId, createdAt])
+  @@index([campusId, createdAt])
 }

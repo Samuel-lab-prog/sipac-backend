@@ -5,13 +5,14 @@ export async function seedCourse(db: SeedDb) {
 		where: { code: `${SEED_PREFIX}INF` },
 		update: {},
 		create: {
+			campusId: 1,
 			code: `${SEED_PREFIX}INF`,
 			name: 'Informática — demonstração AGIAS',
 		},
 	});
 	const course = await db.course.upsert({
 		where: { code: `${SEED_PREFIX}CURSO` },
-		update: {},
+		update: { departmentId: department.id },
 		create: {
 			code: `${SEED_PREFIX}CURSO`,
 			name: 'Técnico em Informática — demonstração AGIAS',

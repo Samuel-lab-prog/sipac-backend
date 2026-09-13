@@ -134,6 +134,46 @@ describe.skipIf(process.env.NODE_ENV !== 'test')(
 				),
 			).toBe(true);
 		});
+		it('seeds the IFRS campus and a complete project/document reference', async () => {
+			const campus = await prisma.campus.findUniqueOrThrow({
+				where: { id: 1 },
+				include: { institution: true },
+			});
+			expect(campus.name).toBe('Campus Erechim');
+			expect(campus.institution.acronym).toBe('IFRS');
+			expect(campus.institution.configured).toBe(true);
+
+			const project = await prisma.institutionalProject.findFirstOrThrow({
+				where: {
+					title:
+						'[DEV-AGIAS-REFERENCE] Pesquisa aplicada em tecnologia educacional',
+				},
+				include: { participants: true, reports: true, events: true },
+			});
+			expect(project.kind).toBe('research');
+			expect(project.status).toBe('completed');
+			expect(project.code).toBe('DEV-AGIAS-REF-2026-001');
+			expect(project.year).toBe(2026);
+			expect(project.researchLine).toBe(
+				'Tecnologias educacionais e aprendizagem ativa',
+			);
+			expect(project.finalReportStatus).toBe('approved');
+			expect(project.participants).toHaveLength(1);
+			expect(project.participants[0]!.approvedHours).toBe(40);
+			expect(project.reports).toHaveLength(1);
+			expect(project.reports[0]!.approved).toBe(true);
+			expect(project.events).toHaveLength(4);
+
+			const documents = await prisma.issuedDocument.findMany({
+				where: { verificationCode: { in: ['a'.repeat(48), 'b'.repeat(48)] } },
+				orderBy: { verificationCode: 'asc' },
+			});
+			expect(documents).toHaveLength(2);
+			expect(documents.map((document) => document.kind)).toEqual([
+				'participation',
+				'enrollment',
+			]);
+		});
 		it('does not leak a draft plan through the dashboard payload', async () => {
 			const user = await userFor('exceptions');
 			const data = await selectStudentDashboardByUserId(user.id);
@@ -175,6 +215,11 @@ describe.skipIf(process.env.NODE_ENV !== 'test')(
 					prisma.academicActivity.count(),
 					prisma.academicCalendarEvent.count(),
 					prisma.user.count(),
+					prisma.institutionalProject.count(),
+					prisma.projectParticipant.count(),
+					prisma.projectReport.count(),
+					prisma.projectEvent.count(),
+					prisma.issuedDocument.count(),
 				]);
 			const before = await counts();
 			await runStudentSeeds(prisma, []);

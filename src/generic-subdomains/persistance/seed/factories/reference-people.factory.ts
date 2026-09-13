@@ -37,6 +37,7 @@ export async function seedReferenceStudents(
 		const email = `student.reference.${key}@dev.agias.example`;
 		const cpf = `9901000${String(index + 1).padStart(4, '0')}`;
 		const data = {
+			campusId: 1,
 			name: referenceStudents[index]!,
 			email,
 			nickname: `dev.agias.reference.${key}`,
@@ -82,8 +83,9 @@ export async function seedReferenceFaculty(db: SeedDb, passwordHash: string) {
 	for (const [code, name] of Object.entries(referenceAreas)) {
 		const department = await db.department.upsert({
 			where: { code: `DEV-AGIAS-REF-${code}` },
-			update: { name: `${name} — turma de referência AGIAS` },
+			update: { name: `${name} — turma de referência AGIAS`, campusId: 1 },
 			create: {
+				campusId: 1,
 				code: `DEV-AGIAS-REF-${code}`,
 				name: `${name} — turma de referência AGIAS`,
 			},
@@ -95,6 +97,7 @@ export async function seedReferenceFaculty(db: SeedDb, passwordHash: string) {
 		const email = `professor.reference.${subject.code.toLowerCase()}@dev.agias.example`;
 		const cpf = `9902000${String(index + 1).padStart(4, '0')}`;
 		const data = {
+			campusId: 1,
 			email,
 			name: subject.professor,
 			nickname: `dev.agias.prof.${subject.code.toLowerCase()}`,
@@ -142,6 +145,7 @@ export async function seedReferenceManagement(
 		const email = `${role}.reference@dev.agias.example`;
 		const cpf = `9903000000${index + 1}`;
 		const data = {
+			campusId: 1,
 			email,
 			name:
 				role === 'staff'

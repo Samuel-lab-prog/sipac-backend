@@ -6,6 +6,7 @@ import { validateServerEnv } from '../../server-config/utils/validateEnv';
 import { seedCoursePlans } from './seed/planning';
 import { runStudentSeeds } from './seed/index';
 import { assertSeedEnvironment } from './seed/config';
+import { seedInstitution } from './seed/factories/institution.factory';
 
 /* eslint-disable max-lines, max-lines-per-function -- deterministic integration fixture. */
 
@@ -19,19 +20,23 @@ async function upsertUserByEmail(params: {
 	cpf: string;
 	role: 'student' | 'professor' | 'staff' | 'admin';
 	status?: 'active' | 'pending' | 'blocked' | 'suspended';
+	campusId?: number;
 }) {
+	const { campusId = 1, ...user } = params;
 	const passwordHash = await BcryptHashService.hash(PASSWORD);
 	return prisma.user.upsert({
 		where: { email: params.email },
 		update: {
-			...params,
+			...user,
+			campusId,
 			passwordHash,
-			status: params.status ?? 'active',
+			status: user.status ?? 'active',
 		},
 		create: {
-			...params,
+			...user,
+			campusId,
 			passwordHash,
-			status: params.status ?? 'active',
+			status: user.status ?? 'active',
 		},
 	});
 }
@@ -39,11 +44,13 @@ async function upsertUserByEmail(params: {
 async function main() {
 	assertSeedEnvironment();
 	validateServerEnv({ silent: true });
+	const { campus } = await seedInstitution(prisma);
 
 	const department = await prisma.department.upsert({
 		where: { code: 'INF' },
-		update: { name: 'Informática' },
+		update: { name: 'Informática', campusId: campus.id },
 		create: {
+			campusId: campus.id,
 			name: 'Informática',
 			code: 'INF',
 		},
@@ -51,8 +58,9 @@ async function main() {
 
 	const languageDept = await prisma.department.upsert({
 		where: { code: 'LET' },
-		update: { name: 'Linguagens' },
+		update: { name: 'Linguagens', campusId: campus.id },
 		create: {
+			campusId: campus.id,
 			name: 'Linguagens',
 			code: 'LET',
 		},
@@ -72,11 +80,13 @@ async function main() {
 	await prisma.academicPeriod.upsert({
 		where: { year_term: { year: 2026, term: 1 } },
 		update: {
+			campusId: campus.id,
 			code: '2026.1',
 			startsAt: new Date('2026-02-02T00:00:00.000Z'),
 			endsAt: new Date('2026-07-17T23:59:59.000Z'),
 		},
 		create: {
+			campusId: campus.id,
 			code: '2026.1',
 			year: 2026,
 			term: 1,
@@ -90,11 +100,13 @@ async function main() {
 			year_term: { year: 2026, term: 2 },
 		},
 		update: {
+			campusId: campus.id,
 			code: '2026.2',
 			startsAt: new Date('2026-08-01T00:00:00.000Z'),
 			endsAt: new Date('2026-12-20T23:59:59.000Z'),
 		},
 		create: {
+			campusId: campus.id,
 			code: '2026.2',
 			year: 2026,
 			term: 2,

@@ -17,6 +17,7 @@ export async function seedStudent(
 	};
 	const cpf = scenario === 'reference' ? '99010000001' : `9900000000${index}`;
 	const data = {
+		campusId: 1,
 		name: labels[scenario],
 		nickname: `dev.agias.${scenario}`,
 		rg: seedRg(cpf),
@@ -50,6 +51,7 @@ export async function seedProfessor(
 	passwordHash: string,
 ) {
 	const data = {
+		campusId: 1,
 		name: 'Helena Duarte (demonstração)',
 		nickname: 'dev.agias.professor',
 		rg: seedRg('99000000009'),

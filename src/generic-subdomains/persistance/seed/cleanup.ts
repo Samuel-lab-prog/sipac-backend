@@ -6,6 +6,31 @@ export async function cleanSeedScenarios(
 	scenarios: ScenarioName[],
 ) {
 	for (const scenario of scenarios) {
+		if (scenario === 'reference') {
+			const projectIds = (
+				await db.institutionalProject.findMany({
+					where: { title: { startsWith: '[DEV-AGIAS-REFERENCE]' } },
+					select: { id: true },
+				})
+			).map((project) => project.id);
+			if (projectIds.length) {
+				await db.projectEvent.deleteMany({
+					where: { projectId: { in: projectIds } },
+				});
+				await db.projectReport.deleteMany({
+					where: { projectId: { in: projectIds } },
+				});
+				await db.projectParticipant.deleteMany({
+					where: { projectId: { in: projectIds } },
+				});
+				await db.institutionalProject.deleteMany({
+					where: { id: { in: projectIds } },
+				});
+			}
+			await db.issuedDocument.deleteMany({
+				where: { verificationCode: { in: ['a'.repeat(48), 'b'.repeat(48)] } },
+			});
+		}
 		await db.classOffering.deleteMany({
 			where: {
 				code: { startsWith: `${SEED_PREFIX}${scenario.toUpperCase()}-` },

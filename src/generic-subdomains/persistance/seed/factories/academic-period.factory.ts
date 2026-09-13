@@ -5,8 +5,9 @@ import { academicEvents } from '../catalogs/academic-events';
 export function seedPeriod(db: SeedDb, term: number) {
 	return db.academicPeriod.upsert({
 		where: { year_term: { year: 2026, term } },
-		update: {},
+		update: { campusId: 1 },
 		create: {
+			campusId: 1,
 			year: 2026,
 			term,
 			code: `2026.${term}`,

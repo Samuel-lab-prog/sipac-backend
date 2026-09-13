@@ -1,6 +1,12 @@
 import { Elysia } from 'elysia';
 import { teachingRouter } from './domains/teaching-management/router';
 import { adminRouter } from './domains/admin-management/router';
+import { institutionRouter } from './domains/institution-management/router';
+import { projectsRouter } from './domains/projects-management/router';
+import {
+	documentsRouter,
+	documentVerificationRouter,
+} from './domains/documents-management/router';
 // Plugins
 import cors from '@elysiajs/cors';
 import { openapi } from '@elysiajs/openapi';
@@ -119,6 +125,10 @@ function makeServer({
 			.use(curriculumStaffRouter)
 			.use(teachingRouter)
 			.use(adminRouter)
+			.use(institutionRouter)
+			.use(projectsRouter)
+			.use(documentVerificationRouter)
+			.use(documentsRouter)
 			.use(academicCalendarCommandsRouter)
 			.use(communicationsCommandsRouter)
 			.use(enableRealHash ? authRouter : authRouterWithFakeHash)
